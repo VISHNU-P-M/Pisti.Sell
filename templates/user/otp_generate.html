@@ -1,0 +1,134 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>otp-generate</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="{% static 'css/otp.css' %}" rel="stylesheet">
+</head>
+<body>
+    <style>
+        /* Chrome, Safari, Edge, Opera */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+        
+        /* Firefox */
+        input[type=number] {
+          -moz-appearance: textfield;
+        }
+    </style>
+    <div class="container">
+        <div class="row">
+            <div class="container new-login-area">
+                <div id='sign-in' class='login-setup-section'>
+                    <h3 class="request-otp-header">Please verify your mobile number</h3>
+                    <div class="form-group login-label">
+                        <label for="inputnumber">mobile number</label>
+                        <input type="number" id="phone" class="form-control input-edit" placeholder='Enter mobile number' id="number">
+                        <span id="span1" style="color: #c74032;font-weight: 600;font-size: 12px;"></span>
+                    </div>
+                    <button type="button" id="generatebtn" class="btn btn-default btn-lg btn-block request-otp" id='request-otp'>Get OTP</button>
+                </div>
+                <div id='verify-otp' class="login-setup-section">
+                    <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                    <h3 class="request-otp-header">Verify OTP</h3>
+                    <div class="form-group login-label">
+                        <label for="inputnumber">One Time Password</label>
+                        <input type="number" id="otp" class="form-control input-edit" placeholder='Enter OTP' id="number">
+                        <label class="pull-right resend-otp" onclick="resend()">Resend otp</label>
+                        <span id="span2" style="color: #c74032;font-weight: 600;font-size: 12px;"></span>
+                    </div>
+                    <button type="button" id="validatebtn" class="btn btn-default btn-lg btn-block request-otp ">Verify</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script>
+        $('#verify-otp').hide();
+        $('.fa-chevron-left').on('click',function(){
+            $('#sign-in').show();
+            $('#verify-otp').hide();
+        });
+        $('#generatebtn').click(function(){
+            var phone = $('#phone').val()
+            var data = {
+                'csrfmiddlewaretoken':'{{csrf_token}}',
+                'phone':phone
+            }
+            if(phone.length!=10 || isNaN(phone)){
+                $('#span1').html('<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Enter the valid phone no.')
+            }else{
+                $.ajax({
+                    url:'/otp-generate/',
+                    method:'POST',
+                    data:data,
+                    dataType:'json',
+                    success:function(data){
+                        if(data=='true'){
+                            $('#sign-in').hide();
+                            $('#verify-otp').show();
+                        }
+                        if(data=='false'){
+                            $('#span1').html('<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Number is not exist')
+                        }
+                    }
+                })
+            }
+        })
+        $('#validatebtn').click(function(){
+            var otp = $('#otp').val()
+            var data = {
+                'csrfmiddlewaretoken':'{{csrf_token}}',
+                'otp':otp
+            }
+            if(otp.length<1){
+                $('#span2').html('<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Enter the OTP')
+            }else{
+                $.ajax({
+                    url:'/otp-validate/',
+                    method:'POST',
+                    data:data,
+                    dataType:'json',
+                    success:function(data){
+                        if(data=='true'){
+                            window.location.replace('/user-home/')
+                        }
+                        if(data=='false'){
+                            $('#span2').html('<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>Invalid OTP')
+                        }
+                    }
+                })
+            }
+            
+        })
+        function resend(){
+            var data = {
+                'csrfmiddlewaretoken':'{{csrf_token}}',
+                'hi':'hi'
+            }
+            $.ajax({
+                url:'/otp-resend/',
+                method:'POST',
+                data:data,
+                dataType:'json',
+                success:function(data){
+                    if(data=='true'){
+                        $('#span2').html('<label for="" style="color: yellow;font-weight: 600;font-size: 12px;">OTP sended</label>')
+                    }else if(data=='false'){
+                        $('#span2').html('<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>something wrong')
+                    }
+                }
+            })
+        }
+    </script>  
+</body>
+</html>

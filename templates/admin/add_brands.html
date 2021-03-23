@@ -1,0 +1,122 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block link %}
+{% endblock %}
+{% block content %}
+
+
+<style>
+      
+#body {
+    font-family: 'Nunito';
+  background-color:  #5d8fc9;
+  }
+  #login-card{
+      width:350px;
+      border-radius: 25px;
+      margin:150px auto;
+    
+  }
+  
+  #email{
+      border-radius:30px;
+      background-color: #ebf0fc;
+      border-color: #ebf0fc;
+      color: #9da3b0;
+  }
+  
+  #button{
+      border-radius:30px;
+  
+  }
+  
+  #btn{
+     position: absolute; 
+     bottom: -35px; 
+     padding: 5px;
+     margin: 0px 55px;
+     align-items: center;
+     border-radius: 5px"
+  }
+  #container{
+      margin-top:25px;
+  }
+  
+  .btn-circle.btn-sm { 
+              width: 40px; 
+              height: 40px; 
+              padding: 2px 0px; 
+              border-radius: 25px; 
+              font-size: 14px; 
+              text-align: center;
+              
+              margin: 8px;
+          }
+</style>
+<div>
+    <div id="login-card" class="card">
+        <div class="card-body">
+          <h2 class="text-center">Add Brands</h2>
+          <br>
+          <form action="/action_page.php">
+            <div class="form-group">
+                <select name="cars" id="category" style="width: 100%; height: 50px;">
+                    <option value="0">Select Category</option>
+                    {% for category in categories %}
+                        <option value="{{category.id}}">{{category.category}}</option>
+                    {% endfor %}
+                </select> 
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control" id="brand" placeholder="Enter The Brand" name="brand">
+            </div>
+            <div class="form-group">
+                <span id="span" style="color: brown;"></span>
+            </div>
+            <button type="button" id="button" class="btn btn-primary deep-purple btn-block ">Submit</button>
+        <br>
+            <br>
+           
+          </form>
+        </div>
+        <div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous"></script>
+<script>
+    $('#button').click(function(){
+        var category = $('#category').val()
+        var brand = $('#brand').val()
+        var data = {
+            'csrfmiddlewaretoken':'{{csrf_token}}',
+            'category':category,
+            'brand':brand
+        }
+        if(category == '0'){
+            $('#span').html('Select the Category')
+        }else if(brand.length < 3){
+            $('#span').html('Enter brand')
+        }else{
+            $.ajax({
+                url:'/adminapp/add-brands/',
+                method:'POST',
+                data:data,
+                dataType:'json',
+                success:function(data){
+                    if(data=='true'){
+                        window.location.replace('/adminapp/brands/')
+                    }
+                    if(data=='exist'){
+                        $('#span').html('brand already exist')
+                    }
+                }
+            })
+        }
+    })
+</script>
+<script>
+   
+    
+</script>
+{% endblock %}
