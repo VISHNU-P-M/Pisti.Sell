@@ -1,0 +1,317 @@
+{% extends 'user/base.html' %}
+{% load static %}
+{% block link %}
+<style>
+    h2 {
+        font-family: "Poppins";
+        font-size: 36px;
+    
+        margin-bottom: 15px;
+    }
+    
+    h3 {
+        font-size: 24px;
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.699);
+    
+        margin-bottom: 25px;
+        margin-top: 0px;
+    }
+    
+    h3,
+    span,
+    p {
+        font-family: "Avenir";
+    }
+    
+    .profile_container,
+    .info,
+    .back {
+        margin: 60px 100px 0px;
+        max-width: 900px;
+        display: flex;
+        overflow-x: hidden;
+    }
+    
+    .back {
+        display: flex;
+        align-items: center;
+        color: rgba(34, 34, 34, 0.5);
+    }
+    
+    .back i {
+        margin-right: 15px;
+    }
+    
+    .profile_img-LG {
+        height: 400px;
+        width: 300px;
+        border-radius: 40px;
+    
+        object-fit: cover;
+        object-position: 50% 50%;
+    
+        background-position: 40% 50%;
+    }
+    
+    .flag_wrapper {
+        width: 50px;
+        height: 50px;
+        background-color: #f2f2f2;
+        border-radius: 100%;
+        position: relative;
+        top: -70px;
+        left: 230px;
+    }
+    
+    .flag {
+        width: 30px;
+        height: 30px;
+        position: absolute;
+        right: 0;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        margin: auto auto;
+    }
+    
+    .description {
+        margin-bottom: 30px;
+        margin-top: 0px;
+    }
+    
+    .profile_img_section {
+        margin-right: 50px;
+    }
+    
+    .profile_desc_section {
+        display: flex;
+        flex-direction: column;
+    
+        margin-left: 50px;
+    }
+    
+    .interests_item {
+        display: inline-block;
+        padding: 5px 15px;
+        margin-right: 7.5px;
+        margin-bottom: 10px;
+        line-height: 35px;
+        background-color: #4076d6;
+        border-radius: 5px;
+    
+        color: rgb(255, 254, 254);
+    }
+    
+    .info {
+        margin-top: -20px;
+        margin-left: 100px;
+    }
+    
+    .link_img_wrapper {
+        width: 40px;
+        height: 40px;
+        background-color: #f2f2f2;
+        border-radius: 10px;
+        position: relative;
+    }
+    
+    .link_img {
+        height: 20px;
+        width: 20px;
+        position: absolute;
+        right: 0;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        margin: auto auto;
+    }
+    
+    ul {
+        padding: 0px;
+    }
+    
+    li {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+    
+    li p {
+        margin-left: 30px;
+        color: rgba(34, 34, 34, 0.5);
+    }
+    
+    @media screen and (max-width: 1000px) {
+        .profile_container,
+        .info,
+        .back {
+            margin: 30px 4px 0px;
+        }
+    
+        .profile_container {
+            flex-direction: column;
+        }
+    
+        .profile_img_section {
+            margin: 0 auto;
+        }
+    
+        .profile_img-LG {
+            width: 300px;
+            height: 300px;
+            border-radius: 100%;
+        }
+    
+        .flag_wrapper {
+        }
+    
+        .profile_desc_section {
+            margin-left: 0px;
+            margin-bottom: 10px;
+            margin-top: -40px;
+        }
+    
+        .info {
+            margin-top: 10px;
+            margin-left: 33px;
+        }
+    }
+    
+</style>
+{% endblock %}
+{% block content %}
+<div class="container">
+
+    <section class="profile_container">
+        <div class="profile_img_section">
+            <form action="" id="propicform">
+            {% if user.propic == '' %}
+                <img class="profile_img-LG" id="profilepic" src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg" />
+                <div class="flag_wrapper">
+                    <img class="flag" src="https://cdn3.iconfinder.com/data/icons/eightyshades/512/14_Add-512.png" alt="South Korean Flag" onclick="setPropic()" />
+                    <input type="file" accept="image/*" id="propic" style="display: none;">
+                </div>
+            {% else %}
+                <img class="profile_img-LG" src="{{user.propic}}" />
+                <div class="flag_wrapper">
+                    <img class="flag" src="https://cdn3.iconfinder.com/data/icons/eightyshades/512/14_Add-512.png" alt="South Korean Flag" />
+                </div>
+            {% endif %} 
+            </form>
+        </div>
+
+        <div class="profile_desc_section">
+            <h2 style="text-transform: capitalize;">{{user.first_name}}&nbsp;{{user.last_name}}</h2>
+            <div class="interests">
+                <span class="interests_item">xx followers</span>
+                <span class="interests_item">xx followings</span>
+            </div>
+            <ul>
+                <li>
+                    <div class="link_img_wrapper">
+                        <img class="link_img" src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/240/samsung/265/globe-with-meridians_1f310.png" alt="">
+                    </div>
+                    <p>{{user.email}}</p>
+                </li>
+                <li>
+                    <div class="link_img_wrapper">
+                        <img class="link_img" src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/240/apple/271/speaking-head_1f5e3-fe0f.png" alt="">
+                    </div>
+                    <p>{{user.phone}}</p>
+                </li>
+            </ul>
+            <hr>
+            <h3>Your Ads</h3>
+            <div>
+                {% for ad in userad %}
+                <div class="col-md-7 col-md2 animated wow fadeInRight" data-wow-delay=".1s">
+                    <div class="col-sm-4 item-grid simpleCart_shelfItem" >
+                        <div class="grid-pro" style="padding: 0em; width: 12rem; height: 15rem;">
+                            <div  class=" grid-product " >
+                                <figure>		
+                                    <a href="/view-ad/{{ad.id}}">
+                                        <div class="grid-img">
+                                            <img  src="{{ad.img1}}" class="img-responsive" alt="" >
+                                        </div>
+                                        <div class="grid-img">
+                                            <img  src="{{ad.img2}}" class="img-responsive"  alt="" >
+                                        </div>		
+                                    </a>		
+                                </figure>	
+                            </div>
+                            <div class="women">
+                                <h6><a href="/view-ad/{{ad.id}}">{{ad.title}}</a></h6>
+                                <p ><em class="item_price">Rs : {{ad.price}}/-</em></p>
+                                <small>Status : {{ad.status}}</small><br>
+                                <small>Active : {{ad.active}}</small>
+                            </div>
+                        </div>
+                    </div>
+            
+                </div>
+                
+                {% endfor %} 
+               <hr>
+            </div>
+            <a href="/sell-product/"><button type="button" class="btn btn-success" style="margin-bottom: 2em;width: 15rem; height: 3em; font-size: 24px;">Sell Product</button></a>
+        </div>
+
+    </section>
+
+    <div class="info">
+        
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous"></script>
+<script>
+    function setPropic(){
+        console.log('hi')
+        document.getElementById('propic').click()
+    }
+
+      $("#propic").change(function() {
+            var image = this
+            var form = new FormData(document.getElementById('propicform'));
+            var file = document.getElementById('propic').files[0];
+            if (file) {   
+                form.append('profilepic', file);
+                $.ajax({
+                    type: "POST",
+                    url: "/set-propic/{{user.id}}",
+                    data: form,             
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data)
+                    {
+                        if(data == 'true'){
+                            readURL(image);
+                        }
+                            
+                        if(data == 'false'){
+                            alert('upload canceled, try it after sometime')
+                        }
+                    }
+                });
+            }else{
+                alert('file not valid')
+            }
+            
+      });
+
+      function readURL(input) {
+        if (input.files && input.files[0]) {
+          var reader = new FileReader();
+          
+          reader.onload = function(e) {
+            $('#profilepic').attr('src', e.target.result);
+          }
+          
+          reader.readAsDataURL(input.files[0]); // convert to base64 string
+        }
+      }
+      
+</script>
+{% endblock %}

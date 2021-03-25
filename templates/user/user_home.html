@@ -3,302 +3,98 @@
 {% block content %}
 
 <!-- banner -->
-	<div class="banner">
-	
-	
+<div class="banner">
 	<div class="banner-right">
-					<ul id="flexiselDemo2">			
-						<li><div class="banner-grid">
-						<h2>Featured Products</h2>
-						<div class="wome">
-								<a href="single.html" ><img class="img-responsive" src="{% static 'images/bi1.jpg' %}" alt="" />
-								</a>
-								<div class="women simpleCart_shelfItem">
-									<a href="#"><img src="{% static 'images/ll.png' %}" alt=""></a>
-									<h6 ><a href="single.html">Sed ut perspiciatis unde</a></h6>
-									<p class="ba-price"><del>$100.00</del><em class="item_price">$70.00</em></p>
-									<a href="#" data-text="Add To Cart" class="but-hover1 item_add">Add To Cart</a>
-								</div>							
-								</div>							
-							</div></li>
-						<li><div class="banner-grid">
-						<h2>Featured Products</h2>
-						<div class="wome">
-								<a href="single.html" ><img class="img-responsive" src="{% static 'images/bi.jpg' %}" alt="" />
-								</a>	
-								<div class="women simpleCart_shelfItem">
-									<a href="#"><img src="{% static 'images/ll.png' %}" alt=""></a>
-									<h6 ><a href="single.html">Sed ut perspiciatis unde</a></h6>
-									<p class="ba-price"><del>$100.00</del><em class="item_price">$70.00</em></p>
-									<a href="#" data-text="Add To Cart" class="but-hover1 item_add">Add To Cart</a>
-								</div>						
-								</div>						
-							</div></li>
-						<li><div class="banner-grid">
-						<h2>Featured Products</h2>
-						<div class="wome">
-								<a href="single.html" ><img class="img-responsive" src="{% static 'images/bi2.jpg' %}" alt="" />
-								</a>	
-								<div class="women simpleCart_shelfItem">
-									<a href="#"><img src="{% static 'images/ll.png' %}" alt=""></a>
-									<h6 ><a href="single.html">Sed ut perspiciatis unde</a></h6>
-									<p class="ba-price"><del>$100.00</del><em class="item_price">$70.00</em></p>
-									<a href="#" data-text="Add To Cart" class="but-hover1 item_add">Add To Cart</a>
-								</div>						
-								</div>						
-							</div></li>
-						
-					
-					</ul>
-                    
-
-					</div>
-
-				
+		<ul id="flexiselDemo2">			
+			<li><div class="banner-grid">
+			<h2>Featured Products</h2>
+			<div class="wome">
+					<a href="single.html" ><img class="img-responsive" src="{% static 'images/bi1.jpg' %}" alt="" />
+					</a>
+					<div class="women simpleCart_shelfItem">
+						<a href="#"><img src="{% static 'images/ll.png' %}" alt=""></a>
+						<h6 ><a href="single.html">Sed ut perspiciatis unde</a></h6>
+						<p class="ba-price"><del>$100.00</del><em class="item_price">$70.00</em></p>
+						<a href="#" data-text="Add To Cart" class="but-hover1 item_add">Add To Cart</a>
+					</div>							
+					</div>							
+				</div></li>
+			<li><div class="banner-grid">
+			<h2>Featured Products</h2>
+			<div class="wome">
+					<a href="single.html" ><img class="img-responsive" src="{% static 'images/bi.jpg' %}" alt="" />
+					</a>	
+					<div class="women simpleCart_shelfItem">
+						<a href="#"><img src="{% static 'images/ll.png' %}" alt=""></a>
+						<h6 ><a href="single.html">Sed ut perspiciatis unde</a></h6>
+						<p class="ba-price"><del>$100.00</del><em class="item_price">$70.00</em></p>
+						<a href="#" data-text="Add To Cart" class="but-hover1 item_add">Add To Cart</a>
+					</div>						
+					</div>						
+				</div></li>
+			<li><div class="banner-grid">
+			<h2>Featured Products</h2>
+			<div class="wome">
+					<a href="single.html" ><img class="img-responsive" src="{% static 'images/bi2.jpg' %}" alt="" />
+					</a>	
+					<div class="women simpleCart_shelfItem">
+						<a href="#"><img src="{% static 'images/ll.png' %}" alt=""></a>
+						<h6 ><a href="single.html">Sed ut perspiciatis unde</a></h6>
+						<p class="ba-price"><del>$100.00</del><em class="item_price">$70.00</em></p>
+						<a href="#" data-text="Add To Cart" class="but-hover1 item_add">Add To Cart</a>
+					</div>						
+					</div>						
 				</div>
-
-	</div>
+			</li>
+		</ul>
+    </div>
+</div>
 <!-- //banner -->
 <!--content-->
-		<div class="content">
-		<div class="content-head">
-					
-					<div class="col-md-6 col-m1 animated wow fadeInLeft" data-wow-delay=".1s">
-						<div class="col-1">
-						<div class="col-md-6 col-2">
-							<a href="single.html"><img src="{% static 'images/pi3.jpg' %}" class="img-responsive" alt="">
-							</a></div>
-							<div class="col-md-6 col-p">
-								<h5>For All Collections</h5>
-								<p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis
-								praesentium voluptatum deleniti atque</p>
-								<a href="single.html" class="shop" data-hover="Shop Now">Shop Now</a>
+<div class="content-top">
+	<div class="col-md-2">
+		<!-- filters -->
+
+	</div>
+	<div class="col-md-8 animated wow " data-wow-delay=".1s" style="margin-top: 2em;margin-bottom: 2em;">
+		{% for ad in ads %}
+		{% if ad.active == True%}
+		<div class="col-sm-4 item-grid simpleCart_shelfItem">
+			<div class="grid-pro">
+				<div  class=" grid-product " >
+					<figure>		
+						<a href="/view-ad/{{ad.id}}">
+							<div class="grid-img">
+								<img  src="{{ad.img1}}" class="img-responsive" alt="">
 							</div>
-							<div class="clearfix"> </div>
-						</div>
-						<div class="col-1">
-						<div class="col-md-6 col-p">
-								<h5>For All Collections</h5>
-								<p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis
-								praesentium voluptatum deleniti atque</p>
-								<a href="single.html" class="shop" data-hover="Shop Now">Shop Now</a>
-							</div>
-						<div class="col-md-6 col-2">
-							<a href="single.html"><img src="{% static 'images/pi.jpg' %}" class="img-responsive" alt="">
-							</a></div>
-							<div class="clearfix"> </div>
-						</div>
-						</div>
-					
-					<div class="col-md-6 col-m2 animated wow fadeInRight" data-wow-delay=".1s">
-					
-							
-                            
-							 <!-- //requried-jsfiles-for owl -->
-							 <!-- start content_slider -->
-						       <div id="owl-demo" class="owl-carousel">
-					                <div class="item">					                	 
-										  
-											<a href="single.html"><img class="img-responsive" src="{% static 'images/bb.png' %}" alt="" /></a>  
-											<a href="single.html" class="shop-2" >Shop Now</a>
-								
-					                </div>
-									<div class="item">					                	  
-										
-											<a href="single.html"><img class="img-responsive" src="{% static 'images/bb1.png' %}" alt="" /></a>  
-											<a href="single.html" class="shop-2">Shop Now</a>									
-																		
-					                </div>
-									
-									<div class="item">					                	 
-									
-											<a href="single.html"><img class="img-responsive" src="{% static 'images/bb.png' %}" alt="" /> </a> 
-											<a href="single.html" class="shop-2">Shop Now</a>									
-																			
-					                </div>
-									<div class="item">					                	  
-										
-											<a href="single.html"><img class="img-responsive" src="{% static 'images/bb1.png' %}" alt="" /></a>  
-											<a href="single.html" class="shop-2">Shop Now</a>									
-																		
-					                </div>
-							</div>
-					   </div>
-					   <div class="clearfix"></div>
-			</div>	
-					</div>
-				
-			<!---->
-			
-				<div class="content-top">
-					<div class="col-md-5 col-md1 animated wow fadeInLeft" data-wow-delay=".1s">
-						<div class="col-3">
-							<a href="single.html"><img src="{% static 'images/pi1.jpg' %}" class="img-responsive " alt="">
-							<div class="col-pic">	
-								<h5> Women's Wear</h5>
-								<p>At vero eos et accusamus et</p>
-							</div></a>
-						</div>
-						
-					</div>
-					<div class="col-md-7 col-md2 animated wow fadeInRight" data-wow-delay=".1s">
-						<div class="col-sm-4 item-grid simpleCart_shelfItem">
-							<div class="grid-pro">
-								<div  class=" grid-product " >
-									<figure>		
-										<a href="single.html">
-											<div class="grid-img">
-												<img  src="{% static 'images/pr1.jpg' %}" class="img-responsive" alt="">
-											</div>
-											<div class="grid-img">
-												<img  src="{% static 'images/pr.jpg' %}" class="img-responsive"  alt="">
-											</div>			
-										</a>		
-									</figure>	
-								</div>
-								<div class="women">
-									<a href="#"><img src="{% static 'images/ll.png' %}" alt=""></a>
-									<h6><a href="single.html">Sed ut perspiciatis unde</a></h6>
-									<p ><del>$100.00</del><em class="item_price">$70.00</em></p>
-									<a href="#" data-text="Add To Cart" class="but-hover1 item_add">Add To Cart</a>
-								</div>
-							</div>
-						</div>
-				
-						<div class="col-sm-4 item-grid simpleCart_shelfItem">
-							<div class="grid-pro">
-								<div  class=" grid-product " >
-									<figure>		
-										<a href="single.html">
-											<div class="grid-img">
-												<img  src="{% static 'images/pr3.jpg' %}" class="img-responsive" alt="">
-											</div>
-											<div class="grid-img">
-												<img  src="{% static 'images/pr2.jpg' %}" class="img-responsive"  alt="">
-											</div>			
-										</a>		
-									</figure>	
-								</div>
-								<div class="women">
-									<a href="#"><img src="{% static 'images/ll.png' %}" alt=""></a>
-									<h6><a href="single.html">Sed ut perspiciatis unde</a></h6>
-									<p ><del>$100.00</del><em class="item_price">$70.00</em></p>
-									<a href="#" data-text="Add To Cart" class="but-hover1 item_add">Add To Cart</a>
-								</div>
-							</div>
-						</div>
-						<div class="col-sm-4 item-grid simpleCart_shelfItem">
-						<div class="grid-pro">
-								<div  class=" grid-product " >
-									<figure>		
-										<a href="single.html">
-											<div class="grid-img">
-												<img  src="{% static 'images/pr5.jpg' %}" class="img-responsive" alt="">
-											</div>
-											<div class="grid-img">
-												<img  src="{% static 'images/pr4.jpg' %}" class="img-responsive"  alt="">
-											</div>			
-										</a>		
-									</figure>	
-								</div>
-								<div class="women">
-									<a href="#"><img src="{% static 'images/ll.png' %}" alt=""></a>
-									<h6><a href="single.html">Sed ut perspiciatis unde</a></h6>
-									<p ><del>$100.00</del><em class="item_price">$70.00</em></p>
-									<a href="#" data-text="Add To Cart" class="but-hover1 item_add">Add To Cart</a>
-								</div>
-							</div>
-						</div>
-					<div class="clearfix"></div>
-					</div>
-					<div class="clearfix"></div>
+							<div class="grid-img">
+								<img  src="{{ad.img2}}" class="img-responsive"  alt="">
+							</div>			
+						</a>		
+					</figure>	
 				</div>
-				<!----->
-				<!---->
-				<div class="content-top">
-					
-					<div class="col-md-7 col-md2 animated wow fadeInLeft" data-wow-delay=".1s">
-						<div class="col-sm-4 item-grid simpleCart_shelfItem">
-							<div class="grid-pro">
-								<div  class=" grid-product " >
-									<figure>		
-										<a href="single.html">
-											<div class="grid-img">
-												<img  src="{% static 'images/pr6.jpg' %}" class="img-responsive" alt="">
-											</div>
-											<div class="grid-img">
-												<img  src="{% static 'images/pr7.jpg' %}" class="img-responsive"  alt="">
-											</div>			
-										</a>		
-									</figure>	
-								</div>
-								<div class="women">
-									<a href="#"><img src="{% static 'images/ll.png' %}" alt=""></a>
-									<h6><a href="single.html">Sed ut perspiciatis unde</a></h6>
-									<p ><del>$100.00</del><em class="item_price">$70.00</em></p>
-									<a href="#" data-text="Add To Cart" class="but-hover1 item_add">Add To Cart</a>
-								</div>
-							</div>
-							
-						</div>
-				
-						<div class="col-sm-4 item-grid simpleCart_shelfItem">
-							<div class="grid-pro">
-								<div  class=" grid-product " >
-									<figure>		
-										<a href="single.html">
-											<div class="grid-img">
-												<img  src="{% static 'images/pr9.jpg' %}" class="img-responsive" alt="">
-											</div>
-											<div class="grid-img">
-												<img  src="{% static 'images/pr8.jpg' %}" class="img-responsive"  alt="">
-											</div>			
-										</a>		
-									</figure>	
-								</div>
-								<div class="women">
-									<a href="#"><img src="{% static 'images/ll.png' %}" alt=""></a>
-									<h6><a href="single.html">Sed ut perspiciatis unde</a></h6>
-									<p ><del>$100.00</del><em class="item_price">$70.00</em></p>
-									<a href="#" data-text="Add To Cart" class="but-hover1 item_add">Add To Cart</a>
-								</div>
-							</div>
-						</div>
-						<div class="col-sm-4 item-grid simpleCart_shelfItem">
-						<div class="grid-pro">
-								<div  class=" grid-product " >
-									<figure>		
-										<a href="single.html">
-											<div class="grid-img">
-												<img  src="{% static 'images/pr10.jpg' %}" class="img-responsive" alt="">
-											</div>
-											<div class="grid-img">
-												<img  src="{% static 'images/pr11.jpg' %}" class="img-responsive"  alt="">
-											</div>			
-										</a>		
-									</figure>	
-								</div>
-								<div class="women">
-									<a href="#"><img src="{% static 'images/ll.png' %}" alt=""></a>
-									<h6><a href="single.html">Sed ut perspiciatis unde</a></h6>
-									<p ><del>$100.00</del><em class="item_price">$70.00</em></p>
-									<a href="#" data-text="Add To Cart" class="but-hover1 item_add">Add To Cart</a>
-								</div>
-							</div>
-						</div>
-					<div class="clearfix"></div>
-					</div>
-					<div class="col-md-5 col-md1 animated wow fadeInRight" data-wow-delay=".1s">
-						<div class="col-3">
-							<a href="single.html"><img src="{% static 'images/pi2.jpg' %}" class="img-responsive " alt="">
-							<div class="col-pic">
-								<h5> Men's Wear</h5>
-								<p>At vero eos et accusamus et</p>
-							</div></a>
-						</div>
-						
-					</div>
-					<div class="clearfix"></div>
+				<div class="women">
+					<a href="#"><img src="{% static 'images/ll.png' %}" alt=""></a>
+					<h6><a href="/view-ad/{{ad.id}}">{{ad.title}}</a></h6>
+					<p ><em class="item_price" id="span"></em></p>
+					<a href="/view-ad/{{ad.id}}" data-text="View Ad" class="but-hover1 item_add">View Ad</a>
 				</div>
-			{% endblock %}
+			</div>
+		</div>
+		{% endif %}
+		<script>
+			var number = parseFloat('{{ad.price}}');
+			var result="₹ " + number.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '/-';
+			document.getElementById("span").textContent= result ;
+		</script>
+		{% endfor %}
+		<div class="clearfix"></div>
+	</div>
+	<div class="col-md-2"></div>
+	<div class="clearfix"></div>
+</div>
+<!----->
+
+
+{% endblock %}
 			

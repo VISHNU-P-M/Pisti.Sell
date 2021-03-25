@@ -16,5 +16,8 @@ urlpatterns = [
     path('delete-category/<int:id>', views.delete_category, name = 'delete_category'),
     path('brands/', views.view_brands, name = 'view_brands'),
     path('add-brands/', views.add_brands, name = 'add_brands'),
-    path('delete-brand/<int:id>', views.delete_brand, name = 'delete_brand')
+    path('delete-brand/<int:id>', views.delete_brand, name = 'delete_brand'),
+    path('user-ads/', views.view_user_ads, name = 'view_user_ads'),
+    path('confirm-ad/<int:id>', views.confirm_ad, name = 'confirm_ad'),
+    path('reject-ad/<int:id>', views.reject_ad, name = 'reject_ad'),
 ]

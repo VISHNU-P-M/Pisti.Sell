@@ -142,6 +142,11 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = os.path.join(BASE_DIR,'assets')
 
+MEDIA_ROOT = os.path.join(BASE_DIR,'static/media/')
+MEDIA_URL = '/media/'
+
+
+
 LOGIN_REDIRECT_URL = '/user-home/'
 
 SOCIAL_AUTH_FACEBOOK_KEY = '458153632283454' 

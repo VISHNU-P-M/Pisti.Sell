@@ -241,3 +241,39 @@ def delete_brand(request,id):
         return redirect(view_brands)
     else:
         return redirect(admin_login)
+    
+def view_user_ads(request):
+    if request.user.is_authenticated:
+        user_ads = UserAd.objects.all()
+        exist = True
+        if user_ads.count() == 0:
+            exist = False
+        context = {
+            'user_ads':user_ads,
+            'exist':exist
+        }
+        return render(request, 'admin/view_user_ads.html',context)
+    else:
+        return redirect(admin_login)
+    
+def confirm_ad(request,id):
+    if request.user.is_authenticated:
+        ad = UserAd.objects.get(id=id)
+        ad.status = 'confirmed'
+        ad.save()
+        return redirect(view_user_ads)
+    else:
+        return redirect(admin_login)
+    
+def reject_ad(request,id):
+    if request.user.is_authenticated:
+        ad = UserAd.objects.get(id=id)
+        if ad.status == 'confirmed':
+            ad.status = 'rejected'
+        else:
+            ad.status = 'confirmed'
+        ad.save()
+        return redirect(view_user_ads) 
+    else:
+        return redirect(admin_login)
+    

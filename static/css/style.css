@@ -354,7 +354,7 @@ ul li {
 
 .banner{
     min-height: 590px;
-    background:  url(../images/15.jpg) no-repeat;
+    background:  url(../images/veh.jpg) no-repeat;
 	width:100%;
 	background-size:cover;
 }
@@ -727,7 +727,7 @@ em.item_price {
     width: 100%;
     height: 150px;
     display: block;
-    background: url(../images/back.jpg)no-repeat center;
+    background: url(../images/veh.jpg)no-repeat center;
     padding: 3em 0;
     background-size: cover;
 }
@@ -1911,7 +1911,7 @@ ul.nav.navbar-nav {
     padding-top: 13.5em;
 }
 .item-grid {
-    width: 33.3%;
+    width: 100%;
     float: left;
 	padding: 0 5px;
 }	
@@ -2028,7 +2028,7 @@ td.add-check a {
     padding: 2.5em 0;
 }
 .item-grid {
-    width: 65%;
+    width: 100%;
     float: none;
     padding: 0 5px;
     margin: 0 auto 1em;
@@ -2239,7 +2239,7 @@ ul.cate, .price-head, .color-top {
     padding: 0 0em 1em;
 }
 .item-grid {
-    width: 90%;
+    width: 100%;
     padding: 0 ;
 }
 .footer-top1 h4 {

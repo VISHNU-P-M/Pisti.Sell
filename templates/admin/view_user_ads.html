@@ -1,0 +1,107 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+{% block link %}
+<style>
+    @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600);
+
+*, *:before, *:after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #105469;
+  font-family: 'Open Sans', sans-serif;
+}
+table {
+  background: #012B39;
+  border-radius: 0.25em;
+  border-collapse: collapse;
+  margin: 1em;
+  width: 95%;
+}
+th {
+  border-bottom: 1px solid #364043;
+  color: #E2B842;
+  font-size: 0.85em;
+  font-weight: 600;
+  padding: 0.5em 1em;
+  text-align: left;
+}
+td {
+  color: #fff;
+  font-weight: 400;
+  padding: 0.65em 1em;
+}
+.disabled td {
+  color: #4F5F64;
+}
+tbody tr {
+  transition: background 0.25s ease;
+}
+tbody tr:hover {
+  background: #014055;
+}
+#overflowTest {
+    color: rgb(255, 255, 255);
+    height: 190px;
+    overflow: auto;
+    border: .5px solid #ccc;
+    width: 225px;
+    }
+</style>
+{% endblock %}
+{% block content %}
+
+<div style="overflow-x: auto;">
+    {% if exist == 0 %}
+    <h1> no users </h1>
+    {% else %}
+<table>
+    <thead>
+      <tr>
+        <th>ID
+        <th>Username
+        <th>Title
+        <th>Brand
+        <th>Category
+        <th>Year
+        <th>KM driven
+        <th>Description
+        <th>Price
+        <th>Images
+        <th>Status
+        <th>
+    </thead>
+    <tbody>
+        {% for ad in user_ads %}
+        <tr>
+        <td>{{ad.id}}
+        <td>{{ad.user.first_name}}
+        <td>{{ad.title}}
+        <td>{{ad.brand.brand}}
+        <td>{{ad.brand.category.category}}
+        <td>{{ad.year}}
+        <td>{{ad.km_driven}}
+        <td><div id="overflowTest">{{ad.description}}</div>
+        <td>{{ad.price}}
+        <td><img src="{{ad.img1}}" alt="">
+            <img src="{{ad.img2}}" alt="">
+            <img src="{{ad.img3}}" alt="">
+        <td>{{ad.status}}
+        <td>{% if ad.status == 'pending' %}
+            <a href="/adminapp/confirm-ad/{{ad.id}}" style="text-decoration: none;color: #fbfeff;"><i class="fa fa-check-square-o" aria-hidden="true"></i>Confirm</a>
+            <a href="/adminapp/reject-ad/{{ad.id}}" style="text-decoration: none;color: #fbfeff;"><i class="fa fa-times" aria-hidden="true"></i>Reject.</a>
+            {% elif ad.status == 'confirmed' %}
+            <a href="/adminapp/reject-ad/{{ad.id}}" style="text-decoration: none;color: #fbfeff;"><i class="fa fa-times" aria-hidden="true"></i>Reject.</a>
+            {% else %}
+            <a href="/adminapp/reject-ad/{{ad.id}}" style="text-decoration: none;color: #fbfeff;"><i class="fa fa-plus" aria-hidden="true"></i>Unreject</a>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+</div>
+{% endblock %}
