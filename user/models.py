@@ -24,10 +24,13 @@ class UserAd(models.Model):
     description = models.CharField(max_length=500)
     price = models.DecimalField(max_digits=20,decimal_places=2)
     date = models.DateField()
+    expiry_date = models.DateField(null = True) 
     image1 = models.ImageField(null=True,upload_to='image')
     image2 = models.ImageField(null=True,upload_to='image')
     image3 = models.ImageField(null=True,upload_to='image')
     status = models.CharField(null=True,default='pending',max_length=10)
+    location_latitude = models.CharField(max_length=20, null=True)
+    location_longitude = models.CharField(max_length=20, null=True)
 
 
     @property

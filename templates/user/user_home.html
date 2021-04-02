@@ -5,47 +5,23 @@
 <!-- banner -->
 <div class="banner">
 	<div class="banner-right">
-		<ul id="flexiselDemo2">			
-			<li><div class="banner-grid">
-			<h2>Featured Products</h2>
-			<div class="wome">
-					<a href="single.html" ><img class="img-responsive" src="{% static 'images/bi1.jpg' %}" alt="" />
-					</a>
-					<div class="women simpleCart_shelfItem">
-						<a href="#"><img src="{% static 'images/ll.png' %}" alt=""></a>
-						<h6 ><a href="single.html">Sed ut perspiciatis unde</a></h6>
-						<p class="ba-price"><del>$100.00</del><em class="item_price">$70.00</em></p>
-						<a href="#" data-text="Add To Cart" class="but-hover1 item_add">Add To Cart</a>
+		<ul id="flexiselDemo2">
+			{% for ad in all_ads %}			
+			<li>
+				<div class="banner-grid">
+					<h2>{{ad.brand.brand}}</h2>
+					<div class="wome">
+						<a href="/view-ad/{{ad.id}}" ><img class="img-responsive" src="{{ad.img1}}" alt="" /></a>
+						<div class="women simpleCart_shelfItem">
+							<a href="#"><img src="{% static 'images/ll.png' %}" alt=""></a>
+							<h6 ><a href="#">{{ad.title}}</a></h6>
+							<p class="ba-price"><em class="item_price" id=""> {{ad.price}} </em></p>
+							<a href="/view-ad/{{ad.id}}" data-text="View Product" class="but-hover1 item_add">View Product</a>
+						</div>							
 					</div>							
-					</div>							
-				</div></li>
-			<li><div class="banner-grid">
-			<h2>Featured Products</h2>
-			<div class="wome">
-					<a href="single.html" ><img class="img-responsive" src="{% static 'images/bi.jpg' %}" alt="" />
-					</a>	
-					<div class="women simpleCart_shelfItem">
-						<a href="#"><img src="{% static 'images/ll.png' %}" alt=""></a>
-						<h6 ><a href="single.html">Sed ut perspiciatis unde</a></h6>
-						<p class="ba-price"><del>$100.00</del><em class="item_price">$70.00</em></p>
-						<a href="#" data-text="Add To Cart" class="but-hover1 item_add">Add To Cart</a>
-					</div>						
-					</div>						
-				</div></li>
-			<li><div class="banner-grid">
-			<h2>Featured Products</h2>
-			<div class="wome">
-					<a href="single.html" ><img class="img-responsive" src="{% static 'images/bi2.jpg' %}" alt="" />
-					</a>	
-					<div class="women simpleCart_shelfItem">
-						<a href="#"><img src="{% static 'images/ll.png' %}" alt=""></a>
-						<h6 ><a href="single.html">Sed ut perspiciatis unde</a></h6>
-						<p class="ba-price"><del>$100.00</del><em class="item_price">$70.00</em></p>
-						<a href="#" data-text="Add To Cart" class="but-hover1 item_add">Add To Cart</a>
-					</div>						
-					</div>						
 				</div>
 			</li>
+			{% endfor %}
 		</ul>
     </div>
 </div>
@@ -76,17 +52,12 @@
 				<div class="women">
 					<a href="#"><img src="{% static 'images/ll.png' %}" alt=""></a>
 					<h6><a href="/view-ad/{{ad.id}}">{{ad.title}}</a></h6>
-					<p ><em class="item_price" id="span"></em></p>
+					<p ><em class="item_price" id={{ad.id}} ></em></p>
 					<a href="/view-ad/{{ad.id}}" data-text="View Ad" class="but-hover1 item_add">View Ad</a>
 				</div>
 			</div>
 		</div>
 		{% endif %}
-		<script>
-			var number = parseFloat('{{ad.price}}');
-			var result="₹ " + number.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '/-';
-			document.getElementById("span").textContent= result ;
-		</script>
 		{% endfor %}
 		<div class="clearfix"></div>
 	</div>
@@ -94,6 +65,15 @@
 	<div class="clearfix"></div>
 </div>
 <!----->
+{% for ad in  ads %}
+	{% if ad.active == True%}
+		<script>
+			var number = parseFloat('{{ad.price}}');
+			var result="₹ " + number.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '/-';
+			document.getElementById("{{ad.id}}").textContent= result ;
+		</script>
+	{% endif %}
+{% endfor %}
 
 
 {% endblock %}

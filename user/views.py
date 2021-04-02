@@ -7,7 +7,13 @@ import requests
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files import File
-from datetime import date
+from datetime import date, timedelta
+import folium
+
+#geolocation
+from geopy.geocoders import Nominatim
+from django.contrib.gis.geoip2 import GeoIP2 
+
 # Create your views here.
 def user_login(request):
     if request.user.is_authenticated:
@@ -151,9 +157,11 @@ def otp_resend(request):
 
 def user_home(request):
     if request.user.is_authenticated:
-        ads = UserAd.objects.filter(status='confirmed').exclude(user=request.user)
+        ads = UserAd.objects.filter(status='confirmed',expiry_date__gt=date.today()).exclude(user=request.user)
+        all_ads = UserAd.objects.filter(status='confirmed')
         context = {
-            'ads':ads
+            'ads':ads,
+            'all_ads':all_ads
         }
         return render(request,'user/user_home.html', context)
     else:
@@ -192,7 +200,22 @@ def set_propic(request,id):
         return JsonResponse('true',safe=False)
     else:
         return redirect(user_login)
-    
+
+def get_geo(ip):
+    g = GeoIP2()
+    country = g.country(ip)
+    city = g.city(ip)
+    lat, lon = g.lat_lon(ip)
+    return country, city, lat, lon
+
+def get_ip_address(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
 @csrf_exempt
 def sell_product(request):
     if request.user.is_authenticated:
@@ -206,34 +229,66 @@ def sell_product(request):
             title = request.POST.get('title')
             description = request.POST.get('description')
             price = request.POST.get('price')
-            if UserAd.objects.filter(user=request.user).count()>2:
+            latitude = request.session['latitude']
+            longitude = request.session['longitude']
+            del request.session['latitude']
+            del request.session['longitude']
+            today = date.today()
+            expiry = today + timedelta(days=14)
+            print(latitude,longitude)
+            if UserAd.objects.filter(user=request.user,expiry_date__gt=today).count()>2:
                 return JsonResponse('false', safe=False)
             else:
-                UserAd.objects.create(user=request.user,brand_id=brand,year=year,km_driven=km,title=title,description=description,price=price,date=date.today(),image1=img1,image2=img2,image3=img3)
+                UserAd.objects.create(user=request.user,brand_id=brand,year=year,km_driven=km,title=title,description=description,
+                                      price=price,date=today,expiry_date=expiry,image1=img1,image2=img2,image3=img3,
+                                      location_latitude=latitude,location_longitude=longitude)
                 return JsonResponse('true',safe=False)
         else:
+            geolocator = Nominatim(user_agent="user")
+            o_ip = get_ip_address(request)
+            print(o_ip)
+            ip = '117.194.167.44'
+            country, city , lat, lon = get_geo(ip)
+            request.session['latitude'] = lat
+            request.session['longitude'] = lon
+            location = geolocator.geocode(city)
+            point = ([lat,lon])
+            
+            # folium map
+            folium_map_ = folium.Map(width=400, height=250, location=point, zoom_start = 15) 
+            folium.Marker([lat,lon], icon = folium.Icon(color = 'red')).add_to(folium_map_)
+            folium_map = folium_map_._repr_html_()
+            
             categories = Categories.objects.all()
             brands = Brands.objects.all()
             context = {
                 'categories':categories,
-                'brands':brands
+                'brands':brands,
+                'map':folium_map
             }
-            return render(request, 'user/sell_product.html',context)
+            return render(request, 'user/sell_product.html',context)    
+            
     else:
         return redirect(user_login)
 
 def view_ad(request,id):
     if request.user.is_authenticated:
         ad = UserAd.objects.get(id=id)
+        point = ([ad.location_latitude,ad.location_longitude])
+        folium_map_ = folium.Map(width=300, height=200, location=point, zoom_start = 15) 
+        folium.Marker([ad.location_latitude,ad.location_longitude], icon = folium.Icon(color = 'red')).add_to(folium_map_)
+        folium_map = folium_map_._repr_html_()
         if ad.user == request.user:
             context = {
                 'own': True,
-                'ad' : ad
+                'ad' : ad,
+                'map':folium_map
             }
         else:
             context = {
                 'own': False,
-                'ad':ad
+                'ad':ad,
+                'map':folium_map
             }
         return render(request,'user/view_ad.html',context)
     else:
