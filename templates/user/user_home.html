@@ -13,10 +13,9 @@
 					<div class="wome">
 						<a href="/view-ad/{{ad.id}}" ><img class="img-responsive" src="{{ad.img1}}" alt="" /></a>
 						<div class="women simpleCart_shelfItem">
-							<a href="#"><img src="{% static 'images/ll.png' %}" alt=""></a>
+							<img id="fetured-wish-image-{{ad.id}}" {% if ad.id in wish_list %} src="{% static 'images/download.png' %}"{% else %} src="{% static 'images/ll.png' %}" {% endif %} alt="" style="width: 1em;" onclick="FeturedAddWishList('{{ad.id}}')">
 							<h6 ><a href="#">{{ad.title}}</a></h6>
-							<p class="ba-price"><em class="item_price" id=""> {{ad.price}} </em></p>
-							<a href="/view-ad/{{ad.id}}" data-text="View Product" class="but-hover1 item_add">View Product</a>
+							<p class="ba-price"><em class="item_price" id="futured-{{ad.id}}"></em></p>
 						</div>							
 					</div>							
 				</div>
@@ -50,10 +49,9 @@
 					</figure>	
 				</div>
 				<div class="women">
-					<a href="#"><img src="{% static 'images/ll.png' %}" alt=""></a>
+					<img id="wish-image-{{ad.id}}" {% if ad.id in wish_list %} src="{% static 'images/download.png' %}"{% else %} src="{% static 'images/ll.png' %}" {% endif %} alt="" style="width: 1em;" onclick="AddWishList('{{ad.id}}')">
 					<h6><a href="/view-ad/{{ad.id}}">{{ad.title}}</a></h6>
 					<p ><em class="item_price" id={{ad.id}} ></em></p>
-					<a href="/view-ad/{{ad.id}}" data-text="View Ad" class="but-hover1 item_add">View Ad</a>
 				</div>
 			</div>
 		</div>
@@ -65,6 +63,17 @@
 	<div class="clearfix"></div>
 </div>
 <!----->
+<!-- show price in fetured products -->
+{% for ad in all_ads %}
+	<script>
+		var number = parseFloat('{{ad.price}}');
+		var result="₹ " + number.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '/-';
+		document.getElementById('futured-'+'{{ad.id}}').textContent= result ;
+	</script>
+{% endfor %}
+
+
+<!-- show price in all products -->
 {% for ad in  ads %}
 	{% if ad.active == True%}
 		<script>
@@ -76,5 +85,45 @@
 {% endfor %}
 
 
+<!-- for adding wish List -->
+<script>
+	function AddWishList(id){
+		$.ajax({
+			url:'/add-wish-list/'+id,
+			method:'GET',
+			success:function(data){
+				if(data == 'added'){
+					document.getElementById('wish-image-'+id).src="{% static 'images/download.png' %}";
+					//document.getElementById('fetured-wish-image-'+id).src="{% static 'images/download.png' %}";
+				}
+				if(data == 'removed'){
+					document.getElementById('wish-image-'+id).src="{% static 'images/ll.png' %}";
+					//document.getElementById('fetured-wish-image-'+id).src="{% static 'images/ll.png' %}";
+				}
+				if(data == 'false'){}
+			}
+		})
+	}
+
+
+	//for adding wish list in fetured ads
+	function FeturedAddWishList(id){
+		$.ajax({
+			url:'/add-wish-list/'+id,
+			method:'GET',
+			success:function(data){
+				if(data == 'added'){
+					document.getElementById('fetured-wish-image-'+id).src="{% static 'images/download.png' %}";
+					//document.getElementById('wish-image-'+id).src="{% static 'images/download.png' %}";
+				}
+				if(data == 'removed'){
+					document.getElementById('fetured-wish-image-'+id).src="{% static 'images/ll.png' %}";
+					//document.getElementById('wish-image-'+id).src="{% static 'images/ll.png' %}";
+				}
+				if(data == 'false'){}
+			}
+		})
+	}
+</script>
 {% endblock %}
 			

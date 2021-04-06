@@ -1,0 +1,61 @@
+{% extends 'user/base.html' %}
+{% load static %}
+{% block content %}
+<div class="container" style="margin-top: 3em;margin-bottom: 3em;">
+    {% for wish in wish_list %}
+		{% if wish.ad.active == True %}
+		<div class="col-sm-4 item-grid simpleCart_shelfItem">
+			<div class="grid-pro">
+				<div  class=" grid-product " >
+					<figure>		
+						<a href="/view-ad/{{wish.ad.id}}">
+							<div class="grid-img">
+								<img  src="{{wish.ad.img1}}" class="img-responsive" alt="">
+							</div>
+							<div class="grid-img">
+								<img  src="{{wish.ad.img2}}" class="img-responsive"  alt="">
+							</div>			
+						</a>		
+					</figure>	
+				</div>
+				<div class="women">
+					<img id="wish-image-{{wish.ad.id}}" {% if wish.ad.id in wish_lists %} src="{% static 'images/download.png' %}"{% else %} src="{% static 'images/ll.png' %}" {% endif %} alt="" style="width: 1em;" onclick="AddWishList('{{wish.ad.id}}')">
+					<h6><a href="/view-ad/{{wish.ad.id}}">{{wish.ad.title}}</a></h6>
+					<p ><em class="item_price" id={{wish.ad.id}} ></em></p>
+				</div>
+			</div>
+		</div>
+		{% endif %}
+		{% endfor %}
+</div>
+
+{% for wish in  wish_list %}
+	{% if wish.ad.active == True%}
+		<script>
+			var number = parseFloat('{{wish.ad.price}}');
+			var result="₹ " + number.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '/-';
+			document.getElementById("{{wish.ad.id}}").textContent= result ;
+		</script>
+	{% endif %}
+{% endfor %}
+
+<script>
+	function AddWishList(id){
+		$.ajax({
+			url:'/add-wish-list/'+id,
+			method:'GET',
+			success:function(data){
+				if(data == 'added'){
+					document.getElementById('wish-image-'+id).src="{% static 'images/download.png' %}";
+					//document.getElementById('fetured-wish-image-'+id).src="{% static 'images/download.png' %}";
+				}
+				if(data == 'removed'){
+					document.getElementById('wish-image-'+id).src="{% static 'images/ll.png' %}";
+					//document.getElementById('fetured-wish-image-'+id).src="{% static 'images/ll.png' %}";
+				}
+				if(data == 'false'){}
+			}
+		})
+	}
+</script>
+{% endblock %}

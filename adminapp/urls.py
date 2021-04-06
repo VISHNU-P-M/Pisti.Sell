@@ -20,4 +20,5 @@ urlpatterns = [
     path('user-ads/', views.view_user_ads, name = 'view_user_ads'),
     path('confirm-ad/<int:id>', views.confirm_ad, name = 'confirm_ad'),
     path('reject-ad/<int:id>', views.reject_ad, name = 'reject_ad'),
+    path('user-reprots/', views.user_reports, name = 'user_reprots'),
 ]

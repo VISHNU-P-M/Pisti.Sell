@@ -13,5 +13,10 @@ urlpatterns = [
     path('set-propic/<int:id>', views.set_propic, name = 'set_propic'),
     path('sell-product/', views.sell_product, name = 'sell_product'),
     path('view-ad/<int:id>', views.view_ad, name = 'view_ad'),
+    path('view-images/<int:id>', views.view_images, name = 'view_images'),
+    path('edit-ad/<int:id>', views.edit_ad, name = 'edit_ad'),
     path('seller/<int:id>', views.view_seller, name = 'view_seller'),
+    path('add-wish-list/<int:id>', views.add_wishlist, name = 'add_wishlist'),
+    path('view-wish-list/', views.view_wish_list, name = 'view_wish_list'),
+    path('report-ad/',views.report_ad, name = 'report_ad'),
 ]

@@ -188,14 +188,8 @@
         <div class="profile_img_section">
             {% if seller.propic == '' %}
                 <img class="profile_img-LG" src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg" />
-                <div class="flag_wrapper">
-                    <img class="flag" src="https://cdn3.iconfinder.com/data/icons/eightyshades/512/14_Add-512.png" alt="South Korean Flag" />
-                </div>
             {% else %}
                 <img class="profile_img-LG" src="{{seller.propic}}" />
-                <div class="flag_wrapper">
-                    <img class="flag" src="https://cdn3.iconfinder.com/data/icons/eightyshades/512/14_Add-512.png" alt="South Korean Flag" />
-                </div>
             {% endif %} 
             
         </div>
@@ -241,7 +235,7 @@
                                 </figure>	
                             </div>
                             <div class="women">
-                                <a href="#"><img src="{% static 'images/ll.png' %}" alt=""></a>
+                                <img id="wish-image-{{ad.id}}" {% if ad.id in wish_list %} src="{% static 'images/download.png' %}"{% else %} src="{% static 'images/ll.png' %}" {% endif %} alt="" style="width: 1em;" onclick="AddWishList('{{ad.id}}')">
                                 <h6><a href="/view-ad/{{ad.id}}">{{ad.title}}</a></h6>
                                 <p ><em class="item_price">Rs : {{ad.price}}/-</em></p>
                             </div>
@@ -260,4 +254,22 @@
         
     </div>
 </div>
+
+<script>
+    function AddWishList(id){
+		$.ajax({
+			url:'/add-wish-list/'+id,
+			method:'GET',
+			success:function(data){
+				if(data == 'added'){
+					document.getElementById('wish-image-'+id).src="{% static 'images/download.png' %}";
+				}
+				if(data == 'removed'){
+					document.getElementById('wish-image-'+id).src="{% static 'images/ll.png' %}";
+				}
+				if(data == 'false'){}
+			}
+		})
+	}
+</script>
 {% endblock %}

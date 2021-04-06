@@ -10,9 +10,22 @@ from django.core.files import File
 from datetime import date, timedelta
 import folium
 
-#geolocation
+# watermark on image
+import cv2
+import numpy as np
+from PIL import Image
+
+# import StringIO
+
+# from django.core.files.uploadedfile import InMemoryUploadedFile
+
+# geolocation
 from geopy.geocoders import Nominatim
 from django.contrib.gis.geoip2 import GeoIP2 
+
+import pandas as pd
+from folium.plugins import MarkerCluster
+from folium.plugins import Search
 
 # Create your views here.
 def user_login(request):
@@ -159,9 +172,14 @@ def user_home(request):
     if request.user.is_authenticated:
         ads = UserAd.objects.filter(status='confirmed',expiry_date__gt=date.today()).exclude(user=request.user)
         all_ads = UserAd.objects.filter(status='confirmed')
+        wish_list = []
+        Wishes = WishList.objects.filter(user=request.user)
+        for wish in Wishes:
+            wish_list.append(wish.ad.id)
         context = {
             'ads':ads,
-            'all_ads':all_ads
+            'all_ads':all_ads,
+            'wish_list':wish_list
         }
         return render(request,'user/user_home.html', context)
     else:
@@ -223,6 +241,7 @@ def sell_product(request):
             img1 = request.FILES.get('img1')
             img2 = request.FILES.get('img2')
             img3 = request.FILES.get('img3')
+            
             brand = request.POST.get('brand')
             year = request.POST.get('year')
             km = request.POST.get('km')
@@ -235,18 +254,66 @@ def sell_product(request):
             del request.session['longitude']
             today = date.today()
             expiry = today + timedelta(days=14)
-            print(latitude,longitude)
-            if UserAd.objects.filter(user=request.user,expiry_date__gt=today).count()>2:
+            if UserAd.objects.filter(user=request.user,expiry_date__gt=today).count()>=2:
                 return JsonResponse('false', safe=False)
             else:
-                UserAd.objects.create(user=request.user,brand_id=brand,year=year,km_driven=km,title=title,description=description,
-                                      price=price,date=today,expiry_date=expiry,image1=img1,image2=img2,image3=img3,
-                                      location_latitude=latitude,location_longitude=longitude)
-                return JsonResponse('true',safe=False)
+                user_ad = UserAd.objects.create(user=request.user,brand_id=brand,year=year,km_driven=km,title=title,description=description,
+                                                price=price,date=today,expiry_date=expiry,image1=img1,image2=img2,image3=img3,
+                                                location_latitude=latitude,location_longitude=longitude)
+                # importing logo
+                logo = cv2.imread('static/images/Logo.png')
+                logo_height, logo_width, _ = logo.shape
+                    
+                #set first image logo
+                image1 = cv2.imread('static/'+user_ad.img1)
+                image1_height, image1_width, _ = image1.shape
+                # print('height and width',image_height,image_width)
+                top1_y = image1_height - logo_height
+                left1_x = image1_width - logo_width
+                # print(top_y,left_x)
+                roi1 = image1[top1_y:image1_height,left1_x:image1_width] 
+                result1 = cv2.addWeighted(roi1, 1, logo, 0.5, 0)
+                image1[top1_y:image1_height,left1_x:image1_width] = result1
+                # cv2.imshow('image1', image1)
+                # cv2.waitKey(0)
+                print('logoset')
+                cv2.imwrite('static/'+user_ad.img1,image1)
+                
+                #set second image logo
+                image2 = cv2.imread('static/'+user_ad.img2)
+                image2_height, image2_width, _ = image2.shape
+                # print('height and width',image_height,image_width)
+                top2_y = image2_height - logo_height
+                left2_x = image2_width - logo_width
+                # print(top_y,left_x)
+                roi2 = image2[top2_y:image2_height,left2_x:image2_width] 
+                result2 = cv2.addWeighted(roi2, 1, logo, 0.5, 0)
+                image2[top2_y:image2_height,left2_x:image2_width] = result2
+                # cv2.imshow('image1', image1)
+                # cv2.waitKey(0)
+                print('logoset')
+                cv2.imwrite('static/'+user_ad.img2,image2)
+                
+                #set third image logo
+                image3 = cv2.imread('static/'+user_ad.img3)
+                image3_height, image3_width, _ = image3.shape
+                # print('height and width',image_height,image_width)
+                top3_y = image3_height - logo_height
+                left3_x = image3_width - logo_width
+                # print(top_y,left_x)
+                roi3 = image3[top3_y:image3_height,left3_x:image3_width] 
+                result3 = cv2.addWeighted(roi3, 1, logo, 0.5, 0)
+                image3[top3_y:image3_height,left3_x:image3_width] = result3
+                # cv2.imshow('image1', image1)
+                # cv2.waitKey(0)
+                print('logoset')
+                cv2.imwrite('static/'+user_ad.img3,image3)
+                
+                return JsonResponse('true', safe=False)
         else:
             geolocator = Nominatim(user_agent="user")
             o_ip = get_ip_address(request)
-            print(o_ip)
+            # print(o_ip)
             ip = '117.194.167.44'
             country, city , lat, lon = get_geo(ip)
             request.session['latitude'] = lat
@@ -257,6 +324,8 @@ def sell_product(request):
             # folium map
             folium_map_ = folium.Map(width=400, height=250, location=point, zoom_start = 15) 
             folium.Marker([lat,lon], icon = folium.Icon(color = 'red')).add_to(folium_map_)
+            
+            
             folium_map = folium_map_._repr_html_()
             
             categories = Categories.objects.all()
@@ -270,6 +339,114 @@ def sell_product(request):
             
     else:
         return redirect(user_login)
+    
+    
+@csrf_exempt
+
+def edit_ad(request, id):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            brand = request.POST.get('brand')
+            year = request.POST.get('year')
+            km = request.POST.get('km')
+            title = request.POST.get('title')
+            description = request.POST.get('description')
+            price = request.POST.get('price')
+            latitude = request.session['latitude']
+            longitude = request.session['longitude']
+            del request.session['latitude']
+            del request.session['longitude']
+            
+            ad = UserAd.objects.get(id=id)
+            
+            if 'img1' not in request.POST:
+                img1 = request.FILES.get('img1')
+            else:
+                img1 = ad.image1
+            if 'img2' not in request.POST:
+                img2 = request.FILES.get('img2')
+            else:
+                img2 = ad.image2
+            if 'img3' not in request.POST:
+                img3 = request.FILES.get('img3')
+            else:
+                img3 = ad.image3
+                
+            print(brand,year,km,title,description,price,latitude,longitude,img1,img2,img3)
+            ad.brand_id = brand
+            ad.year = year
+            ad.km_driven = km
+            ad.title = title
+            ad.description = description
+            ad.price = price
+            ad.location_latitude = latitude
+            ad.location_longitude = longitude
+            ad.image1 = img1
+            ad.image2 = img2
+            ad.image3 = img3
+            ad.save()
+            # importing logo
+            logo = cv2.imread('static/images/Logo.png')
+            logo_height, logo_width, _ = logo.shape
+            
+            if 'img1' not in request.POST:
+                #set first image logo
+                image1 = cv2.imread('static/'+ad.img1)
+                image1_height, image1_width, _ = image1.shape
+                top1_y = image1_height - logo_height
+                left1_x = image1_width - logo_width
+                roi1 = image1[top1_y:image1_height,left1_x:image1_width] 
+                result1 = cv2.addWeighted(roi1, 1, logo, 0.5, 0)
+                image1[top1_y:image1_height,left1_x:image1_width] = result1
+                cv2.imwrite('static/'+ad.img1,image1)
+                
+            if 'img2' not in request.POST:
+                image2 = cv2.imread('static/'+ad.img2)
+                image2_height, image2_width, _ = image2.shape
+                top2_y = image2_height - logo_height
+                left2_x = image2_width - logo_width
+                roi2 = image2[top2_y:image2_height,left2_x:image2_width] 
+                result2 = cv2.addWeighted(roi2, 1, logo, 0.5, 0)
+                image2[top2_y:image2_height,left2_x:image2_width] = result2
+                cv2.imwrite('static/'+ad.img2,image2)
+                
+            if 'img3' not in request.POST:  
+                image3 = cv2.imread('static/'+ad.img3)
+                image3_height, image3_width, _ = image3.shape
+                top3_y = image3_height - logo_height
+                left3_x = image3_width - logo_width
+                roi3 = image3[top3_y:image3_height,left3_x:image3_width] 
+                result3 = cv2.addWeighted(roi3, 1, logo, 0.5, 0)
+                image3[top3_y:image3_height,left3_x:image3_width] = result3
+                cv2.imwrite('static/'+ad.img3,image3)
+                
+            return JsonResponse('true', safe=False)
+        else:
+            ad = UserAd.objects.get(id=id)
+            categories = Categories.objects.all()
+            brands = Brands.objects.all()
+            
+            request.session['latitude'] = ad.location_latitude
+            request.session['longitude'] = ad.location_longitude
+            point = ([ad.location_latitude,ad.location_longitude])
+            
+            # folium map
+            folium_map_ = folium.Map(width=400, height=250, location=point, zoom_start = 15) 
+            folium.Marker([ad.location_latitude,ad.location_longitude], icon = folium.Icon(color = 'red')).add_to(folium_map_)
+            
+            
+            folium_map = folium_map_._repr_html_()
+            
+            context = {
+                'ad': ad, 
+                'map':folium_map,
+                'categories':categories,
+                'brands':brands,
+            }
+            return render(request, 'user/edit_ad.html',context)
+    else:
+        return redirect(user_login)
+
 
 def view_ad(request,id):
     if request.user.is_authenticated:
@@ -278,16 +455,22 @@ def view_ad(request,id):
         folium_map_ = folium.Map(width=300, height=200, location=point, zoom_start = 15) 
         folium.Marker([ad.location_latitude,ad.location_longitude], icon = folium.Icon(color = 'red')).add_to(folium_map_)
         folium_map = folium_map_._repr_html_()
+        wish_list =[]
+        wishlist = WishList.objects.filter(user=request.user)
+        for wish in wishlist:
+            wish_list.append(wish.ad.id)
         if ad.user == request.user:
             context = {
                 'own': True,
                 'ad' : ad,
+                'wish_list':wish_list,
                 'map':folium_map
             }
         else:
             context = {
                 'own': False,
                 'ad':ad,
+                'wish_list':wish_list,
                 'map':folium_map
             }
         return render(request,'user/view_ad.html',context)
@@ -299,14 +482,68 @@ def view_seller(request,id):
         seller = CustomUser.objects.get(id=id)
         if UserAd.objects.filter(user=seller).exists():
             ads = UserAd.objects.filter(user=seller)
+            wish_list =[]
+            wishlist = WishList.objects.filter(user=request.user)
+            for wish in wishlist:
+                wish_list.append(wish.ad.id)
             context = {
                 'seller':seller,
-                'ads':ads
+                'ads':ads,
+                'wish_list':wish_list
             }
         else:
             context = {
                 'seller':seller
             }
         return render(request,'user/seller_profile.html', context)
+    else:
+        return redirect(user_login)
+    
+def add_wishlist(request,id):
+    ad = UserAd.objects.get(id=id)
+    if WishList.objects.filter(ad=ad,user=request.user).exists():
+        wish = WishList.objects.filter(ad=ad,user=request.user).first()
+        wish.delete()
+        return JsonResponse('removed',safe=False)
+    else:
+        WishList.objects.create(ad=ad,user=request.user)
+        return JsonResponse('added',safe=False)
+    return JsonResponse('false',safe=False)
+
+def view_wish_list(request):
+    if request.user.is_authenticated:
+        wish_list = WishList.objects.filter(user=request.user)
+        wish_lists = []
+        Wishes = WishList.objects.filter(user=request.user)
+        for wish in Wishes:
+            wish_lists.append(wish.ad.id)
+        context = {
+            'wish_list':wish_list,
+            'wish_lists':wish_lists
+        }
+        return render(request, 'user/view_wish_list.html',context)
+    else:
+        return redirect(user_login)
+
+def report_ad(request):
+    if request.user.is_authenticated:
+        ad_id = request.GET["ad_id"]
+        note = request.GET['note']
+        if ReportAd.objects.filter(ad_id = ad_id,user=request.user).exists():
+            return JsonResponse('false',safe = False)
+        else:
+            ReportAd.objects.create(ad_id = ad_id,note = note, user = request.user)
+            return JsonResponse('true',safe = False)
+    else:
+        return redirect(user_login)
+    
+def view_images(request,id):
+    if request.user.is_authenticated:
+        ad = UserAd.objects.get(id=id)
+        context = {
+            'ad':ad,
+            'id':id 
+        }
+        return render(request, 'user/view_images.html', context)
     else:
         return redirect(user_login)

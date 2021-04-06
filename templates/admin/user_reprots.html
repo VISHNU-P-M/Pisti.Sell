@@ -1,0 +1,195 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+{% block link %}
+<style>
+    .fullscreen:-webkit-full-screen {
+      width: auto !important;
+      height: auto !important;
+      margin:auto !important;
+    }
+    .fullscreen:-moz-full-screen {
+      width: auto !important;
+      height: auto !important;
+      margin:auto !important;
+    }
+    .fullscreen:-ms-fullscreen {
+      width: auto !important;
+      height: auto !important;
+      margin:auto !important;
+    }     
+  </style>
+<style>
+    @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600);
+
+*, *:before, *:after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #105469;
+  font-family: 'Open Sans', sans-serif;
+}
+table {
+  background: #012B39;
+  border-radius: 0.25em;
+  border-collapse: collapse;
+  margin: 1em;
+  width: 95%;
+}
+th {
+  border-bottom: 1px solid #364043;
+  color: #E2B842;
+  font-size: 0.85em;
+  font-weight: 600;
+  padding: 0.5em 1em;
+  text-align: left;
+}
+td {
+  color: #fff;
+  font-weight: 400;
+  padding: 0.65em 1em;
+}
+.disabled td {
+  color: #4F5F64;
+}
+tbody tr {
+  transition: background 0.25s ease;
+}
+tbody tr:hover {
+  background: #014055;
+}
+#overflowTest {
+    color: rgb(255, 255, 255);
+    height: 190px;
+    overflow: auto;
+    border: .5px solid #ccc;
+    width: 225px;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<h2>User Reportings</h2>
+<div style="overflow-x: auto;">
+    {% if exist == 0 %}
+    <h1> no users </h1>
+    {% else %}
+    <table>
+        <thead>
+        <tr>
+            <th>ID
+            <th>Reported Username
+            <th>Seller
+            <th>Title
+            <th>Brand
+            <th>Category
+            <th>Year
+            <th>KM driven
+            <th>Description
+            <th>Price
+            <th>Images
+            <th>Status
+            <th>
+        </thead>
+        <tbody>
+            {% for ad in reports %}
+            <tr>
+            <td>{{ad.id}}
+            <td>{{ad.user.first_name}}
+            <td>{{ad.ad.user.first_name}}
+            <td>{{ad.ad.title}}
+            <td>{{ad.ad.brand.brand}}
+            <td>{{ad.ad.brand.category.category}}
+            <td>{{ad.ad.year}}
+            <td>{{ad.ad.km_driven}}
+            <td><div id="overflowTest">{{ad.ad.description}}</div>
+            <td>{{ad.ad.price}}
+            <td><img id="img1{{ad.ad.id}}" style="width:400px; height:auto;"  class="fullscreen" src="{{ad.ad.img1}}" alt="" onclick="makeFullScreen1('{{ad.ad.id}}')">
+                <img id="img2{{ad.ad.id}}" style="width:400px; height:auto;"  class="fullscreen" src="{{ad.ad.img2}}" alt="" onclick="makeFullScreen2('{{ad.ad.id}}')">
+                <img id="img3{{ad.ad.id}}" style="width:400px; height:auto;"  class="fullscreen" src="{{ad.ad.img3}}" alt="" onclick="makeFullScreen3('{{ad.ad.id}}')">
+            <td>{{ad.ad.status}}
+            <td>{% if ad.ad.status == 'confirmed' %}
+                <a href="#" onclick="reject('{{ad.ad.id}}')" style="text-decoration: none;color: #fbfeff;"><i class="fa fa-times" aria-hidden="true"></i>Reject Ad</a>
+                {% else %}
+                <a href="#" onclick="reject('{{ad.ad.id}}')" style="text-decoration: none;color: #fbfeff;"><i class="fa fa-plus" aria-hidden="true"></i>Unreject Ad</a>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  {% endif %}
+</div>
+<script>
+    function makeFullScreen1(id) {
+      var divObj = document.getElementById("img1"+id);
+      if (divObj.requestFullscreen) {
+        divObj.requestFullscreen();
+      }
+      else if (divObj.msRequestFullscreen) {
+        divObj.msRequestFullscreen();               
+      }
+      else if (divObj.mozRequestFullScreen) {
+        divObj.mozRequestFullScreen();      
+      }
+      else if (divObj.webkitRequestFullscreen) {
+        divObj.webkitRequestFullscreen();       
+      } else {
+        alert('Fullscreen is not supported on your browser');
+      } 
+  
+    }
+    function makeFullScreen2(id) {
+      var divObj = document.getElementById("img2"+id);
+      if (divObj.requestFullscreen) {
+        divObj.requestFullscreen();
+      }
+      else if (divObj.msRequestFullscreen) {
+        divObj.msRequestFullscreen();               
+      }
+      else if (divObj.mozRequestFullScreen) {
+        divObj.mozRequestFullScreen();      
+      }
+      else if (divObj.webkitRequestFullscreen) {
+        divObj.webkitRequestFullscreen();       
+      } else {
+        alert('Fullscreen is not supported on your browser');
+      } 
+  
+    }
+    function makeFullScreen3(id) {
+      var divObj = document.getElementById("img3"+id);
+      if (divObj.requestFullscreen) {
+        divObj.requestFullscreen();
+      }
+      else if (divObj.msRequestFullscreen) {
+        divObj.msRequestFullscreen();               
+      }
+      else if (divObj.mozRequestFullScreen) {
+        divObj.mozRequestFullScreen();      
+      }
+      else if (divObj.webkitRequestFullscreen) {
+        divObj.webkitRequestFullscreen();       
+      } else {
+        alert('Fullscreen is not supported on your browser');
+      } 
+  
+    }
+  </script>
+<script>
+    function reject(id){
+        console.log(id)
+        $.ajax({
+            url:'/adminapp/reject-ad/'+id,
+            method:'GET',
+            success:function(data){
+                if(data == 'true'){
+                    window.location.replace('/adminapp/user-reprots/')
+                }else{
+                    alert('something wrong')
+                }
+            }
+        })
+    }
+</script>
+{% endblock %}

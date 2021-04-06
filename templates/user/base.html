@@ -80,8 +80,9 @@ opacity: 0;
 
 .drop-down__menu {
     margin: 0;
-    padding: 0 13px;
+    padding:1px;
     list-style: none;
+    font-size: 1px;
   
 }
 .drop-down__menu-box:before{
@@ -203,14 +204,14 @@ transform: translateY(-50%);
 									<input class="form-control mr-sm-2" type="search" placeholder="Find cars, bikes, .." aria-label="Search" style="height: 3em;">
 								</form>
 							</li>
-							<li class="active"><a href="/" class="act">Home</a></li>
-							<li>
+							<li class="active" class="float-left"><a href="/" class="act">Home</a></li>
+							<li class="float-left">
 								<a href="/sell-product/">
 									<img src="https://media.dojmt.gov/wp-content/uploads/buy-sell-icon.jpg" alt="" style="width: 50px;margin-top: -20px;border-radius: 50%;">
 									<small>sell</small>
 								</a>
 							</li>
-							<li>
+							<li class="float-left">
 								<div class="table_center">
 									<div class="drop-down">
 										<div id="dropDown" class="drop-down__button">
@@ -222,16 +223,21 @@ transform: translateY(-50%);
 												{% endif %}
 											</span>
 										</div>
-										<div class="drop-down__menu-box">
+										<div class="drop-down__menu-box" style="z-index: 1;">
 											<ul class="drop-down__menu">
-											<a href="/user-profile/">
+											<a href="/user-profile/" style="height: 0em;">
 												<li data-name="profile" class="drop-down__item">
-													Your Profile 
+													<label for="" style="font-size: 15px;"> Your Profile </label>
 												</li>
 											</a>
-											<a href="/user-logout/" style="text-decoration: none;">
+                      <a href="/view-wish-list/" style="text-decoration: none;" style="height: 0em;">
 												<li data-name="activity" class="drop-down__item">
-													Log Out<i class="fa fa-power-off" aria-hidden="true"></i>
+												  <label for="" style="font-size: 15px;"> Wish List</label>
+												</li>
+											</a>
+											<a href="/user-logout/" style="text-decoration: none;" style="height: 0em;">
+												<li data-name="activity" class="drop-down__item">
+													<label for="" style="font-size: 15px;"> Log out</label>
 												</li>
 											</a>
 											</ul>

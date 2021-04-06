@@ -6,6 +6,7 @@ from .models import *
 from django.contrib.auth.hashers import check_password
 import requests
 import json 
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 def admin_login(request):
     if request.user.is_authenticated:
@@ -264,7 +265,7 @@ def confirm_ad(request,id):
         return redirect(view_user_ads)
     else:
         return redirect(admin_login)
-    
+@csrf_exempt  
 def reject_ad(request,id):
     if request.user.is_authenticated:
         ad = UserAd.objects.get(id=id)
@@ -273,7 +274,21 @@ def reject_ad(request,id):
         else:
             ad.status = 'confirmed'
         ad.save()
-        return redirect(view_user_ads) 
+        return JsonResponse('true',safe=False)
     else:
         return redirect(admin_login)
     
+def user_reports(request):
+    if request.user.is_authenticated:
+        reports = ReportAd.objects.all()
+        if reports.count() == 0:
+            exist = 0
+        else:
+            exist = 1
+        context = {
+            'reports':reports,
+            'exist': exist
+        }  
+        return render(request, 'admin/user_reprots.html', context)
+    else:
+        return redirect(admin_login)

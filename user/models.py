@@ -7,6 +7,7 @@ from datetime import date, timedelta
 class CustomUser(AbstractUser):
     profile_picture = models.ImageField(upload_to = 'pics', null = True)
     phone = models.BigIntegerField(null = True)
+    
 
     @property
     def propic(self):
@@ -63,3 +64,12 @@ class UserAd(models.Model):
                 return True
         else:
             return False
+
+class WishList(models.Model):
+    ad = models.ForeignKey(UserAd, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    
+class ReportAd(models.Model):
+    ad = models.ForeignKey(UserAd, on_delete=models.CASCADE)
+    note = models.TextField()
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
