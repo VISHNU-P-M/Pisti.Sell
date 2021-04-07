@@ -34,6 +34,7 @@
 	<div class="col-md-8 animated wow " data-wow-delay=".1s" style="margin-top: 2em;margin-bottom: 2em;">
 		{% for ad in ads %}
 		{% if ad.active == True%}
+		{% if ad.id in ads_id %}
 		<div class="col-sm-4 item-grid simpleCart_shelfItem">
 			<div class="grid-pro">
 				<div  class=" grid-product " >
@@ -55,6 +56,7 @@
 				</div>
 			</div>
 		</div>
+		{% endif %}
 		{% endif %}
 		{% endfor %}
 		<div class="clearfix"></div>

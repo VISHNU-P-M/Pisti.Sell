@@ -8,6 +8,19 @@
     <title>Log in</title>
     <link href="{% static 'css/login.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+    <style>
+      .select{
+        height: 35px;
+        width: 100%;
+        margin-top: 5px;
+        background-color: #f0f0f0;
+        border: none;
+        text-align: center;
+        color: #acacac;
+        font-size: 21px;
+        font-weight: 600;
+      }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -64,6 +77,26 @@
               <input type="text"  id="phone" placeholder="Phone no." />
             </div>
             <div class="input-field">
+              <i class="fa fa-location-arrow" aria-hidden="true"></i>
+              <select class="form-select select" id="district" aria-label="Select District">
+                <option selected value="0">Select District</option>
+                <option value="Thiruvananthapuram">Thiruvananthapuram</option>
+                <option value="Kollam">Kollam</option>
+                <option value="Alappuzha">Alappuzha</option>
+                <option value="Pathanamthitta">Pathanamthitta</option>
+                <option value="Idukki">Idukki</option>
+                <option value="Kottayam">Kottayam</option>
+                <option value="Ernakulam">Ernakulam</option>
+                <option value="Thrissur">Thrissur</option>
+                <option value="Palakkad">Palakkad</option>
+                <option value="Malappuram">Malappuram</option>
+                <option value="Kozhikode">Kozhikode</option>
+                <option value="Wayanad">Wayanad</option>
+                <option value="Kannur">Kannur</option>
+                <option value="Kasaragod">Kasaragod</option>
+              </select>
+            </div>
+            <div class="input-field">
               <i class="fas fa-lock"></i>
               <input type="password" id="password1" placeholder="Password" />
             </div>
@@ -118,6 +151,7 @@
         var atposition=email.indexOf("@");  
         var dotposition=email.lastIndexOf(".");  
         var phone = $('#phone').val()
+        var district = $('#district').val()
         var password1 = $('#password1').val()
         var password2 = $('#password2').val()
         var data = {
@@ -127,6 +161,7 @@
           'username':username,
           'email':email,
           'phone':phone,
+          'district':district,
           'password':password1
         }
         if(first_name.length <4){
@@ -139,6 +174,8 @@
           $('#first').html('<i class="fa fa-times" aria-hidden="true" ></i>Enter a valid Email ID')
         }else if(isNaN(phone) || phone.length != 10 ){
           $('#first').html('<i class="fa fa-times" aria-hidden="true" ></i>Enter a valid Phone no.')
+        }else if(district == '0'){
+          $('#first').html('<i class="fa fa-times" aria-hidden="true" ></i>Select the District')
         }else if(password1.length <6){
           $('#first').html('<i class="fa fa-times" aria-hidden="true" ></i>Password must have 6 character')
         }else if(password2.length <1){

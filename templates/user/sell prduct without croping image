@@ -1,0 +1,149 @@
+
+
+Sell product without croping image
+
+
+{% extends 'user/base.html' %}
+{% load static %}
+{% block link %}
+{% endblock %}
+{% block content %}
+<div class="container" style=" background-color:  #F5F5F5; width: 500px;">
+    <u><h2 style="display: flex;place-content: cente; margin-top:2em">Add Product</h2></u>
+    <div style="padding: 2em;display: contents;place-content: center;" >
+        <form action="" id="sell">
+            <p class="title-register-main-connection-div" style="margin-top: 2em;">CATEGORY</p>
+            <select  id="category" onchange="show_brands(this)" style="height: 2em; width: 15em;">
+                <option selected>Choose...</option>
+                {% for category in categories %}
+                <option value="{{category.id}}"> {{category.category}} </option>
+                {% endfor %}
+            </select>
+
+            <p class="title-register-main-connection-div" style="margin-top: 2em;">Brand</p>
+            <select  id="brand" style="height: 2em; width: 15em;">
+                <option selected value="0">select brand</option>
+            </select>
+
+            <p class="title-register-main-connection-div" style="margin-top: 2em;">Year</p>
+            <input type="number" id="year" name="year" style="height: 2em; width: 15em;" value="2021">
+
+            <p class="title-register-main-connection-div" style="margin-top: 2em;">KM driven</p>
+            <input type="number" id="km" name="km" placeholder="KM driven" style="height: 2em; width: 15em;">
+
+            <p class="title-register-main-connection-div" style="margin-top: 2em;">Ad Title</p>
+            <input type="text" id="title" name="title" placeholder="Leave a title" style="height: 2em; width: 15em;">
+
+            <p class="title-register-main-connection-div" style="margin-top: 2em;">Ad Description</p>
+            <textarea name="description" id="description" cols="15" rows="10" style="width: 15em;"></textarea>
+
+            <p class="title-register-main-connection-div" style="margin-top: 2em;">Set Price</p>
+            <input type="number" id="price" name="price" placeholder="Set your price" style="height: 2em; width: 15em;">
+
+            <p class="title-register-main-connection-div" style="margin-top: 2em;">Ad Location</p>
+            <div style=" width: 400px; height: 250px;">
+                {{map|safe}}
+            </div>
+
+            <p class="title-register-main-connection-div" style="margin-top: 2em;">Add images</p>
+            <input type="file" name="img1" id="img1" style="margin-top: 2em;" onchange="document.getElementById('image1').src = window.URL.createObjectURL(this.files[0])"><img src="" alt="" id="image1" width="200" height="200">
+            <input type="file" name="img2" id="img2" style="margin-top: 2em;" onchange="document.getElementById('image2').src = window.URL.createObjectURL(this.files[0])"><img src="" alt="" id="image2" width="200" height="200">
+            <input type="file" name="img3" id="img3" style="margin-top: 2em;" onchange="document.getElementById('image3').src = window.URL.createObjectURL(this.files[0])"><img src="" alt="" id="image3" width="200" height="200"><br>
+            <span id="span" style="color: red;"></span><br>
+            <button id="btn" type="button" class="btn btn-primary" style="width: 20em; height: 4em;"><label for="" style="font-size: 2em;">Post Ad</label></button>
+        </form>
+        <div hidden>
+            This product includes GeoLite2 data created by MaxMind, available from
+            <a href="https://www.maxmind.com">https://www.maxmind.com</a>.
+        </div>
+    </div>
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous"></script>
+<script>
+    $('#btn').click(function(){
+        var brand = $('#brand').val()
+        var year = $('#year').val()
+        var km = $('#km').val()
+        var title = $('#title').val()
+        var description = $('#description').val()
+        var price = $('#price').val()
+        var image1 = $('#img1').val()
+        var image2 = $('#img2').val()
+        var image3 = $('#img3').val()
+        if(brand == '0'){
+            $('#span').html('select Brand after choose category')
+        }else if(year.length != 4 || isNaN(year)){
+            $('#span').html('Enter valid year')
+        }else if(km.length < 1 || isNaN(km)){
+            $('#span').html('Enter valid KM driven')
+        }else if(title.length < 6){
+            $('#span').html('Enter valid Title')
+        }else if(description.length <20){
+            $('#span').html('Enter valid description')
+        }else if(price.length<1 || isNaN(price)){
+            $('#span').html('Enter valid Price')
+        }else if(image1 == ''){
+            $('#span').html('Select first image')
+        }else if(image2 == ''){
+            $('#span').html('Select second image')
+        }else if(image3 == ''){
+            $('#span').html('Select third image')
+        }else{
+            var form = new FormData(document.getElementById('sell'));
+            var img1 = document.getElementById('img1').files[0];
+            var img2 = document.getElementById('img2').files[0];
+            var img3 = document.getElementById('img3').files[0];
+            form.append('img1',img1)
+            form.append('img2',img2)
+            form.append('img3',img3)
+            form.append('brand',brand)
+            form.append('year',year)
+            form.append('km',km)
+            form.append('title',title)
+            form.append('description',description)
+            form.append('price',price)
+            $.ajax({
+                url:'/sell-product/',
+                method:'POST',
+                data:form,
+                cache:false,
+                contentType:false,
+                processData:false,
+                success:function(data){
+                    if(data=='true'){
+                        window.location.replace('/user-profile/')
+                    }
+                    if(data=='false'){
+                        $('#span').html('Your last ad is active, add after it expired')
+                    }
+                }
+            })
+        }
+        
+    })
+</script>
+<script>
+    function show_brands(hi){
+        var select = document.getElementById("brand");
+        var length = select.options.length;
+        for (i = length-1; i >= 0; i--) {
+        select.options[i] = null;
+    }
+        var id = hi.value
+        var x = document.getElementById("category");
+        var option = document.createElement("option");
+        option.text = "Select brand";
+        select.add(option);
+        {% for brand in brands %}
+            if('{{brand.category.id}}' == id){
+                var option = document.createElement("option");
+                option.text = "{{brand.brand}}";
+                option.value = '{{brand.id}}';
+                select.add(option);
+            }
+        {% endfor %}
+        
+    }
+</script>
+{% endblock %}

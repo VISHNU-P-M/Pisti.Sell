@@ -22,10 +22,18 @@ from PIL import Image
 # geolocation
 from geopy.geocoders import Nominatim
 from django.contrib.gis.geoip2 import GeoIP2 
+from geopy.distance import geodesic
 
+# map stuff fron end
 import pandas as pd
 from folium.plugins import MarkerCluster
 from folium.plugins import Search
+
+
+#for convert base64 to imagefile
+import base64
+from django.core.files.base import ContentFile
+
 
 # Create your views here.
 def user_login(request):
@@ -54,8 +62,8 @@ def user_signup(request):
             username = request.POST['username']
             email = request.POST['email']
             phone = request.POST['phone']
+            district = request.POST['district']
             password = request.POST['password']
-            print(first_name,last_name,username,email,phone,password)
             if CustomUser.objects.filter(username=username).exists():
                 return JsonResponse('user', safe=False)
             elif CustomUser.objects.filter(email=email).exists():
@@ -63,7 +71,7 @@ def user_signup(request):
             elif CustomUser.objects.filter(phone=phone).exists():
                 return JsonResponse('phone', safe=False)
             else:
-                CustomUser.objects.create_user(first_name=first_name,last_name=last_name,username=username,email=email,phone=phone,password=password)
+                CustomUser.objects.create_user(first_name=first_name,last_name=last_name,username=username,email=email,phone=phone,district=district,password=password)
                 return JsonResponse('true', safe=False)
         else:
             return redirect(user_login)
@@ -171,7 +179,26 @@ def otp_resend(request):
 def user_home(request):
     if request.user.is_authenticated:
         ads = UserAd.objects.filter(status='confirmed',expiry_date__gt=date.today()).exclude(user=request.user)
+        district = request.user.district
+        geolocator = Nominatim(user_agent="user")
+        location = geolocator.geocode(district)
+        latitude,longitude = location.latitude, location.longitude
+        
+        user_location = (latitude,longitude)
+        
+        all_ads_id = []
         all_ads = UserAd.objects.filter(status='confirmed')
+        
+        
+        # for finding the ad near user location
+        for ad in all_ads:
+            ad_location = (ad.location_latitude,ad.location_longitude)
+            print(request.user.district)
+            print(geodesic(user_location,ad_location).km)
+            if geodesic(user_location,ad_location).km <100:
+                all_ads_id.append(ad.id)
+                
+                
         wish_list = []
         Wishes = WishList.objects.filter(user=request.user)
         for wish in Wishes:
@@ -179,7 +206,8 @@ def user_home(request):
         context = {
             'ads':ads,
             'all_ads':all_ads,
-            'wish_list':wish_list
+            'ads_id':all_ads_id,
+            'wish_list':wish_list,
         }
         return render(request,'user/user_home.html', context)
     else:
@@ -238,18 +266,113 @@ def get_ip_address(request):
 def sell_product(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
-            img1 = request.FILES.get('img1')
-            img2 = request.FILES.get('img2')
-            img3 = request.FILES.get('img3')
+            # ----------------WITHOUT CROPING-----------------
+            # img1 = request.FILES.get('img1')
+            # img2 = request.FILES.get('img2')
+            # img3 = request.FILES.get('img3')
             
-            brand = request.POST.get('brand')
-            year = request.POST.get('year')
-            km = request.POST.get('km')
-            title = request.POST.get('title')
-            description = request.POST.get('description')
-            price = request.POST.get('price')
-            latitude = request.session['latitude']
-            longitude = request.session['longitude']
+            # brand = request.POST.get('brand')
+            # year = request.POST.get('year')
+            # km = request.POST.get('km')
+            # title = request.POST.get('title')
+            # description = request.POST.get('description')
+            # price = request.POST.get('price')
+            # latitude = request.session['latitude']
+            # longitude = request.session['longitude']
+            # del request.session['latitude']
+            # del request.session['longitude']
+            # today = date.today()
+            # expiry = today + timedelta(days=14)
+            # if UserAd.objects.filter(user=request.user,expiry_date__gt=today).count()>=2:
+            #     return JsonResponse('false', safe=False)
+            # else:
+            #     user_ad = UserAd.objects.create(user=request.user,brand_id=brand,year=year,km_driven=km,title=title,description=description,
+            #                                     price=price,date=today,expiry_date=expiry,image1=img1,image2=img2,image3=img3,
+            #                                     location_latitude=latitude,location_longitude=longitude)
+            #     # importing logo
+            #     logo = cv2.imread('static/images/Logo.png')
+            #     logo_height, logo_width, _ = logo.shape
+                    
+            #     #set first image logo
+            #     image1 = cv2.imread('static/'+user_ad.img1)
+            #     image1_height, image1_width, _ = image1.shape
+            #     # print('height and width',image_height,image_width)
+            #     top1_y = image1_height - logo_height
+            #     left1_x = image1_width - logo_width
+            #     # print(top_y,left_x)
+            #     roi1 = image1[top1_y:image1_height,left1_x:image1_width] 
+            #     result1 = cv2.addWeighted(roi1, 1, logo, 0.5, 0)
+            #     image1[top1_y:image1_height,left1_x:image1_width] = result1
+            #     # cv2.imshow('image1', image1)
+            #     # cv2.waitKey(0)
+            #     print('logoset')
+            #     cv2.imwrite('static/'+user_ad.img1,image1)
+                
+            #     #set second image logo
+            #     image2 = cv2.imread('static/'+user_ad.img2)
+            #     image2_height, image2_width, _ = image2.shape
+            #     # print('height and width',image_height,image_width)
+            #     top2_y = image2_height - logo_height
+            #     left2_x = image2_width - logo_width
+            #     # print(top_y,left_x)
+            #     roi2 = image2[top2_y:image2_height,left2_x:image2_width] 
+            #     result2 = cv2.addWeighted(roi2, 1, logo, 0.5, 0)
+            #     image2[top2_y:image2_height,left2_x:image2_width] = result2
+            #     # cv2.imshow('image1', image1)
+            #     # cv2.waitKey(0)
+            #     print('logoset')
+            #     cv2.imwrite('static/'+user_ad.img2,image2)
+                
+            #     #set third image logo
+            #     image3 = cv2.imread('static/'+user_ad.img3)
+            #     image3_height, image3_width, _ = image3.shape
+            #     # print('height and width',image_height,image_width)
+            #     top3_y = image3_height - logo_height
+            #     left3_x = image3_width - logo_width
+            #     # print(top_y,left_x)
+            #     roi3 = image3[top3_y:image3_height,left3_x:image3_width] 
+            #     result3 = cv2.addWeighted(roi3, 1, logo, 0.5, 0)
+            #     image3[top3_y:image3_height,left3_x:image3_width] = result3
+            #     # cv2.imshow('image1', image1)
+            #     # cv2.waitKey(0)
+            #     print('logoset')
+            #     cv2.imwrite('static/'+user_ad.img3,image3)
+                
+            #     return JsonResponse('true', safe=False)
+            
+            # ---------WITH CROPING----------
+            title = request.POST['title']
+            img1 = request.POST['img1']
+            # converting to file
+            format, imgstr = img1.split(';base64,')
+            ext1 = format.split('/')[-1]
+            imageurl1 = ContentFile(base64.b64decode(imgstr), name=title + '1.' + ext1)
+            
+            img2 = request.POST['img2']
+            # converting to file
+            format, imgstr = img2.split(';base64,')
+            ext2 = format.split('/')[-1]
+            imageurl2 = ContentFile(base64.b64decode(imgstr), name=title + '2.' + ext2)
+            
+            img3 = request.POST['img3']
+            # converting to file
+            format, imgstr = img3.split(';base64,')
+            ext3 = format.split('/')[-1]
+            imageurl3 = ContentFile(base64.b64decode(imgstr), name=title + '3.' + ext3)
+            
+            brand = request.POST['brand']
+            year = request.POST['year']
+            km = request.POST['km']
+            description = request.POST['description']
+            price = request.POST['price']
+            district = request.POST['district']
+            if district == '0':
+                latitude = request.session['latitude']
+                longitude = request.session['longitude']
+            else:
+                geolocator = Nominatim(user_agent="user")
+                location = geolocator.geocode(district)
+                latitude,longitude = location.latitude, location.longitude
             del request.session['latitude']
             del request.session['longitude']
             today = date.today()
@@ -258,7 +381,7 @@ def sell_product(request):
                 return JsonResponse('false', safe=False)
             else:
                 user_ad = UserAd.objects.create(user=request.user,brand_id=brand,year=year,km_driven=km,title=title,description=description,
-                                                price=price,date=today,expiry_date=expiry,image1=img1,image2=img2,image3=img3,
+                                                price=price,date=today,expiry_date=expiry,image1=imageurl1,image2=imageurl2,image3=imageurl3,
                                                 location_latitude=latitude,location_longitude=longitude)
                 # importing logo
                 logo = cv2.imread('static/images/Logo.png')
@@ -276,7 +399,6 @@ def sell_product(request):
                 image1[top1_y:image1_height,left1_x:image1_width] = result1
                 # cv2.imshow('image1', image1)
                 # cv2.waitKey(0)
-                print('logoset')
                 cv2.imwrite('static/'+user_ad.img1,image1)
                 
                 #set second image logo
@@ -291,7 +413,6 @@ def sell_product(request):
                 image2[top2_y:image2_height,left2_x:image2_width] = result2
                 # cv2.imshow('image1', image1)
                 # cv2.waitKey(0)
-                print('logoset')
                 cv2.imwrite('static/'+user_ad.img2,image2)
                 
                 #set third image logo
@@ -306,7 +427,6 @@ def sell_product(request):
                 image3[top3_y:image3_height,left3_x:image3_width] = result3
                 # cv2.imshow('image1', image1)
                 # cv2.waitKey(0)
-                print('logoset')
                 cv2.imwrite('static/'+user_ad.img3,image3)
                 
                 return JsonResponse('true', safe=False)

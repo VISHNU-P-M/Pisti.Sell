@@ -7,7 +7,7 @@ from datetime import date, timedelta
 class CustomUser(AbstractUser):
     profile_picture = models.ImageField(upload_to = 'pics', null = True)
     phone = models.BigIntegerField(null = True)
-    
+    district = models.CharField(max_length=50,null=True)
 
     @property
     def propic(self):
