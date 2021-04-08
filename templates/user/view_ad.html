@@ -262,7 +262,7 @@
                     {% endif %}
                 </div>
                 <div>
-                    <h1>{{ad.user.first_name}}</h1>
+                    <h1  style='text-transform: capitalize;'>{{ad.user.first_name}}</h1>
                     <label> {{ad.user.phone}} </label>
                     <label> {{ad.user.email}} </label>
                 </div>
@@ -340,14 +340,6 @@
                     </div>
                     <div class="clearfix"> </div>
                 </div>
-
-
-                <!-- modal -->
-                
-                
-      
-             
-
                 <!----- tabs-box ---->
                 <div class="sap_tabs">	
                     <div id="horizontalTab" style="display: block; width: 100%; margin: 0px;">				  	 
@@ -357,17 +349,17 @@
                                 <div class="facts">
                                     <h2>Description</h2>
                                     <p >{{ad.description}}</p>         
-                                </div>
+                                </div><hr>
+                                <div>
+                                  <h4>Model</h4><h3>{{ad.year}}</h3><hr>
+                                  <h4>KM driven</h4><h3>{{ad.km_driven}}km</h3><hr>
+                              </div>
                             </div>
                             <h2 class="resp-accordion resp-tab-active" role="tab" aria-controls="tab_item-0"><span class="resp-arrow"></span>Ad's Location</h2>
                             <div style=" width: 400px; height: 250px;">
                                <h2>Location</h2>
                                {{map|safe}}
                             </div><br><hr>
-                            <div>
-                                <h4>Model</h4><h3>{{ad.year}}</h3>
-                                <h4>KM driven</h4><h3>{{ad.km_driven}}km</h3>
-                            </div>
                         </div>
                         <div hidden>
                             This product includes GeoLite2 data created by MaxMind, available from

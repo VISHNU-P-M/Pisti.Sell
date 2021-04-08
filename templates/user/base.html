@@ -17,155 +17,12 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 </head>
 	
 <body>
-	<style>
-		@import url('https://fonts.googleapis.com/css?family=Raleway:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i');
-
-
-.drop-down{
-    display: inline-block;
-    position: relative;
-}
-
-.drop-down__button{
-	width: 4em;
-    background: transparent;
-    display: inline-block;
-    line-height: 40px;
-    padding: 0 18px;
-    text-align: left;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.drop-down__name {
-    font-size: 9px;
-    text-transform: uppercase;
-    color: #fff;
-    font-weight: 800;
-    letter-spacing: 2px;
-}
-
-.drop-down__icon {
-    width: 18px;
-    vertical-align: middle;
-    margin-left: 14px;
-    height: 18px;
-    border-radius: 50%;
-    transition: all 0.4s;
-  -webkit-transition: all 0.4s;
-  -moz-transition: all 0.4s;
-  -ms-transition: all 0.4s;
-  -o-transition: all 0.4s;
-  
-}
-
-
-
-.drop-down__menu-box {
-    position: absolute;
-    width: 100%;
-    left: 0;
-    background-color: #fff;
-    border-radius: 4px;
-  box-shadow: 0px 3px 6px 0px rgba(0,0,0,0.2);
-     transition: all 0.3s;
-  -webkit-transition: all 0.3s;
-  -moz-transition: all 0.3s;
-  -ms-transition: all 0.3s;
-  -o-transition: all 0.3s;
- visibility: hidden;
-opacity: 0;
-  margin-top: 5px;
-}
-
-.drop-down__menu {
-    margin: 0;
-    padding:1px;
-    list-style: none;
-    font-size: 1px;
-  
-}
-.drop-down__menu-box:before{
-  content:'';
-  background-color: transparent;
-  border-right: 8px solid transparent;
-  position: absolute;
-  border-left: 8px solid transparent;
-  border-bottom: 8px solid #fff;
-  border-top: 8px solid transparent;
-  top: -15px;
-  right: 18px;
-
-}
-
-.drop-down__menu-box:after{
-  content:'';
-  background-color: transparent;
-}
-
-.drop-down__item {
-    font-size: 13px;
-    padding: 13px 0;
-    text-align: left;
-    font-weight: 500;
-    color: #909dc2;
-    cursor: pointer;
-    position: relative;
-    border-bottom: 1px solid #e0e2e9;
-}
-
-.drop-down__item-icon {
-    width: 15px;
-    height: 15px;
-    position: absolute;
-    right: 0px;
-    fill: #8995b6;
-  
-}
-
-.drop-down__item:hover .drop-down__item-icon{
-  fill: #3d6def;
-}
-
-.drop-down__item:hover{
-  color: #3d6def;
-}
-
-
-
-.drop-down__item:last-of-type{
-  border-bottom: 0;
-}
-
-
-.drop-down--active .drop-down__menu-box{
-visibility: visible;
-opacity: 1;
-  margin-top: 15px;
-}
-
-.drop-down__item:before{
-  content:'';
-  position: absolute;
-width: 3px;
-height: 28px;
-background-color: #3d6def;
-left: -13px;
-top: 50%;
-transform: translateY(-50%);
-  display:none;
-}
-
-.drop-down__item:hover:before{
-  display:block;
-}
-	</style>
+	
 {% block link %}
 {% endblock %}
 <!-- header -->
 	<div class="header">
-			<div class="container">
-			<div class="logo-nav">
+			<div class="logo-nav" style=" padding: 1em;">
 				
 					<nav class="navbar navbar-default">
 					<!-- Brand and toggle get grouped for better mobile display -->
@@ -176,8 +33,8 @@ transform: translateY(-50%);
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 						</button>
-						 <div class="navbar-brand logo-nav-left ">
-							<h1 class="animated wow pulse" data-wow-delay=".5s"><a href="/">PISTI<span>Sell</span></a></h1>
+						 <div class="navbar-brand logo-nav-left mx-auto">
+							<h1 class="animated wow pulse " style="margin-left: 0;" data-wow-delay=".5s"><a href="/">PISTI<span>Sell</span></a></h1>
 						</div>
 
 					</div> 
@@ -186,22 +43,30 @@ transform: translateY(-50%);
 							<li>
 								<!-- <div class="input-group mb-3" > -->
 									<div class="input-group-prepend" style="margin-top: 12px;margin-right: 20px;">
-									  <label class="input-group-text" for="inputGroupSelect01">Location</label>
-									
-									<select class="custom-select" id="inputGroupSelect01" style="height: 2em;">
-										<option selected value="current_location">Current Location</option>
-										<option value="thrisur">Thrisur</option>
-										<option value="kozhikode">Kozhikode</option>
-										<option value="palakkad">Palakkad</option>
-										<option value="50km">Between 50 km</option>
-										<option value="100km">Between 100 km</option>
-										<option value="200km">Between 200 km</option>
-									</select>
+                    <form action="/location-filter/" id="location-filter">
+                      <select class="custom-select" id="district" name="district" style="height: 2em;width: 6em;" onchange="FilterByDistrict()">
+                        <option selected value="0">Location</option>
+                        <option value="Thiruvananthapuram">Thiruvananthapuram</option>
+                        <option value="Kollam">Kollam</option>
+                        <option value="Alappuzha">Alappuzha</option>
+                        <option value="Pathanamthitta">Pathanamthitta</option>
+                        <option value="Idukki">Idukki</option>
+                        <option value="Kottayam">Kottayam</option>
+                        <option value="Ernakulam">Ernakulam</option>
+                        <option value="Thrissur">Thrissur</option>
+                        <option value="Palakkad">Palakkad</option>
+                        <option value="Malappuram">Malappuram</option>
+                        <option value="Kozhikode">Kozhikode</option>
+                        <option value="Wayanad">Wayanad</option>
+                        <option value="Kannur">Kannur</option>
+                        <option value="Kasaragod">Kasaragod</option>
+                      </select>
+                    </form>
 								</div>
 							</li>
 							<li>
-								<form class="form-inline my-2 my-lg-0" style="margin-top: 13px;">
-									<input class="form-control mr-sm-2" type="search" placeholder="Find cars, bikes, .." aria-label="Search" style="height: 3em;">
+								<form action="/search-filter/" class="form-inline my-2 my-lg-0" style="margin-top: 13px;">
+									<input class="form-control mr-sm-2" id="key" name="key" type="search" placeholder="Find cars, bikes, .." aria-label="Search" style="height: 3em;">
 								</form>
 							</li>
 							<li class="active" class="float-left"><a href="/" class="act">Home</a></li>
@@ -211,47 +76,26 @@ transform: translateY(-50%);
 									<small>sell</small>
 								</a>
 							</li>
-							<li class="float-left">
-								<div class="table_center">
-									<div class="drop-down">
-										<div id="dropDown" class="drop-down__button">
-											<span class="drop-down__name">
-												{% if user.propic == '' %}
-												<img src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg" alt="" style="width: 50px; margin-top: -3px;border-radius: 50%;" >
-												{% else %}
-												<img src="{{user.propic}}" alt="" style="width: 50px; margin-top: -3px;border-radius: 50%;">
-												{% endif %}
-											</span>
-										</div>
-										<div class="drop-down__menu-box" style="z-index: 1;">
-											<ul class="drop-down__menu">
-											<a href="/user-profile/" style="height: 0em;">
-												<li data-name="profile" class="drop-down__item">
-													<label for="" style="font-size: 15px;"> Your Profile </label>
-												</li>
-											</a>
-                      <a href="/view-wish-list/" style="text-decoration: none;" style="height: 0em;">
-												<li data-name="activity" class="drop-down__item">
-												  <label for="" style="font-size: 15px;"> Wish List</label>
-												</li>
-											</a>
-											<a href="/user-logout/" style="text-decoration: none;" style="height: 0em;">
-												<li data-name="activity" class="drop-down__item">
-													<label for="" style="font-size: 15px;"> Log out</label>
-												</li>
-											</a>
-											</ul>
-										</div>
-									</div>
-							 	</div>
+              <li class="float-left">
+                <!-- Example single danger button -->
+                <div class="btn-group">
+                  {% if user.propic == '' %}
+                    <img src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg" alt="" style="width: 50px; margin-top: -3px;border-radius: 50%;margin-left: 1em;" class=" dropdown-toggle" data-toggle="dropdown" >
+                  {% else %}
+                    <img src="{{user.propic}}" alt="" style="width: 50px; margin-top: -3px;border-radius: 50%;margin-left: 1em;" class=" dropdown-toggle" data-toggle="dropdown" >
+                  {% endif %}
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" style="text-decoration: none;" href="/user-profile/"><h4>Your Profile</h4></a><br>
+                    <a class="dropdown-item" style="text-decoration: none;" href="/view-wish-list/"><h4>Wish List</h4></a><br>
+                    <a class="dropdown-item" style="text-decoration: none;" href="/user-logout/"><h4>Log Out</h4></a><br>
+                    <div class="dropdown-divider"></div>
+                  </div>
+                </div>
 							</li>
-							
 						</ul>
 					</div>
 					</nav>
 				</div>
-				
-		</div>
 	</div>
 <!-- //header -->
 {% block content %}
@@ -299,6 +143,11 @@ transform: translateY(-50%);
         
     </div>
 </div>
+<script>
+  function FilterByDistrict(){
+    document.getElementById('location-filter').submit()
+  }
+</script>
 <!-- //footer -->
 <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false);
 function hideURLbar(){ window.scrollTo(0,1); } </script>
@@ -350,12 +199,5 @@ $(window).load(function() {
           });
         });
       </script>
-	  <script>
-		$(document).ready(function(){
-			$('#dropDown').click(function(){
-			  $('.drop-down').toggleClass('drop-down--active');
-			});
-		  });
-	  </script>
 </body>
 </html>

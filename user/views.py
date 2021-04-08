@@ -187,7 +187,7 @@ def user_home(request):
         user_location = (latitude,longitude)
         
         all_ads_id = []
-        all_ads = UserAd.objects.filter(status='confirmed')
+        all_ads = UserAd.objects.filter(status='confirmed').exclude(user=request.user)
         
         
         # for finding the ad near user location
@@ -665,5 +665,157 @@ def view_images(request,id):
             'id':id 
         }
         return render(request, 'user/view_images.html', context)
+    else:
+        return redirect(user_login)
+    
+def location_filter(request):
+    if request.user.is_authenticated:
+        district = request.GET['district']
+        print(district)
+        geolocator = Nominatim(user_agent="user")
+        location = geolocator.geocode(district)
+        latitude,longitude = location.latitude, location.longitude
+        filter_location = (latitude,longitude)
+        filtered_ads = []
+        all_ads = UserAd.objects.filter(status='confirmed').exclude(user=request.user)
+        # for finding the ad near user location
+        for ad in all_ads:
+            ad_location = (ad.location_latitude,ad.location_longitude)
+            print(geodesic(filter_location,ad_location).km)
+            if geodesic(filter_location,ad_location).km <100:
+                filtered_ads.append(ad)
+        # for geting ads in wishlist
+        wish_list = []
+        Wishes = WishList.objects.filter(user=request.user)
+        for wish in Wishes:
+            wish_list.append(wish.ad.id)
+        categories = Categories.objects.all()
+        brands = Brands.objects.all()
+        context = {
+            'district':district,
+            'ads':filtered_ads,
+            'wish_list':wish_list,
+            'categories':categories,
+            'brands':brands 
+        }
+        return render(request, 'user/filter.html', context )
+    else:
+        return redirect(user_login)
+    
+def search_filter(request):
+    if request.user.is_authenticated:
+        key = request.GET['key']
+        ads1 = UserAd.objects.filter(brand__brand__icontains = key).exclude(user=request.user)
+        ads2 = UserAd.objects.filter(brand__category__category__icontains = key).exclude(user=request.user)
+        ads3 = UserAd.objects.filter(title__icontains = key).exclude(user=request.user)
+        exist = True
+        ads = []
+        for ad in ads1:
+            ads.append(ad)
+        for ad in ads2:
+            if ad in ads:
+                pass
+            else:
+                ads.append(ad)
+        for ad in ads3:
+            if ad in ads:
+                pass
+            else:
+                ads.append(ad)
+        
+        wish_list = []
+        wishlist = WishList.objects.filter(user=request.user)
+        for wish in wishlist:
+            wish_list.append(wish.ad.id)
+            
+        categories = Categories.objects.all()
+        brands = Brands.objects.all()
+        
+        district = request.user.district
+        geolocator = Nominatim(user_agent="user")
+        location = geolocator.geocode(district)
+        latitude,longitude = location.latitude, location.longitude
+        
+        user_location = (latitude,longitude)
+        filter_ads = []
+        # for finding the ad near user location
+        for ad in ads:
+            ad_location = (ad.location_latitude,ad.location_longitude)
+            print(geodesic(user_location,ad_location).km)
+            if geodesic(user_location,ad_location).km <100:
+                filter_ads.append(ad)
+        if len(filter_ads) == 0:
+            exist = False 
+        print(len(filter_ads))     
+        context = {
+            'ads':filter_ads,
+            'district':district,
+            'exist':exist,
+            'wish_list':wish_list,
+            'categories':categories,
+            'brands':brands
+        }
+        return render(request, 'user/filter.html', context)
+    else:
+        return redirect(user_login)
+    
+def spec_filter(request):
+    if request.user.is_authenticated:
+        district = request.GET['district_']
+        category_id = request.GET['category']
+        brand_id = request.GET['brand']
+        from_price = request.GET['from_price']
+        to_price = request.GET['to_price']
+        if category_id == '0':
+            print('only price')
+            ads = UserAd.objects.filter(price__range=(float(from_price),float(to_price))).exclude(user=request.user)
+        elif brand_id == '0' and from_price == '':
+            print('only category')
+            ads = UserAd.objects.filter(brand__category_id = category_id) .exclude(user=request.user)
+        elif brand_id == '0' and from_price != '':
+            print('no brand and have price')
+            ads = UserAd.objects.filter(brand__category_id=category_id,price__range=(float(from_price),float(to_price))).exclude(user=request.user)
+        elif from_price == '' and brand_id != '0':
+            print('no price and have brand')
+            ads = UserAd.objects.filter(brand_id = brand_id,brand__category_id=category_id).exclude(user=request.user)
+        else:
+            print('all have')
+            ads = UserAd.objects.filter(brand__category_id=category_id,brand_id = brand_id,price__range=(float(from_price),float(to_price))).exclude(user=request.user) 
+        
+        geolocator = Nominatim(user_agent="user")
+        location = geolocator.geocode(district)
+        latitude,longitude = location.latitude, location.longitude
+        filter_location = (latitude,longitude)
+        filtered_ads = []
+        
+        # for finding the ad near user location
+        for ad in ads:
+            ad_location = (ad.location_latitude,ad.location_longitude)
+            print(geodesic(filter_location,ad_location).km)
+            if geodesic(filter_location,ad_location).km <100:
+                filtered_ads.append(ad)
+                
+        # for getting ads in wishlist
+        wish_list = []
+        Wishes = WishList.objects.filter(user=request.user)
+        for wish in Wishes:
+            wish_list.append(wish.ad.id)
+        
+        if len(filtered_ads)== 0:
+            exist = False
+        else:
+            exist = True
+        
+        categories = Categories.objects.all()
+        brands = Brands.objects.all()
+        context = {
+            'ads':filtered_ads,
+            'exist':exist,
+            'wish_list':wish_list,
+            'district':district,
+            'categories':categories,
+            'brands':brands,
+        }
+        return render(request, 'user/filter.html', context)
     else:
         return redirect(user_login)

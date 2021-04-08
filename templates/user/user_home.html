@@ -96,11 +96,11 @@
 			success:function(data){
 				if(data == 'added'){
 					document.getElementById('wish-image-'+id).src="{% static 'images/download.png' %}";
-					//document.getElementById('fetured-wish-image-'+id).src="{% static 'images/download.png' %}";
+					document.getElementById('fetured-wish-image-'+id).src="{% static 'images/download.png' %}";
 				}
 				if(data == 'removed'){
 					document.getElementById('wish-image-'+id).src="{% static 'images/ll.png' %}";
-					//document.getElementById('fetured-wish-image-'+id).src="{% static 'images/ll.png' %}";
+					document.getElementById('fetured-wish-image-'+id).src="{% static 'images/ll.png' %}";
 				}
 				if(data == 'false'){}
 			}

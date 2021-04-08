@@ -1,0 +1,182 @@
+{% extends 'user/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="row">
+    <div class="col-md-3 col-sm-3 ">
+        <div class="col-md-3 col-sm-3  animated wow float-right " data-wow-delay=".1s" style="margin-top: 2em;margin-bottom: 2em;">
+            <div class="col-md-4  item-grid simpleCart_shelfItem">
+                <form action="/spec-filter/" id="filter-form">
+                    <ul>
+                        <li>
+                            <label for="">Location</label><br>
+                            <select class="custom-select" id="district_" name="district_" style="height: 2em;width: 10em;">
+                                <option  value="Thiruvananthapuram" {% if district == "Thiruvananthapuram" %} selected {% endif %}>Thiruvananthapuram</option>
+                                <option value="Kollam" {% if district == "Kollam" %} selected {% endif %}>Kollam</option>
+                                <option value="Alappuzha" {% if district == "Alappuzha" %} selected {% endif %}>Alappuzha</option>
+                                <option value="Pathanamthitta" {% if district == "Pathanamthitta" %} selected {% endif %}>Pathanamthitta</option>
+                                <option value="Idukki" {% if district == "Idukki" %} selected {% endif %}>Idukki</option>
+                                <option value="Kottayam" {% if district == "Kottayam" %} selected {% endif %}>Kottayam</option>
+                                <option value="Ernakulam" {% if district == "Ernakulam" %} selected {% endif %}>Ernakulam</option>
+                                <option value="Thrissur" {% if district == "Thrissur" %} selected {% endif %}>Thrissur</option>
+                                <option value="Palakkad" {% if district == "Palakkad" %} selected {% endif %}>Palakkad</option>
+                                <option value="Malappuram" {% if district == "Malappuram" %} selected {% endif %}>Malappuram</option>
+                                <option value="Kozhikode" {% if district == "Kozhikode" %} selected {% endif %}>Kozhikode</option>
+                                <option value="Wayanad" {% if district == "Wayanad" %} selected {% endif %}>Wayanad</option>
+                                <option value="Kannur" {% if district == "Kannur" %} selected {% endif %}>Kannur</option>
+                                <option value="Kasaragod" {% if district == "Kasaragod" %} selected {% endif %}>Kasaragod</option>
+                            </select>
+                        </li><br>
+                        <li>
+                            <label for="">Category</label><br>
+                            <select name="category" id="category" style="height: 2em;width: 10em;" onchange="BringBrands(this)">
+                                <option value="0">Select category</option>
+                                {% for category in categories %}
+                                    <option value="{{category.id}}">{{category.category}}</option>
+                                {% endfor %}
+                            </select>
+                        </li><br>
+                        <li>
+                            <label for="">Brands</label><br>
+                            <select name="brand" id="brand" style="height: 2em;width: 10em;">
+                                <option value="0">Select category</option>
+                            </select>
+                        </li><br>
+                        <li>
+                            <label for="">Price_Range</label><br>
+                            <input type="number" name="from_price" id="from" style="height: 2em;width: 10em;" placeholder="from"><br>
+                            <input type="number" name="to_price" id="to" style="height: 2em;width: 10em;" placeholder="to">
+                        </li><br>
+                    </ul><br>
+                    <span id="error" style="color: red;"></span><br>
+                    <button type="button" onclick="Filter()" class="btn btn-warning">Check Availabilty</button><br>
+                </form>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+    <div class="col-md-9 col-sm-9 ">
+        <div class="col-md-9 col-sm-9  animated wow float-right " data-wow-delay=".1s" style="margin-top: 2em;margin-bottom: 2em;">
+            {% if exist == False %}
+            <h1>No Ads as per your request</h1>
+            {% else %}
+                {% for ad in ads %}
+                    {% if ad.active == True%}
+                    <div class="col-md-4 col-sm-6 item-grid simpleCart_shelfItem">
+                        <div class="grid-pro" style="height: 13em;width: 12em;margin: 2em;">
+                            <div  class=" grid-product " >
+                                <figure>		
+                                    <a href="/view-ad/{{ad.id}}">
+                                        <div class="grid-img">
+                                            <img  src="{{ad.img1}}" class="img-responsive" alt="">
+                                        </div>
+                                        <div class="grid-img">
+                                            <img  src="{{ad.img2}}" class="img-responsive"  alt="">
+                                        </div>			
+                                    </a>		
+                                </figure>	
+                            </div>
+                            <div class="women">
+                                <img id="wish-image-{{ad.id}}" {% if ad.id in wish_list %} src="{% static 'images/download.png' %}"{% else %} src="{% static 'images/ll.png' %}" {% endif %} alt="" style="width: 1em;" onclick="AddWishList('{{ad.id}}')">
+                                <h6><a href="/view-ad/{{ad.id}}">{{ad.title}}</a></h6>
+                                <p ><em class="item_price" id={{ad.id}} ></em></p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function Filter(){
+        var district = $('#district_').val()
+        var category_id = $('#category').val()
+        var brand_id = $('#brand').val()
+        var from_price = $('#from').val()
+        var to_price = $('#to').val()
+        var error = 0
+        if(category_id == '0' && brand_id == '0' && from_price == '' && to_price == ''){
+            $('#error').html('Select anything for check')
+            error = 1
+        }else if((from_price != '' && to_price == '') || (to_price != '' && from_price == '')){
+            $('#error').html('Fill the price fields corresponding')
+            error = 1
+        }else if(from_price != '' && to_price != ''){
+            if(from_price>=to_price){
+                $('#error').html('From should lower than to')
+                error = 1
+            }else{
+                $('#error').html('')
+                error = 0
+            }
+        }
+        if(error == 1){
+            console.log('all not ok')
+        }else{
+            document.getElementById('filter-form').submit()
+        }
+        
+        console.log(district,category_id,brand_id,from_price,to_price)
+    }
+</script>
+<script>
+    
+    
+</script>
+
+{% for ad in  ads %}
+	{% if ad.active == True%}
+		<script>
+			var number = parseFloat('{{ad.price}}');
+			var result="₹ " + number.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '/-';
+			document.getElementById("{{ad.id}}").textContent= result ;
+
+        </script>
+	{% endif %}
+{% endfor %}
+<script>
+    function BringBrands(input){
+        var select = document.getElementById("brand");
+        var length = select.options.length;
+        for (i = length-1; i >= 0; i--) {
+        select.options[i] = null;
+        }
+        var id = input.value
+        var x = document.getElementById("category");
+        var option = document.createElement("option");
+        option.text = "Select brand";
+        option.value = '0';
+        select.add(option);
+        {% for brand in brands %}
+            if('{{brand.category.id}}' == id){
+                var option = document.createElement("option");
+                option.text = "{{brand.brand}}";
+                option.value = '{{brand.id}}';
+                select.add(option);
+            }
+        {% endfor %}
+    }
+
+
+    function AddWishList(id){
+        $.ajax({
+            url:'/add-wish-list/'+id,
+            method:'GET',
+            success:function(data){
+                if(data == 'added'){
+                    document.getElementById('wish-image-'+id).src="{% static 'images/download.png' %}";
+                }
+                if(data == 'removed'){
+                    document.getElementById('wish-image-'+id).src="{% static 'images/ll.png' %}";
+                }
+                if(data == 'false'){}
+            }
+        })
+    }
+</script>
+
+{% endblock %}

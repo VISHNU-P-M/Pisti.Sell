@@ -8,7 +8,7 @@
     <div style="padding: 2em;display: contents;place-content: center;" >
         <form action="" id="sell">
             <p class="title-register-main-connection-div" style="margin-top: 2em;">CATEGORY</p>
-            <select  id="category"  style="height: 2em; width: 15em;">
+            <select  id="category"  style="height: 2em; width: 15em;" onchange="show_brands(this)">
                 <option selected>Choose...</option>
                 {% for category in categories %}
                 <option value="{{category.id}}" {% if ad.brand.category.category == category.category %} selected {% endif %}> {{category.category}} </option>
@@ -133,5 +133,26 @@
             }
         {% endfor %}
     
+        function show_brands(hi){
+            var select = document.getElementById("brand");
+            var length = select.options.length;
+            for (i = length-1; i >= 0; i--) {
+            select.options[i] = null;
+        }
+            var id = hi.value
+            var x = document.getElementById("category");
+            var option = document.createElement("option");
+            option.text = "Select brand";
+            select.add(option);
+            {% for brand in brands %}
+                if('{{brand.category.id}}' == id){
+                    var option = document.createElement("option");
+                    option.text = "{{brand.brand}}";
+                    option.value = '{{brand.id}}';
+                    select.add(option);
+                }
+            {% endfor %}
+            
+        }
 </script>
 {% endblock %}

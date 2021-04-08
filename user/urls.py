@@ -19,4 +19,7 @@ urlpatterns = [
     path('add-wish-list/<int:id>', views.add_wishlist, name = 'add_wishlist'),
     path('view-wish-list/', views.view_wish_list, name = 'view_wish_list'),
     path('report-ad/',views.report_ad, name = 'report_ad'),
+    path('location-filter/', views.location_filter, name = 'location_filter'),
+    path('spec-filter/', views.spec_filter, name = 'spec_filter'),
+    path('search-filter/', views.search_filter, name = 'search_filter')
 ]
