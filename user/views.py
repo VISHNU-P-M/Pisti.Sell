@@ -221,15 +221,29 @@ def user_logout(request):
 def user_profile(request):
     if request.user.is_authenticated:
         user = request.user
+        followers = Follow.objects.filter(following = user)
+        count_followers = followers.count()
+        print(count_followers)
+        followings = Follow.objects.filter(follower = user)
+        count_followings = followings.count()
+        print(count_followings) 
         if UserAd.objects.filter(user=user).exists():
             userad = UserAd.objects.filter(user=user)
             context = {
             'user':user,
-            'userad':userad
+            'userad':userad,
+            'followers':followers,
+            'count_followers':count_followers,
+            'followings':followings,
+            'count_followings':count_followings
             }
         else:
             context = {
             'user':user,
+            'followers':followers,
+            'count_followers':count_followers,
+            'followings':followings,
+            'count_followings':count_followings
             }
         return render(request, 'user/user_profile.html', context)
     else:
@@ -600,6 +614,19 @@ def view_ad(request,id):
 def view_seller(request,id):
     if request.user.is_authenticated:
         seller = CustomUser.objects.get(id=id)
+        
+        # check is following or not
+        if Follow.objects.filter(follower=request.user,following=seller).exists():
+            is_following = True
+        else:
+            is_following = False
+        # getting the followers and followings
+        followers = Follow.objects.filter(following = seller)
+        count_followers = followers.count()
+        print(count_followers)
+        followings = Follow.objects.filter(follower=seller)
+        count_followings = followings.count()
+        print(count_followings) 
         if UserAd.objects.filter(user=seller).exists():
             ads = UserAd.objects.filter(user=seller)
             wish_list =[]
@@ -609,13 +636,38 @@ def view_seller(request,id):
             context = {
                 'seller':seller,
                 'ads':ads,
-                'wish_list':wish_list
+                'wish_list':wish_list,
+                'is_following':is_following,
+                'followers':followers,
+                'count_followers':count_followers,
+                'followings':followings,
+                'count_followings':count_followings
             }
         else:
             context = {
-                'seller':seller
+                'seller':seller,
+                'is_following':is_following,
+                'followers':followers,
+                'count_followers':count_followers,
+                'followings':followings,
+                'count_followings':count_followings
             }
         return render(request,'user/seller_profile.html', context)
+    else:
+        return redirect(user_login)
+    
+def follow_user(request,id):
+    if request.user.is_authenticated:
+        follower = request.user
+        following_id = id
+        if Follow.objects.filter(follower = follower,following_id = following_id).exists():
+            follow = Follow.objects.filter(follower = follower , following_id = following_id)
+            follow.delete()
+            return JsonResponse('follow', safe=False)
+        else:
+            Follow.objects.create(follower = follower,following_id = following_id)
+            print('followed')
+            return JsonResponse('unfollow',safe=False)
     else:
         return redirect(user_login)
     
@@ -819,3 +871,4 @@ def spec_filter(request):
         return render(request, 'user/filter.html', context)
     else:
         return redirect(user_login)
+    

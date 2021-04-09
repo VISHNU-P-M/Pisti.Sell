@@ -180,8 +180,81 @@
     }
     
 </style>
+<style>
+    .hero {
+        min-height: 100vh;
+        width: 100%;
+        background-image: url(https://i.postimg.cc/d3n43ShN/keila-hotzel-Gb-EFj-VVHp-Q-unsplash.jpg);
+        display: grid;
+        place-items: center;
+      }
+      .banner {
+        background: white;
+        padding: 4rem 0;
+        border-radius: 5px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        width: 90vw;
+        max-width: 80%;
+      }
+      
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(1, 1, 1, 0.5);
+        /*   opacity:0.5; */
+        display: grid;
+        place-items: center;
+        transition: 1s all ease-in;
+        visibility: hidden;
+        z-index: -10;
+      }
+      .open-modal {
+        visibility: visible;
+        z-index: 10;
+        transition: 1s all ease-out;
+      }
+      
+      .modal-container {
+        background: white;
+        width: 90vw;
+        height: 55vh;
+      }
+      
+      
+      .close-btn {
+        background: transparent;
+        outline: none;
+        border: none;
+        font-size: 2rem;
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        cursor: pointer;
+        animation: bounce 2s ease-in-out infinite;
+      }
+      
+      @keyframes bounce {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.2);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      
+</style>
 {% endblock %}
 {% block content %}
+<link rel="stylesheet"   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css"/>
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
 <div class="container">
 
     <section class="profile_container">
@@ -206,9 +279,67 @@
         <div class="profile_desc_section">
             <h2 style="text-transform: capitalize;">{{user.first_name}}&nbsp;{{user.last_name}}</h2>
             <div class="interests">
-                <span class="interests_item">xx followers</span>
-                <span class="interests_item">xx followings</span>
+                <button type="button"  class="btn btn-primary modal-btn" ><span id="followers" >{{count_followers}} followers</span></button>
+                <button type="button"  class="btn btn-primary modal1-btn" id="following-btn"><span id="followings" >{{count_followings}} followings</span></button>
+                <div class="modal-overlay">
+                    <div class="modal-container">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-6 col-xs-6 col-sm-6">
+                                    <h3>followers&nbsp;</h3>
+                                    <div>
+                                        <ul id="followers-list">
+                                            {% for follow in followers %}
+                                                    <li id='ownlist-{{follow.follower.id}}'>
+                                                        <a {% if request.user.id == follow.follower.id  %} href='/user-profile/' {% else %} href="/seller/{{follow.follower.id}}" {% endif %} style="text-decoration: none;color: black;">
+                                                            <img src="{{follow.follower.propic}}" style="width: 2em;" alt="">
+                                                            <label for="" style="text-transform: capitalize;">&nbsp;{{follow.follower.username}}</label>
+                                                        </a>
+                                                    </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-xs-6 col-sm-6">
+                                    <h3>&nbsp;followings</h3>
+                                    <div>
+                                        {% for follow in followings %}
+                                            <ul>
+                                                <li>
+                                                    <a {% if request.user.id == follow.following.id  %} href='/user-profile/' {% else %} href="/seller/{{follow.following.id}}" {% endif %} style="text-decoration: none;color: black;" >
+                                                        <img src="{{follow.following.propic}}" style="width: 2em;" alt="">
+                                                        <label for="" style="text-transform: capitalize;">&nbsp;{{follow.following.username}}</label>
+                                                    </a>
+                                                    <button class="btn btn-danger" onclick="ModalFollow()"><span id="follow-button-{{follow.following.id}}">unfollow</span></button>
+                                                    <script>
+                                                        function ModalFollow(){
+                                                            $.ajax({
+                                                                url:'/follow-user/'+'{{follow.following.id}}',
+                                                                method:'GET',
+                                                                success:function(data){
+                                                                    if(data == 'unfollow'){
+                                                                        $('#follow-button-'+'{{follow.following.id}}').html('unfollow')
+                                                                    }
+                                                                    if(data == 'follow'){
+                                                                        $('#follow-button-'+'{{follow.following.id}}').html('follow')
+                                                                    }
+                                                                }
+                                                            })
+                                                        }
+                                                    </script>
+                                                </li>
+                                            </ul>
+                                        {% endfor %}
+                                    </div>
+                                    <button class="close-btn"><i class="fas fa-times" style="width: 0px;"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
             </div>
+        
+            <br>    
             <ul>
                 <li>
                     <div class="link_img_wrapper">
@@ -266,6 +397,36 @@
     </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous"></script>
+<script>
+    const modalOverlay = document.querySelector(".modal-overlay");
+    const openModalBtn = document.querySelector(".modal-btn");
+    const closeModalBtn = document.querySelector(".close-btn");
+
+    openModalBtn.addEventListener("click", function () {
+    modalOverlay.classList.add("open-modal");
+    console.log(modalOverlay.classList);
+    });
+
+    closeModalBtn.addEventListener("click", function () {
+    modalOverlay.classList.remove("open-modal");
+    });
+
+</script>
+<script>
+    const modalOverlay1 = document.querySelector(".modal-overlay");
+    const openModalBtn1 = document.querySelector(".modal1-btn");
+    const closeModalBtn1 = document.querySelector(".close-btn");
+
+    openModalBtn1.addEventListener("click", function () {
+    modalOverlay1.classList.add("open-modal");
+    });
+
+    closeModalBtn1.addEventListener("click", function () {
+    modalOverlay1.classList.remove("open-modal");
+    });
+
+</script>
+
 <script>
     function setPropic(){
         document.getElementById('propic').click()

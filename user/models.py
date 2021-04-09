@@ -73,3 +73,8 @@ class ReportAd(models.Model):
     ad = models.ForeignKey(UserAd, on_delete=models.CASCADE)
     note = models.TextField()
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    
+class Follow(models.Model):
+    follower = models.ForeignKey(CustomUser, on_delete = models.CASCADE,related_name='%(class)s_requests_follower')
+    following = models.ForeignKey(CustomUser, on_delete = models.CASCADE,related_name='%(class)s_requests_following')
+    

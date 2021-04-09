@@ -21,5 +21,6 @@ urlpatterns = [
     path('report-ad/',views.report_ad, name = 'report_ad'),
     path('location-filter/', views.location_filter, name = 'location_filter'),
     path('spec-filter/', views.spec_filter, name = 'spec_filter'),
-    path('search-filter/', views.search_filter, name = 'search_filter')
+    path('search-filter/', views.search_filter, name = 'search_filter'),
+    path('follow-user/<int:id>', views.follow_user, name = 'follow_user'),
 ]
