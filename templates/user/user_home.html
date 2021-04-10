@@ -6,10 +6,11 @@
 <div class="banner">
 	<div class="banner-right">
 		<ul id="flexiselDemo2">
-			{% for ad in all_ads %}			
+			{% for ad in fetured_ads %}			
 			<li>
 				<div class="banner-grid">
 					<h2>{{ad.brand.brand}}</h2>
+					<small style="background-color: yellow;">Fetured Ad</small>
 					<div class="wome">
 						<a href="/view-ad/{{ad.id}}" ><img class="img-responsive" src="{{ad.img1}}" alt="" /></a>
 						<div class="women simpleCart_shelfItem">
@@ -36,7 +37,7 @@
 		{% if ad.active == True%}
 		{% if ad.id in ads_id %}
 		<div class="col-sm-4 item-grid simpleCart_shelfItem">
-			<div class="grid-pro">
+			<div class="grid-pro" style="height: 300px;">
 				<div  class=" grid-product " >
 					<figure>		
 						<a href="/view-ad/{{ad.id}}">

@@ -1,0 +1,88 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+{% block link %}
+<style>
+    @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600);
+
+*, *:before, *:after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #105469;
+  font-family: 'Open Sans', sans-serif;
+}
+table {
+  background: #012B39;
+  border-radius: 0.25em;
+  border-collapse: collapse;
+  margin: 1em;
+  width: 95%;
+}
+th {
+  border-bottom: 1px solid #364043;
+  color: #E2B842;
+  font-size: 0.85em;
+  font-weight: 600;
+  padding: 0.5em 1em;
+  text-align: left;
+}
+td {
+  color: #fff;
+  font-weight: 400;
+  padding: 0.65em 1em;
+}
+.disabled td {
+  color: #4F5F64;
+}
+tbody tr {
+  transition: background 0.25s ease;
+}
+tbody tr:hover {
+  background: #014055;
+}
+</style>
+{% endblock %}
+{% block content %}
+<h2>Premium Users</h2>
+<!-- <form action="/adminapp/filter-user/" style=" place-content: end;display: grid;">
+    <input type="text" name="key" id="" placeholder="Search for users"  value="{{key}}" style=" background-color: #034d66;color: #fdfefe;">
+</form> -->
+<div style="overflow-x: auto;">
+    {% if exist == 0 %}
+    <h1> no users </h1>
+    {% else %}
+<table>
+    <thead>
+      <tr>
+        <th>ID
+        <th>First Name
+        <th>Last Name
+        <th>Username
+        <th>Phone
+          <th>Profile Picture</th>
+        <!-- <th>Action -->
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+        <td>{{user.premium_user.id}}
+        <td>{{user.premium_user.first_name}}
+        <td>{{user.premium_user.last_name}}
+        <td>{{user.premium_user.username}}
+        <td>{{user.premium_user.phone}}
+          <td><img src="{{user.premium_user.propic}}" style="width: 3em;" alt=""></td>
+        <!-- <td>{% if user.is_active == True %}
+            <a href="/adminapp/block-user/{{user.premium_user.id}}" style="text-decoration: none;color: #fbfeff;"><i class="fa fa-toggle-off" aria-hidden="true"></i>Block</a>
+            {% else %}
+            <a href="/adminapp/block-user/{{user.premium_user.id}}" style="text-decoration: none;color: #fbfeff;"><i class="fa fa-toggle-on" aria-hidden="true"></i>Unblock</a>
+            {% endif %}
+        </tr> -->
+        {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+</div>
+{% endblock %}

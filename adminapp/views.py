@@ -142,8 +142,8 @@ def admin_home(request):
     if request.user.is_authenticated:
         return render(request,'admin/admin_home.html')
     else:
-        return redirect(admin_login)
-    
+        return redirect(admin_login)    
+
 def users(request):
     if request.user.is_authenticated:
         users = CustomUser.objects.filter(is_superuser=False)
@@ -151,6 +151,17 @@ def users(request):
         return render(request,'admin/users.html',context) 
     else:
         return redirect(admin_login)
+    
+def premium_users(request):
+    if request.user.is_authenticated:
+        premiumusers = PremiumMember.objects.filter(premium_user__is_superuser = False,expiry_date__gte = date.today())
+        context = {
+            'users':premiumusers
+        }
+        return render(request, 'admin/premium_users.html', context)
+    else:
+        return redirect(admin_login)
+
 def block_user(request,id):
     if request.user.is_authenticated:
         user = CustomUser.objects.get(id=id)
@@ -257,6 +268,30 @@ def view_user_ads(request):
     else:
         return redirect(admin_login)
     
+def view_fetured_ads(request):
+    if request.user.is_authenticated:
+        user_ads = []
+        premiumusers = []
+        premiums = PremiumMember.objects.all()
+        for x in premiums:
+            premiumusers.append(x.premium_user_id)
+        for x in premiumusers:
+            premium_ads = UserAd.objects.filter(user_id = x)
+            for y in premium_ads:
+                user_ads.append(y)
+            
+        exist = True
+        if len(user_ads) == 0:
+            exist = False
+        context = {
+            'user_ads':user_ads,
+            'exist':exist
+        }
+        return render(request, 'admin/view_fetured_ads.html',context)
+    else:
+        return redirect(admin_login)    
+
+
 def confirm_ad(request,id):
     if request.user.is_authenticated:
         ad = UserAd.objects.get(id=id)

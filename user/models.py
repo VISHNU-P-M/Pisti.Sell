@@ -78,3 +78,6 @@ class Follow(models.Model):
     follower = models.ForeignKey(CustomUser, on_delete = models.CASCADE,related_name='%(class)s_requests_follower')
     following = models.ForeignKey(CustomUser, on_delete = models.CASCADE,related_name='%(class)s_requests_following')
     
+class PremiumMember(models.Model):
+    premium_user = models.ForeignKey(CustomUser, on_delete = models.CASCADE)
+    expiry_date = models.DateField() 

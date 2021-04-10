@@ -18,7 +18,9 @@ urlpatterns = [
     path('add-brands/', views.add_brands, name = 'add_brands'),
     path('delete-brand/<int:id>', views.delete_brand, name = 'delete_brand'),
     path('user-ads/', views.view_user_ads, name = 'view_user_ads'),
+    path('fetured-ads/', views.view_fetured_ads, name = 'view_fetured_ads'),
     path('confirm-ad/<int:id>', views.confirm_ad, name = 'confirm_ad'),
     path('reject-ad/<int:id>', views.reject_ad, name = 'reject_ad'),
     path('user-reprots/', views.user_reports, name = 'user_reprots'),
+    path('premium-users/', views.premium_users, name = 'premium_users'),
 ]

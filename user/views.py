@@ -197,7 +197,21 @@ def user_home(request):
             print(geodesic(user_location,ad_location).km)
             if geodesic(user_location,ad_location).km <100:
                 all_ads_id.append(ad.id)
-                
+        
+        fetured_ads = []
+        premium = PremiumMember.objects.all()
+        premium_members = []
+        for x in premium:
+            premium_members.append(x.premium_user_id)
+        for x in premium_members:
+            premium_ads = UserAd.objects.filter(user_id = x,status='confirmed')  
+            for y in premium_ads:
+                fetured_ads.append(y) 
+        
+        print(len(fetured_ads),'len')  
+        
+        
+        
                 
         wish_list = []
         Wishes = WishList.objects.filter(user=request.user)
@@ -208,6 +222,7 @@ def user_home(request):
             'all_ads':all_ads,
             'ads_id':all_ads_id,
             'wish_list':wish_list,
+            'fetured_ads':fetured_ads
         }
         return render(request,'user/user_home.html', context)
     else:
@@ -391,7 +406,62 @@ def sell_product(request):
             del request.session['longitude']
             today = date.today()
             expiry = today + timedelta(days=14)
-            if UserAd.objects.filter(user=request.user,expiry_date__gt=today).count()>=2:
+            if PremiumMember.objects.filter(premium_user=request.user,expiry_date__gte = date.today()).exists():
+                if UserAd.objects.filter(user=request.user,expiry_date__gt=today).count()>=5:
+                    return JsonResponse('false', safe=False)
+                else:
+                    user_ad = UserAd.objects.create(user=request.user,brand_id=brand,year=year,km_driven=km,title=title,description=description,
+                                                price=price,date=today,expiry_date=expiry,image1=imageurl1,image2=imageurl2,image3=imageurl3,
+                                                location_latitude=latitude,location_longitude=longitude)
+                    # importing logo
+                    logo = cv2.imread('static/images/Logo.png')
+                    logo_height, logo_width, _ = logo.shape
+                        
+                    #set first image logo
+                    image1 = cv2.imread('static/'+user_ad.img1)
+                    image1_height, image1_width, _ = image1.shape
+                    # print('height and width',image_height,image_width)
+                    top1_y = image1_height - logo_height
+                    left1_x = image1_width - logo_width
+                    # print(top_y,left_x)
+                    roi1 = image1[top1_y:image1_height,left1_x:image1_width] 
+                    result1 = cv2.addWeighted(roi1, 1, logo, 0.5, 0)
+                    image1[top1_y:image1_height,left1_x:image1_width] = result1
+                    # cv2.imshow('image1', image1)
+                    # cv2.waitKey(0)
+                    cv2.imwrite('static/'+user_ad.img1,image1)
+                    
+                    #set second image logo
+                    image2 = cv2.imread('static/'+user_ad.img2)
+                    image2_height, image2_width, _ = image2.shape
+                    # print('height and width',image_height,image_width)
+                    top2_y = image2_height - logo_height
+                    left2_x = image2_width - logo_width
+                    # print(top_y,left_x)
+                    roi2 = image2[top2_y:image2_height,left2_x:image2_width] 
+                    result2 = cv2.addWeighted(roi2, 1, logo, 0.5, 0)
+                    image2[top2_y:image2_height,left2_x:image2_width] = result2
+                    # cv2.imshow('image1', image1)
+                    # cv2.waitKey(0)
+                    cv2.imwrite('static/'+user_ad.img2,image2)
+                    
+                    #set third image logo
+                    image3 = cv2.imread('static/'+user_ad.img3)
+                    image3_height, image3_width, _ = image3.shape
+                    # print('height and width',image_height,image_width)
+                    top3_y = image3_height - logo_height
+                    left3_x = image3_width - logo_width
+                    # print(top_y,left_x)
+                    roi3 = image3[top3_y:image3_height,left3_x:image3_width] 
+                    result3 = cv2.addWeighted(roi3, 1, logo, 0.5, 0)
+                    image3[top3_y:image3_height,left3_x:image3_width] = result3
+                    # cv2.imshow('image1', image1)
+                    # cv2.waitKey(0)
+                    cv2.imwrite('static/'+user_ad.img3,image3)
+                    
+                    return JsonResponse('true', safe=False)
+                
+            elif UserAd.objects.filter(user=request.user,expiry_date__gt=today).count()>=2:
                 return JsonResponse('false', safe=False)
             else:
                 user_ad = UserAd.objects.create(user=request.user,brand_id=brand,year=year,km_driven=km,title=title,description=description,
@@ -872,3 +942,35 @@ def spec_filter(request):
     else:
         return redirect(user_login)
     
+@csrf_exempt
+def get_premium(request):
+    if request.user.is_authenticated:
+        user = request.user
+        days = 0
+        if request.method == 'POST':
+            expiry_date = date.today() + timedelta(days=30)
+            PremiumMember.objects.create(premium_user=user,expiry_date=expiry_date)
+            
+            # for extending the expiry dates of his ads
+            ads = UserAd.objects.filter(user=user, expiry_date__gte = date.today())
+            for ad in ads:
+                ad.expiry_date += timedelta(days=30)
+                ad.save() 
+                
+            return JsonResponse('true',safe=False)
+        else:
+            if PremiumMember.objects.filter(premium_user = user,expiry_date__gte = date.today()).exists():
+                is_premium_member = True
+                membership = PremiumMember.objects.filter(premium_user = user,expiry_date__gte = date.today()).first()
+                d0 = date.today()
+                d1 = membership.expiry_date
+                days = d1 - d0
+            else:
+                is_premium_member = False
+            context = {
+                'is_premium_member':is_premium_member,
+                'days':days
+            }
+            return render(request, 'user/get_premium.html',context)
+    else:
+        return redirect(user_login)

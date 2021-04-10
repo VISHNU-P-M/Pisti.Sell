@@ -1,0 +1,128 @@
+{% extends 'user/base.html' %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6" style="padding-top:4em;">
+            <h1>Get Premium Membership</h1><br>
+            <div style="padding-bottom: 4em;">
+                <ul>
+                    <li>
+                        <img src="https://static.thenounproject.com/png/971055-200.png" style="width: 1em;" alt="">&nbsp;<label for="">Ads will Fetured </label><br>
+                        <img src="https://static.thenounproject.com/png/971055-200.png" style="width: 1em;" alt="">&nbsp;<label for="">Max count of Ad posting will be 5</label><br>
+                        <img src="https://static.thenounproject.com/png/971055-200.png" style="width: 1em;" alt="">&nbsp;<label for="">Expiry date of existing Ads will extends upto 30 days</label><br>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-6" style="padding-bottom : 4em;padding-top : 4em; display: flex; place-content: center;">
+            {% if is_premium_member == True %}
+                <h2>Explore your Premium Membership for next {{days.days}} days </h2>
+            {% else %}
+                <form action="">
+                    <h3>1 Month Membership</h3>
+                    <h4>₹ 500.00/-</h4><br>
+                    <button class="btn btn-warning" type="button" onclick="razorpay()" style="width: 16em;"><img src="https://avatars.githubusercontent.com/u/7713209?s=280&v=4" style="width: 2em;" alt=""> RazorPay</button><br>
+                    <div id="paypal-button-container"></div>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script src="https://www.paypal.com/sdk/js?client-id=AclpiE7CtYAA_QWXJ-tiAlUa1IqfJXKLlZdIb4lUzwCANEIA30hIlvj4QPmil7Rb_ocofaoaWX3jzwWs&currency=USD&disable-funding=card"></script>
+
+    <script>
+        // Render the PayPal button into #paypal-button-container
+        paypal.Buttons({
+
+            style: {
+                color:  'blue',
+                shape:  'rect',
+                label:  'pay',
+                height: 40
+            },
+
+            // Set up the transaction
+            createOrder: function(data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: '7.14'
+                        }
+                    }]
+                });
+            },
+
+            // Finalize the transaction
+            onApprove: function(data, actions) {
+                return actions.order.capture().then(function(details) {
+                    // Show a success message to the buyer
+                    alert('Transaction completed by ' + details.payer.name.given_name + '!');
+                    $.ajax({
+                        url:'/get-premium/',
+                        method:'POST',
+                        success:function(data){
+                            if(data == 'true'){
+                                window.location.replace('/get-premium/')
+                            }
+                            else{
+                                alert('something wrong!')
+                            }
+                        }
+                    })
+                });
+            }
+
+
+        }).render('#paypal-button-container');
+    </script>
+
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    function razorpay(){
+        var payment_status = 'razorpay'
+        var options = {
+            "key": "rzp_test_0CJlFTJsvWeMla", // Enter the Key ID generated from the Dashboard
+            "amount": '50000', // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+            "currency": "INR",
+            "name": "Pisti Sell",
+            "description": "Get Premium Membership",
+            "image": "https://image.flaticon.com/icons/png/512/575/575780.png",
+            "order_id": "{{payment.id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+            "handler": function (response) {
+                    alert('Transaction completed..!!!');
+                    $.ajax({
+                        url:'/get-premium/',
+                        method:'POST',
+                        success:function(data){
+                            if(data == 'true'){
+                                window.location.replace('/get-premium/')
+                            }
+                            else{
+                                alert('something wrong!')
+                            }
+                        }
+                    })
+                    },
+                    "prefill": {
+                        "name": "{{request.user.name}}",
+                        "email": "{{request.user.email}}",
+                        "contact": "{{request.user.phone}}"
+                    },
+                    "notes": {
+                        "address": "Razorpay Corporate Office"
+                    },
+                    "theme": {
+                        "color": "#F37254"
+                    }
+                };
+                var rzp1 = new Razorpay(options);
+                
+                    rzp1.open();
+            }
+
+
+    </script>
+{% endblock %}
