@@ -81,3 +81,7 @@ class Follow(models.Model):
 class PremiumMember(models.Model):
     premium_user = models.ForeignKey(CustomUser, on_delete = models.CASCADE)
     expiry_date = models.DateField() 
+    
+class FeturedAd(models.Model):
+    ad = models.ForeignKey(UserAd, on_delete = models.CASCADE)
+    expiry_date = models.DateField()

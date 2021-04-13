@@ -314,6 +314,7 @@
         var x = document.getElementById("category");
         var option = document.createElement("option");
         option.text = "Select brand";
+        option.value = '0';
         select.add(option);
         {% for brand in brands %}
             if('{{brand.category.id}}' == id){

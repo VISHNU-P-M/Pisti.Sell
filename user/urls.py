@@ -23,5 +23,6 @@ urlpatterns = [
     path('spec-filter/', views.spec_filter, name = 'spec_filter'),
     path('search-filter/', views.search_filter, name = 'search_filter'),
     path('follow-user/<int:id>', views.follow_user, name = 'follow_user'),
-    path('get-premium/', views.get_premium, name = 'get_premium')
+    path('get-premium/', views.get_premium, name = 'get_premium'),
+    path('boost-ad/<int:id>', views.boost_ad, name = 'boost_ad'),
 ]

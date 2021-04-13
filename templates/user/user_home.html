@@ -37,7 +37,7 @@
 		{% if ad.active == True%}
 		{% if ad.id in ads_id %}
 		<div class="col-sm-4 item-grid simpleCart_shelfItem">
-			<div class="grid-pro" style="height: 300px;">
+			<div class="grid-pro" style="height: 300px; margin-top:2em">
 				<div  class=" grid-product " >
 					<figure>		
 						<a href="/view-ad/{{ad.id}}">
@@ -67,7 +67,7 @@
 </div>
 <!----->
 <!-- show price in fetured products -->
-{% for ad in all_ads %}
+{% for ad in fetured_ads %}
 	<script>
 		var number = parseFloat('{{ad.price}}');
 		var result="₹ " + number.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '/-';

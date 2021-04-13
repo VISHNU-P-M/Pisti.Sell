@@ -198,7 +198,10 @@ def user_home(request):
             if geodesic(user_location,ad_location).km <100:
                 all_ads_id.append(ad.id)
         
-        fetured_ads = []
+        fetured_ads_list = []
+        fetured_ads = FeturedAd.objects.filter(expiry_date__gte = date.today())
+        for x in fetured_ads:
+            fetured_ads_list.append(x.ad)
         premium = PremiumMember.objects.all()
         premium_members = []
         for x in premium:
@@ -206,13 +209,8 @@ def user_home(request):
         for x in premium_members:
             premium_ads = UserAd.objects.filter(user_id = x,status='confirmed')  
             for y in premium_ads:
-                fetured_ads.append(y) 
-        
-        print(len(fetured_ads),'len')  
-        
-        
-        
-                
+                fetured_ads_list.append(y) 
+             
         wish_list = []
         Wishes = WishList.objects.filter(user=request.user)
         for wish in Wishes:
@@ -222,7 +220,7 @@ def user_home(request):
             'all_ads':all_ads,
             'ads_id':all_ads_id,
             'wish_list':wish_list,
-            'fetured_ads':fetured_ads
+            'fetured_ads':fetured_ads_list
         }
         return render(request,'user/user_home.html', context)
     else:
@@ -546,37 +544,58 @@ def sell_product(request):
     
     
 @csrf_exempt
-
 def edit_ad(request, id):
     if request.user.is_authenticated:
         if request.method == 'POST':
-            brand = request.POST.get('brand')
-            year = request.POST.get('year')
-            km = request.POST.get('km')
-            title = request.POST.get('title')
-            description = request.POST.get('description')
-            price = request.POST.get('price')
-            latitude = request.session['latitude']
-            longitude = request.session['longitude']
+            title = request.POST['title']
+            brand = request.POST['brand']
+            year = request.POST['year']
+            km = request.POST['km']
+            description = request.POST['description']
+            price = request.POST['price']
+            district = request.POST['new_district']
+            if district == '0':
+                print('district',district)
+                latitude = request.session['latitude']
+                longitude = request.session['longitude']
+            else:
+                print('district',district)
+                geolocator = Nominatim(user_agent="user")
+                location = geolocator.geocode(district)
+                latitude,longitude = location.latitude, location.longitude
             del request.session['latitude']
             del request.session['longitude']
             
             ad = UserAd.objects.get(id=id)
             
-            if 'img1' not in request.POST:
-                img1 = request.FILES.get('img1')
+
+            img1 = request.POST['img1']
+            # converting to file
+            if img1 != '':
+                format, imgstr = img1.split(';base64,')
+                ext1 = format.split('/')[-1]
+                imageurl1 = ContentFile(base64.b64decode(imgstr), name=title + '1.' + ext1)
             else:
-                img1 = ad.image1
-            if 'img2' not in request.POST:
-                img2 = request.FILES.get('img2')
+                imageurl1 = ad.image1
+            
+            img2 = request.POST['img2']
+            # converting to file
+            if img2 != '':
+                format, imgstr = img2.split(';base64,')
+                ext2 = format.split('/')[-1]
+                imageurl2 = ContentFile(base64.b64decode(imgstr), name=title + '2.' + ext2)
             else:
-                img2 = ad.image2
-            if 'img3' not in request.POST:
-                img3 = request.FILES.get('img3')
+                imageurl2 = ad.image2
+            
+            img3 = request.POST['img3']
+            # converting to file
+            if img3 != '':
+                format, imgstr = img3.split(';base64,')
+                ext3 = format.split('/')[-1]
+                imageurl3 = ContentFile(base64.b64decode(imgstr), name=title + '3.' + ext3)
             else:
-                img3 = ad.image3
+                imageurl3 = ad.image3
                 
-            print(brand,year,km,title,description,price,latitude,longitude,img1,img2,img3)
             ad.brand_id = brand
             ad.year = year
             ad.km_driven = km
@@ -585,15 +604,15 @@ def edit_ad(request, id):
             ad.price = price
             ad.location_latitude = latitude
             ad.location_longitude = longitude
-            ad.image1 = img1
-            ad.image2 = img2
-            ad.image3 = img3
+            ad.image1 = imageurl1
+            ad.image2 = imageurl2
+            ad.image3 = imageurl3
             ad.save()
             # importing logo
             logo = cv2.imread('static/images/Logo.png')
             logo_height, logo_width, _ = logo.shape
             
-            if 'img1' not in request.POST:
+            if img1 != '':
                 #set first image logo
                 image1 = cv2.imread('static/'+ad.img1)
                 image1_height, image1_width, _ = image1.shape
@@ -604,7 +623,7 @@ def edit_ad(request, id):
                 image1[top1_y:image1_height,left1_x:image1_width] = result1
                 cv2.imwrite('static/'+ad.img1,image1)
                 
-            if 'img2' not in request.POST:
+            if img2 != '':
                 image2 = cv2.imread('static/'+ad.img2)
                 image2_height, image2_width, _ = image2.shape
                 top2_y = image2_height - logo_height
@@ -614,7 +633,7 @@ def edit_ad(request, id):
                 image2[top2_y:image2_height,left2_x:image2_width] = result2
                 cv2.imwrite('static/'+ad.img2,image2)
                 
-            if 'img3' not in request.POST:  
+            if img3 != '': 
                 image3 = cv2.imread('static/'+ad.img3)
                 image3_height, image3_width, _ = image3.shape
                 top3_y = image3_height - logo_height
@@ -624,7 +643,7 @@ def edit_ad(request, id):
                 image3[top3_y:image3_height,left3_x:image3_width] = result3
                 cv2.imwrite('static/'+ad.img3,image3)
                 
-            return JsonResponse('true', safe=False)
+            return JsonResponse('true', safe=False) 
         else:
             ad = UserAd.objects.get(id=id)
             categories = Categories.objects.all()
@@ -632,6 +651,13 @@ def edit_ad(request, id):
             
             request.session['latitude'] = ad.location_latitude
             request.session['longitude'] = ad.location_longitude
+            
+            geolocator = Nominatim(user_agent="user")
+            location = geolocator.reverse(ad.location_latitude+","+ad.location_longitude)
+            
+            # to get the district
+            address = location.raw['address']
+            district = address.get('state_district', '')
             point = ([ad.location_latitude,ad.location_longitude])
             
             # folium map
@@ -643,6 +669,7 @@ def edit_ad(request, id):
             
             context = {
                 'ad': ad, 
+                'ad_district':district,
                 'map':folium_map,
                 'categories':categories,
                 'brands':brands,
@@ -656,26 +683,41 @@ def view_ad(request,id):
     if request.user.is_authenticated:
         ad = UserAd.objects.get(id=id)
         point = ([ad.location_latitude,ad.location_longitude])
-        folium_map_ = folium.Map(width=300, height=200, location=point, zoom_start = 15) 
+        folium_map_ = folium.Map(width=300, height=200, location=point, zoom_start = 10) 
         folium.Marker([ad.location_latitude,ad.location_longitude], icon = folium.Icon(color = 'red')).add_to(folium_map_)
         folium_map = folium_map_._repr_html_()
         wish_list =[]
         wishlist = WishList.objects.filter(user=request.user)
         for wish in wishlist:
             wish_list.append(wish.ad.id)
-        if ad.user == request.user:
-            context = {
-                'own': True,
-                'ad' : ad,
-                'wish_list':wish_list,
-                'map':folium_map
-            }
+        
+        fetured_ad = FeturedAd.objects.filter(ad = ad,expiry_date__gte = date.today())    
+        fetured_ad_list = []
+        for x in fetured_ad:
+            fetured_ad_list.append(x.ad.id)
+        if ad.id in fetured_ad_list:
+            ad_boosted = True
+            fetured = FeturedAd.objects.filter(ad = ad,expiry_date__gte = date.today()).first()
+            d0 = date.today()
+            d1 = fetured.expiry_date
+            days = d1 - d0
         else:
-            context = {
-                'own': False,
-                'ad':ad,
+            ad_boosted = False
+            days = 0 
+            
+        
+        if ad.user == request.user:
+            own = True
+        else:
+            own = False
+        context = {
+                'own': own,
+                'ad' : ad, 
                 'wish_list':wish_list,
-                'map':folium_map
+                'map':folium_map,
+                'fetured_ads':fetured_ad_list,
+                'ad_boosted':ad_boosted,
+                'days':days
             }
         return render(request,'user/view_ad.html',context)
     else:
@@ -813,7 +855,13 @@ def location_filter(request):
             wish_list.append(wish.ad.id)
         categories = Categories.objects.all()
         brands = Brands.objects.all()
+        
+        if len(filtered_ads) == 0:
+            exist = False
+        else:
+            exist = True
         context = {
+            'exist':exist,
             'district':district,
             'ads':filtered_ads,
             'wish_list':wish_list,
@@ -974,3 +1022,12 @@ def get_premium(request):
             return render(request, 'user/get_premium.html',context)
     else:
         return redirect(user_login)
+
+def boost_ad(request,id):
+    if request.user.is_authenticated:
+        expiry = date.today() + timedelta(days=30)
+        FeturedAd.objects.create(ad_id = id,expiry_date = expiry)
+        return JsonResponse('true', safe = False)
+    else:
+        return redirect(user_login)
+        

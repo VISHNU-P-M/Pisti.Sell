@@ -270,7 +270,10 @@ def view_user_ads(request):
     
 def view_fetured_ads(request):
     if request.user.is_authenticated:
-        user_ads = []
+        fetured_ads_list = []
+        fetured_ads = FeturedAd.objects.filter(expiry_date__gte = date.today())
+        for x in fetured_ads:
+            fetured_ads_list.append(x.ad)
         premiumusers = []
         premiums = PremiumMember.objects.all()
         for x in premiums:
@@ -278,13 +281,13 @@ def view_fetured_ads(request):
         for x in premiumusers:
             premium_ads = UserAd.objects.filter(user_id = x)
             for y in premium_ads:
-                user_ads.append(y)
+                fetured_ads_list.append(y)
             
         exist = True
-        if len(user_ads) == 0:
+        if len(fetured_ads_list) == 0:
             exist = False
         context = {
-            'user_ads':user_ads,
+            'user_ads':fetured_ads_list,
             'exist':exist
         }
         return render(request, 'admin/view_fetured_ads.html',context)

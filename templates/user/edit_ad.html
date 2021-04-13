@@ -1,50 +1,131 @@
 {% extends 'user/base.html' %}
 {% load static %}
 {% block link %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.0.0/cropper.min.css" integrity="sha256-FeDcPwV8ZgxG1MU5L/b2i8clOmqZJKK0eyDHqrQaXxY=" crossorigin="anonymous" />
 {% endblock %}
 {% block content %}
-<div class="container" style=" background-color:  #F5F5F5; width: 500px;">
+<div class="container" style=" background-color:  #F5F5F5; overflow-x: hidden;">
     <u><h2 style="display: flex;place-content: cente; margin-top:2em">Add Product</h2></u>
     <div style="padding: 2em;display: contents;place-content: center;" >
         <form action="" id="sell">
-            <p class="title-register-main-connection-div" style="margin-top: 2em;">CATEGORY</p>
-            <select  id="category"  style="height: 2em; width: 15em;" onchange="show_brands(this)">
-                <option selected>Choose...</option>
-                {% for category in categories %}
-                <option value="{{category.id}}" {% if ad.brand.category.category == category.category %} selected {% endif %}> {{category.category}} </option>
-                {% endfor %}
-            </select>
-
-            <p class="title-register-main-connection-div" style="margin-top: 2em;">Brand</p>
-            <select  id="brand" style="height: 2em; width: 15em;" >
-                <option selected value="0">select brand</option>
-            </select>
-
-            <p class="title-register-main-connection-div" style="margin-top: 2em;">Year</p>
-            <input type="number" id="year" name="year" style="height: 2em; width: 15em;" value="{{ad.year}}">
-
-            <p class="title-register-main-connection-div" style="margin-top: 2em;">KM driven</p>
-            <input type="number" id="km" name="km" placeholder="KM driven" style="height: 2em; width: 15em;" value="{{ad.km_driven}}">
-
-            <p class="title-register-main-connection-div" style="margin-top: 2em;">Ad Title</p>
-            <input type="text" id="title" name="title" placeholder="Leave a title" style="height: 2em; width: 15em;" value="{{ad.title}}">
-
-            <p class="title-register-main-connection-div" style="margin-top: 2em;">Ad Description</p>
-            <textarea name="description" id="description" cols="15" rows="10" style="width: 15em;">{{ad.description}}</textarea>
-
-            <p class="title-register-main-connection-div" style="margin-top: 2em;">Set Price</p>
-            <input type="number" id="price" name="price" value="{{ad.price}}" placeholder="Set your price" style="height: 2em; width: 15em;">
-
-            <p class="title-register-main-connection-div" style="margin-top: 2em;">Ad Location</p>
-            <div style=" width: 400px; height: 250px;">
-                {{map|safe}}
+            <div class="row">
+                <div class="col-md-6 ">
+                    <p class="title-register-main-connection-div" style="margin-top: 2em;">CATEGORY</p>
+                    <select  id="category" onchange="show_brands(this)" style="height: 2em; width: 15em;">
+                        <option selected>Choose...</option>
+                        {% for category in categories %}
+                        <option value="{{category.id}}" {% if category.id == ad.brand.category.id %} selected {% endif %} > {{category.category}} </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6 ">
+                    <p class="title-register-main-connection-div" style="margin-top: 2em;">BRAND</p>
+                    <select  id="brand" style="height: 2em; width: 15em;">
+                        <option selected value="0">select brand</option>
+                    </select>
+                </div>
             </div>
-            <p class="title-register-main-connection-div" style="margin-top: 2em;">Add images</p>
-            <input type="file" name="img1" id="img1" style="margin-top: 2em;" onchange="document.getElementById('image1').src = window.URL.createObjectURL(this.files[0])"><img src="{{ad.img1}}" alt="" id="image1" width="400" height="200">
-            <input type="file" name="img2" id="img2" style="margin-top: 2em;" onchange="document.getElementById('image2').src = window.URL.createObjectURL(this.files[0])"><img src="{{ad.img2}}" alt="" id="image2" width="400" height="200">
-            <input type="file" name="img3" id="img3" style="margin-top: 2em;" onchange="document.getElementById('image3').src = window.URL.createObjectURL(this.files[0])"><img src="{{ad.img3}}" alt="" id="image3" width="400" height="200"><br>
-            <span id="span" style="color: red;"></span><br>
-            <button id="btn" type="button" class="btn btn-primary" style="width: 20em; height: 4em;"><label for="" style="font-size: 2em;">Post Ad</label></button>
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="title-register-main-connection-div" style="margin-top: 2em;">Year</p>
+                    <input type="number" id="year" name="year" style="height: 2em; width: 15em;" value="{{ad.year}}">
+                </div>
+                <div class="col-md-6">
+                    <p class="title-register-main-connection-div" style="margin-top: 2em;">KM driven</p>
+                    <input type="number" id="km" name="km" placeholder="KM driven" style="height: 2em; width: 15em;" value="{{ad.km_driven}}">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="title-register-main-connection-div" style="margin-top: 2em;">Ad Title</p>
+                    <input type="text" id="title" name="title" placeholder="Leave a title" style="height: 2em; width: 15em;" value="{{ad.title}}">
+                    <p class="title-register-main-connection-div" style="margin-top: 2em;">Set Price</p>
+                    <input type="number" id="price" name="price" placeholder="Set your price" style="height: 2em; width: 15em;" value="{{ad.price}}">    
+                </div>
+                <div class="col-md-6">
+                    <p class="title-register-main-connection-div" style="margin-top: 2em;">Ad Description</p>
+                    <textarea name="description" id="description" cols="15" rows="10" style="width: 15em;">{{ad.description}}</textarea>
+                </div>
+            </div>
+            
+            <div class="row p-3">
+                <h2 class="mx-auto m-3" style="    margin: 2em; display: grid; place-content: center;">Ad Location</h2>
+                <div class="col-md-6">
+                    <h5>Your Ad's location</h5><br>
+                    <div style="width: 15em;">
+                        {{map|safe}}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h5>Or select another</h5><br>
+                    <select class="form-select select" id="location" aria-label="Select District" style="height: 2em; width: 15em;">
+                        <option {% if 'Thiruvananthapuram' in ad_district  %} value="0" selected {% else %} value="Thiruvananthapuram" {% endif %} >Thiruvananthapuram</option>
+                        <option {% if 'Kollam'  in ad_district %} value="0"  selected {% else %} value="Kollam"  {% endif %}>Kollam</option>
+                        <option {% if 'Alappuzha' in ad_district %} value="0" selected {% else %} value="Alappuzha" {% endif %}>Alappuzha</option>
+                        <option {% if 'Pathanamthitta' in ad_district %} value="0" selected {% else %} value="Pathanamthitta" {% endif %}>Pathanamthitta</option>
+                        <option {% if 'Idukki' in ad_district %} value="0" selected {% else %} value="Idukki"  {% endif %}>Idukki</option>
+                        <option {% if 'Kottayam' in ad_district %} value="0" selected {% else %} value="Kottayam"  {% endif %}>Kottayam</option>
+                        <option {% if 'Ernakulam' in ad_district %} value="0" selected {% else %} value="Ernakulam"  {% endif %}>Ernakulam</option>
+                        <option {% if 'Thrissur' in ad_district %} value="0" selected {% else %} value="Thrissur"  {% endif %}>Thrissur</option>
+                        <option {% if 'Palakkad' in ad_district %} value="0" selected {% else %} value="Palakkad"  {% endif %} >Palakkad</option>
+                        <option {% if 'Malappuram' in ad_district %} value="0" selected {% else %} value="Malappuram"  {% endif %}>Malappuram</option>
+                        <option {% if 'Kozhikode' in ad_district %} value="0" selected {% else %} value="Kozhikode"  {% endif %}>Kozhikode</option>
+                        <option {% if 'Wayanad' in ad_district %} value="0" selected {% else %} value="Wayanad"  {% endif %}>Wayanad</option>
+                        <option {% if 'Kannur' in ad_district %} value="0" selected {% else %} value="Kannur"  {% endif %}>Kannur</option>
+                        <option {% if 'Kasaragod' in ad_district %} value="0" selected {% else %} value="Kasaragod"  {% endif %}>Kasaragod</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <p class="title-register-main-connection-div" style="margin-top: 2em;">Add images</p>
+                <div>
+                    
+                        <p class="title-register-main-connection-div" style="margin-top: 2em;">
+                            <div class="col-md-6">
+                                <h4>image 1</h4>
+                                <div class="crop" id="crop1">
+                                    <input type="file" name="image1" id="image1" onchange="readURL1(this)">
+                                    <button type="button" id="crop_button1">Crop</button>
+                                    <img src="" alt="" id="pic1" style="visibility: hidden;width: 4em;">
+                                </div>
+                                <img src="{{ad.img1}}" alt="" id="pic21" style="width: 15em;">
+                                <textarea name="imageurl1" id="imageurl1" cols="30" rows="10" hidden></textarea>
+                            </div>
+                        </p>
+                        <p class="title-register-main-connection-div" style="margin-top: 2em;">
+                            <div class="col-md-6">
+                                <h4>image 2</h4>
+                                <div class="crop" id="crop2">
+                                    <input type="file" name="image2" id="image2" onchange="readURL2(this)">
+                                    <button type="button" id="crop_button2">Crop</button>
+                                    <img src="" alt="" id="pic2" style="visibility: hidden;width: 4em;">
+                                </div>
+                                <img src="{{ad.img2}}" alt="" id="pic22" style="width: 15em;">
+                                <textarea name="imageurl2" id="imageurl2" cols="30" rows="10" hidden></textarea>
+                            </div>
+                        </p>
+                        <p class="title-register-main-connection-div" style="margin-top: 2em;">
+                            <div class="col-md-6">
+                                <h4>image 3</h4>
+                                <div class="crop" id="crop3">
+                                    <input type="file" name="image3" id="image3" onchange="readURL3(this)">
+                                    <button type="button" id="crop_button3">Crop</button>
+                                    <img src="" alt="" id="pic3" style="visibility: hidden;width: 4em;">
+                                </div>
+                                <img src="{{ad.img3}}" alt="" id="pic23" style="width: 15em;">
+                                <textarea name="imageurl3" id="imageurl3" cols="30" rows="10" hidden></textarea>
+                            </div>
+                        </p>
+                </div>
+            </div>
+            <div class="row" style="display: flex; place-content: center;">
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                    <span id="span" style="color: red;"></span><br>
+                    <button id="btn" type="button" class="btn btn-primary" style=" margin: 2em; width: 15em; height: 3em;"><label for="" style="font-size: 25px;">Post Ad</label></button>
+                </div>
+                <div class="col-md-4"></div>
+            </div>
         </form>
         <div hidden>
             This product includes GeoLite2 data created by MaxMind, available from
@@ -53,7 +134,112 @@
     </div>
 </div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.0.0/cropper.min.js"></script>
+    
+    <script>
+        function readURL1(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                $('#pic1').attr('src', e.target.result)
+                $('#pic1').css({'visibility': 'visible'})
+                };
+                reader.readAsDataURL(input.files[0]);
+                setTimeout(initCropper1, 1000);
+            }
+            }
+            function initCropper1(){
+            var image = document.getElementById('pic1');
+            var cropper = new Cropper(image, {
+                aspectRatio: 16 / 9,
+                crop: function(e) {
+                console.log(e.detail.x);
+                console.log(e.detail.y);
+                }
+            });
+            
+            document.getElementById('crop_button1').addEventListener('click', function(){
+                var imgurl1 =  cropper.getCroppedCanvas().toDataURL();
+                var img1 = document.createElement("img");
+                img1.src = imgurl1;
+                img1.width="300";
+                img1.height='150';
+                document.getElementById('crop1').style.display = 'none'
+                document.getElementById("pic21").replaceWith(img1)
+                $('#imageurl1').val(imgurl1)
+            })
+        }
+    </script>
+    <script>
+        function readURL2(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                $('#pic2').attr('src', e.target.result)
+                $('#pic2').css({'visibility': 'visible'})
+                };
+                reader.readAsDataURL(input.files[0]);
+                setTimeout(initCropper2, 1000);
+            }
+            }
+            function initCropper2(){
+            var image = document.getElementById('pic2');
+            var cropper = new Cropper(image, {
+                aspectRatio: 16 / 9,
+                crop: function(e) {
+                console.log(e.detail.x);
+                console.log(e.detail.y);
+                }
+            });
+            
+            document.getElementById('crop_button2').addEventListener('click', function(){
+                var imgurl2 =  cropper.getCroppedCanvas().toDataURL();
+                var img2 = document.createElement("img");
+                img2.src = imgurl2;
+                img2.width="300";
+                img2.height='150';
+                document.getElementById('crop2').style.display = 'none'
+                document.getElementById("pic22").replaceWith(img2)
+                $('#imageurl2').val(imgurl2)
+            })
+        }
+    </script>
+    <script>
+        function readURL3(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                $('#pic3').attr('src', e.target.result)
+                $('#pic3').css({'visibility': 'visible'})
+                };
+                reader.readAsDataURL(input.files[0]);
+                setTimeout(initCropper3, 1000);
+            }
+            }
+            function initCropper3(){
+            var image = document.getElementById('pic3');
+            var cropper = new Cropper(image, {
+                aspectRatio: 16 / 9,
+                crop: function(e) {
+                console.log(e.detail.x);
+                console.log(e.detail.y);
+                }
+            });
+            
+            document.getElementById('crop_button3').addEventListener('click', function(){
+                var imgurl3 =  cropper.getCroppedCanvas().toDataURL();
+                var img3 = document.createElement("img");
+                img3.src = imgurl3;
+                img3.width="300";
+                img3.height='150';
+                document.getElementById('crop3').style.display = 'none'
+                document.getElementById("pic23").replaceWith(img3)
+                $('#imageurl3').val(imgurl3)
+            })
+        }
+    </script>
 <script>
     $('#btn').click(function(){
         var brand = $('#brand').val()
@@ -62,11 +248,25 @@
         var title = $('#title').val()
         var description = $('#description').val()
         var price = $('#price').val()
-        var image1 = $('#img1').val()
-        var image2 = $('#img2').val()
-        var image3 = $('#img3').val()
+        var image1 = $('#imageurl1').val()
+        var image2 = $('#imageurl2').val()
+        var image3 = $('#imageurl3').val()
+        var district = $('#location').val()
+        var data = {
+            'csrfmiddlewaretoken':'{{csrf_token}}',
+            'brand':brand,
+            'year':year,
+            'km' : km,
+            'title':title,
+            'description':description,
+            'price':price,
+            'img1':image1,
+            'img2':image2,
+            'img3':image3,
+            'new_district':district
+        }
         if(brand == '0'){
-            $('#span').html('select Brand after choose category')
+            $('#span').html('Select Brand after choose category')
         }else if(year.length != 4 || isNaN(year)){
             $('#span').html('Enter valid year')
         }else if(km.length < 1 || isNaN(km)){
@@ -78,26 +278,11 @@
         }else if(price.length<1 || isNaN(price)){
             $('#span').html('Enter valid Price')
         }else{
-            var form = new FormData(document.getElementById('sell'));
-            var img1 = document.getElementById('img1').files[0];
-            var img2 = document.getElementById('img2').files[0];
-            var img3 = document.getElementById('img3').files[0];
-            form.append('img1',img1)
-            form.append('img2',img2)
-            form.append('img3',img3)
-            form.append('brand',brand)
-            form.append('year',year)
-            form.append('km',km)
-            form.append('title',title)
-            form.append('description',description)
-            form.append('price',price)
             $.ajax({
                 url:'/edit-ad/{{ad.id}}',
                 method:'POST',
-                data:form,
-                cache:false,
-                contentType:false,
-                processData:false,
+                data:data,
+                dataType:'json',
                 success:function(data){
                     if(data=='true'){
                         window.location.replace('/view-ad/{{ad.id}}')
@@ -120,6 +305,7 @@
         }
         var option = document.createElement("option");
         option.text = "Select brand";
+        option.value = '0';
         select.add(option);
         {% for brand in brands %}
             if('{{brand.category.id}}' == category_id){
