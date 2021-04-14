@@ -25,4 +25,6 @@ urlpatterns = [
     path('follow-user/<int:id>', views.follow_user, name = 'follow_user'),
     path('get-premium/', views.get_premium, name = 'get_premium'),
     path('boost-ad/<int:id>', views.boost_ad, name = 'boost_ad'),
+    path('chat/', views.chat, name = 'chat'),
+    path('chat/<str:room_id>/', views.chat_room, name = 'chat_room')
 ]

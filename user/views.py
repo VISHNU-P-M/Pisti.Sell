@@ -1030,4 +1030,20 @@ def boost_ad(request,id):
         return JsonResponse('true', safe = False)
     else:
         return redirect(user_login)
+    
+def chat(request):
+    if request.user.is_authenticated:
+        context = {}
+        return render(request, 'user/chat.html',context) 
+    else:
+        return redirect(user_login)
+
+def chat_room(request,room_id):
+    if request.user.is_authenticated:
+        context = {
+            'room_name':room_id
+        }
+        return render(request, 'user/chat_room.html', context)  
+    else:
+        return redirect(user_login)
         

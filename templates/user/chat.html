@@ -1,0 +1,19 @@
+{% extends 'user/base.html' %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 col-sm-4"></div>
+        <div class="col-md-4 col-sm-4 text-white" style="background: linear-gradient(0deg, rgba(34,193,195,1) 17%, rgba(253,187,45,1) 77%);
+        width: 17em;height: 20em;padding: 1em;overflow-y: auto; margin-top:3em; margin-bottom:3em;">
+            <a href="/chat/user1" style="text-decoration: none; color: white;">
+                <div style="background: linear-gradient(90deg, rgb(8, 146, 54) 0%, rgba(9,121,39,1) 18%, rgba(99,255,0,1) 82%);margin: 3px;">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTew2PT1GnUtzFQIJq755hjjHAVIZtQz7Ywng&usqp=CAU" style="width: 2em;margin: 3px;" alt="">
+                    <label for="" style="margin-left: 10px;text-transform: capitalize;"> user1</label>
+                </div>
+            </a>                  
+        </div>
+        <div class="col-md-4 col-sm-4"></div>
+    </div>
+</div>
+{% endblock %}

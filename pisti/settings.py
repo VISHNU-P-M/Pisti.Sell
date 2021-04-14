@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
 ]
 
 
@@ -147,6 +148,14 @@ STATIC_ROOT = os.path.join(BASE_DIR,'assets')
 
 MEDIA_ROOT = os.path.join(BASE_DIR,'static/media/')
 MEDIA_URL = '/media/'
+
+# chat settings
+ASGI_APPLICATION = "pisti.routing.application"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND":"channels.layers.InMemoryChannelLayer"
+    }
+}
 
 
 

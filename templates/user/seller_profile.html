@@ -266,9 +266,9 @@
     <section class="profile_container">
         <div class="profile_img_section">
             {% if seller.propic == '' %}
-                <img class="profile_img-LG" src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg" />
+                <img class="profile_img-LG" style="height: 12em; width: 12em;" src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg" />
             {% else %}
-                <img class="profile_img-LG" src="{{seller.propic}}" />
+                <img class="profile_img-LG" src="{{seller.propic}}" style="height: 12em; width: 12em;" />
             {% endif %} 
             
         </div>
@@ -337,9 +337,9 @@
             <div>
                 {% for ad in ads %}
                 {% if ad.active == True %}
-                <div class="col-md-7 col-md2 animated wow fadeInRight" data-wow-delay=".1s">
+                <div class="col-md-7 col-sm-5 animated wow fadeInRight" data-wow-delay=".1s">
                     <div class="col-sm-4 item-grid simpleCart_shelfItem" >
-                        <div class="grid-pro" style="padding: 0em; width: 12rem; height: 13rem;">
+                        <div class="grid-pro" style="padding: 0em; width: 12rem; height: 13rem;margin: 2em;">
                             <div  class=" grid-product " >
                                 <figure>		
                                     <a href="/view-ad/{{ad.id}}">

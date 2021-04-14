@@ -70,6 +70,9 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 								</form>
 							</li>
 							<li class="active" class="float-left"><a href="/" class="act">Home</a></li>
+              <li>
+                <a href="/chat/"><img src="{% static 'images/chat.svg' %}" alt="" style="width: 2em;    margin-top: -16px;"></a>
+              </li>
 							<li class="float-left">
 								<a href="/sell-product/">
 									<img src="https://media.dojmt.gov/wp-content/uploads/buy-sell-icon.jpg" alt="" style="width: 50px;margin-top: -20px;border-radius: 50%;">
@@ -82,7 +85,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                   {% if user.propic == '' %}
                     <img src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg" alt="" style="width: 50px; margin-top: -3px;border-radius: 50%;margin-left: 1em;" class=" dropdown-toggle" data-toggle="dropdown" >
                   {% else %}
-                    <img src="{{user.propic}}" alt="" style="width: 50px; margin-top: -3px;border-radius: 50%;margin-left: 1em;" class=" dropdown-toggle" data-toggle="dropdown" >
+                    <img src="{{user.propic}}" alt="" style="width: 50px; margin-top: 4px;border-radius: 50%;margin-left: 1em;" class=" dropdown-toggle" data-toggle="dropdown" >
                   {% endif %}
                   <div class="dropdown-menu">
                     <a class="dropdown-item" style="text-decoration: none;" href="/user-profile/"><h4>Your Profile</h4></a><br>
