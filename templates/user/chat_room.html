@@ -1,31 +1,130 @@
 {% extends 'user/base.html' %}
 {% load static %}
 {% block content %}
+
+<style>
+    #snackbar {
+        visibility: hidden; 
+        min-width: 250px; 
+        margin-left: -125px;
+        background-color: #ff0606; 
+        color: #fff;
+        text-align: center; 
+        border-radius: 20px; 
+        padding: 16px;
+        position: fixed; 
+        z-index: 1;
+        left: 50%;
+        bottom: 30px; 
+      }
+      #snackbar1 {
+        visibility: hidden; 
+        min-width: 250px; 
+        margin-left: -125px;
+        background-color: #ff0606; 
+        color: #fff;
+        text-align: center; 
+        border-radius: 20px; 
+        padding: 16px;
+        position: fixed; 
+        z-index: 1;
+        left: 50%;
+        bottom: 30px; 
+      }
+      #snackbar2 {
+        visibility: hidden; 
+        min-width: 250px; 
+        margin-left: -125px;
+        background-color: #ff0606; 
+        color: #fff;
+        text-align: center; 
+        border-radius: 20px; 
+        padding: 16px;
+        position: fixed; 
+        z-index: 1;
+        left: 50%;
+        bottom: 30px; 
+      }
+      
+      #snackbar.show {
+        visibility: visible; 
+        -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        animation: fadein 0.5s, fadeout 0.5s 2.5s;
+      }
+      #snackbar1.show1 {
+        visibility: visible; 
+        -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        animation: fadein 0.5s, fadeout 0.5s 2.5s;
+      }
+      #snackbar2.show2 {
+        visibility: visible; 
+        -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        animation: fadein 0.5s, fadeout 0.5s 2.5s;
+      }
+      
+      @-webkit-keyframes fadein {
+        from {bottom: 0; opacity: 0;}
+        to {bottom: 30px; opacity: 1;}
+      }
+      
+      @keyframes fadein {
+        from {bottom: 0; opacity: 0;}
+        to {bottom: 30px; opacity: 1;}
+      }
+      
+      @-webkit-keyframes fadeout {
+        from {bottom: 30px; opacity: 1;}
+        to {bottom: 0; opacity: 0;}
+      }
+      
+      @keyframes fadeout {
+        from {bottom: 30px; opacity: 1;}
+        to {bottom: 0; opacity: 0;}
+      }
+</style>
 <div class="container">
     <div class="row">
         <div class="col-md-2"></div>
         <div class="col-md-8" style="margin: 2em;background-color: #43434382;border-radius: 8px;
         height: 400px;">
         <div style="background-color: #c3c3c3;height: 50px;margin-left: -15px;margin-right: -15px;border-top-left-radius: 8px;border-top-right-radius: 8px">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTew2PT1GnUtzFQIJq755hjjHAVIZtQz7Ywng&usqp=CAU" style="width: 40px;margin: 5px;border-radius: 50%;" alt="">
-            <label for="username" style=" padding-top: 9px;">Username</label>
+            {% if receiver.propic == '' %}
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTew2PT1GnUtzFQIJq755hjjHAVIZtQz7Ywng&usqp=CAU" style="width: 40px;margin: 5px;border-radius: 50%;" alt="">
+            {% else %}
+            <img src="{{receiver.propic}}" style="width: 40px;margin: 5px;border-radius: 50%;" alt="">
+            {% endif %}
+
+            <label for="username" style=" padding-top: 9px;">{{receiver.username}}</label>
         </div>
-        <div id="messages" style="overflow-y: auto;height: 305px;"></div>
+        <div id="messages" style="overflow-y: auto;height: 305px;color: white;padding: 2em;"></div>
         <div >
-            <form onsubmit="printoo()" id="form" action="#" style="display: flex; place-content: center;">
-                <input type="text" name="text" id="text" style=" width: 90%;border-radius: 6px;height: 2em;"><button style=" height: 44px; margin-left: 10px;border-radius: 7px;width: 41px; " type="button" onclick="printoo()"><img src=" {% static 'images/paper-clip.svg' %} " style="width: 30px;" alt=""></button>
+            <form onsubmit="InputSubmit()" id="form" action="#" style="display: flex; place-content: center;">
+                <input class="form-control" type="text" name="text" id="text"  placeholder="Enter any messages">
+                <button class="form-control" style="border-radius: 7px;width: 35px;padding: 0px; " type="button" id="filebtn">
+                    <img src=" {% static 'images/paper-clip.svg' %} " style="width: 20px;" alt="">
+                </button>
             </form>
+            <input type="file" name="file" id="file" accept="image/*" onchange="SendFile()" style="display: none;">
+            <div id="snackbar">Text some message..</div>
+            <div id="snackbar1"> Select Image File only</div>
+            <div id="snackbar2"> Image size too large, can't send</div>
         </div>
         </div>
         <div class="col-md-2"></div>
     </div>
 </div>
 {{room_name|json_script:"room-name"}}
+{{request.user.username|json_script:'username'}}
+{{receiver.id|json_script:'receiver_id'}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous"></script>
 
 <script>
+    var myDiv = document.getElementById("messages");
+    var height = myDiv.scrollHeight+10
+    myDiv.scrollTop = height;
     const roomName = JSON.parse(document.getElementById('room-name').textContent);
-    console.log(window.location.host)
+    const UserName = JSON.parse(document.getElementById('username').textContent);
+    const Receiver_id = JSON.parse(document.getElementById('receiver_id').textContent);
     const chatSocket = new WebSocket(
         'ws://' +
         window.location.host +
@@ -37,16 +136,116 @@
 
     chatSocket.onmessage = function(e){
         const data = JSON.parse(e.data);
-        console.log(data.tester)
-        document.getElementById('messages').innerHTML = (data.tester)
+        if(data.msgtype == 'text'){
+            if('{{request.user.username}}' == data.username ){
+                document.getElementById('messages').innerHTML += ('<div  style="place-content: flex-end; display: flex;text-transform: capitalize;"><label for="author">' + data.username + '</label><br></div><div style="place-content: flex-end; display: flex;color: black;"><p>' + data.message + '</p></div>')
+            }else{
+                document.getElementById('messages').innerHTML += ('<div style="text-transform: capitalize;"><label for="author">' + data.username + '</label><br></div><div style="color: black;"><p>' + data.message + '</p></div>')
+            }
+        }else{
+            if('{{request.user.username}}' == data.username ){
+                document.getElementById('messages').innerHTML += ('<div  style="place-content: flex-end; display: flex;text-transform: capitalize;"><label for="author">' + data.username + '</label><br></div><div style="place-content: flex-end; display: flex;color: black;"> <br><img src='+data.message+' style = "width: 6em;"> <br> </div>')
+            }else{
+                document.getElementById('messages').innerHTML += ('<div style="text-transform: capitalize;"><label for="author">' + data.username + '</label><br></div><div style="color: black;"> <br><img src='+data.message+' style = "width: 6em;"> <br> </div>')
+            }
+        }
+        var myDiv = document.getElementById("messages");
+        var height = myDiv.scrollHeight+10
+        myDiv.scrollTop = height;
+    }
+
+    $('form').submit(false);
+    function InputSubmit(){
+        var input = document.getElementById('text').value;
+        if(input == ''){
+            var x = document.getElementById("snackbar");
+
+            // Add the "show" class to DIV
+            x.className = "show";
+
+            // After 3 seconds, remove the show class from DIV
+            setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+
+        }else{
+            const messageInputDom = document.querySelector('#text');
+            const message = messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'message':message,
+                'type':'text',
+                'username':UserName,
+                'receiver_id':Receiver_id,
+            }));
+            messageInputDom.value = '';
+        }
     }
 
 </script>
-
 <script>
-    $('form').submit(false);
-    function printoo(){
-        console.log('hi')
+    document.querySelector('#filebtn').onclick = function(e){
+        document.getElementById('file').click()
+    };
+
+    async function SendFile(){
+        const file = document.querySelector('#file').files[0];
+        const file_size = document.getElementById('file').files[0].size
+        if(file_size < 5000000){
+            var dataURL = await toBase64(file)
+            if (isImage(file.name)) {
+                var type = 'image'
+                chatSocket.send(JSON.stringify({
+                    'message':dataURL,
+                    'type':type,
+                    'username':UserName,
+                    'receiver_id':Receiver_id,
+                }));
+            }else{
+                var x = document.getElementById("snackbar1");
+
+                // Add the "show" class to DIV
+                x.className = "show1";
+
+                // After 3 seconds, remove the show class from DIV
+                setTimeout(function(){ x.className = x.className.replace("show1", ""); }, 3000);
+            }
+        }else{
+            var x = document.getElementById("snackbar2");
+
+            // Add the "show" class to DIV
+            x.className = "show2";
+
+            // After 3 seconds, remove the show class from DIV
+            setTimeout(function(){ x.className = x.className.replace("show2", ""); }, 3000);
+        }
+        
+
     }
+
+    // function to get the extension
+    function getExtension(filename) {
+        var parts = filename.split('.');
+        return parts[parts.length - 1];
+    }
+    //function to check file is image
+    function isImage(filename) {
+        var ext = getExtension(filename);
+        switch (ext.toLowerCase()) {
+          case 'jpg':
+          case 'gif':
+          case 'bmp':
+          case 'png':
+          case 'webp':
+          case 'jpeg':
+            //etc
+            return true;
+        }
+        return false;
+    }
+    
+    const toBase64 = file => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
 </script>
 {% endblock %}

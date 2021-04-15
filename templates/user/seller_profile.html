@@ -274,7 +274,23 @@
         </div>
         <br><br>
         <div class="profile_desc_section">
-            <h2 style="text-transform: capitalize;">{{seller.first_name}}&nbsp;{{seller.last_name}}</h2>{% if request.user.id != seller.id %}<button type="button" class="btn btn-info" style="width: 5em;font-size: 1em;" onclick="follow('{{seller.id}}')"><span id="follow">{% if is_following == True %} unfollow {% else %} follow {% endif %}</span></button>{% endif %}<br>
+            <h2 style="text-transform: capitalize;">{{seller.first_name}}&nbsp;{{seller.last_name}}</h2>
+            <div style="display: flex;">
+                {% if request.user.id != seller.id %}
+                <button type="button" class="btn btn-info" style="width: 5em;font-size: 1em;" onclick="follow('{{seller.id}}')">
+                    <span id="follow">
+                        {% if is_following == True %}
+                        unfollow
+                        {% else %}
+                        follow
+                        {% endif %}
+                    </span>
+                </button>
+                {% endif %}
+                <a href="/chat/{{seller.id}}/" style="text-decoration: none;"><button type="button" class="btn btn-warning" style="width: 5em;font-size: 1em;margin-left: 1em;"> Message </button></a>
+            </div>
+            <br>
+
             <div class="interests">
                 <button type="button"  class="btn btn-primary modal-btn" ><span id="followers" >{{count_followers}} followers</span></button>
                 <button type="button"  class="btn btn-primary modal1-btn" ><span id="followings" >{{count_followings}} followings</span></button>

@@ -34,8 +34,11 @@ from folium.plugins import Search
 import base64
 from django.core.files.base import ContentFile
 
+# for chat_room no
+import uuid
 
-# Create your views here.
+
+
 def user_login(request):
     if request.user.is_authenticated:
         return redirect(user_home)
@@ -293,80 +296,6 @@ def get_ip_address(request):
 def sell_product(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
-            # ----------------WITHOUT CROPING-----------------
-            # img1 = request.FILES.get('img1')
-            # img2 = request.FILES.get('img2')
-            # img3 = request.FILES.get('img3')
-            
-            # brand = request.POST.get('brand')
-            # year = request.POST.get('year')
-            # km = request.POST.get('km')
-            # title = request.POST.get('title')
-            # description = request.POST.get('description')
-            # price = request.POST.get('price')
-            # latitude = request.session['latitude']
-            # longitude = request.session['longitude']
-            # del request.session['latitude']
-            # del request.session['longitude']
-            # today = date.today()
-            # expiry = today + timedelta(days=14)
-            # if UserAd.objects.filter(user=request.user,expiry_date__gt=today).count()>=2:
-            #     return JsonResponse('false', safe=False)
-            # else:
-            #     user_ad = UserAd.objects.create(user=request.user,brand_id=brand,year=year,km_driven=km,title=title,description=description,
-            #                                     price=price,date=today,expiry_date=expiry,image1=img1,image2=img2,image3=img3,
-            #                                     location_latitude=latitude,location_longitude=longitude)
-            #     # importing logo
-            #     logo = cv2.imread('static/images/Logo.png')
-            #     logo_height, logo_width, _ = logo.shape
-                    
-            #     #set first image logo
-            #     image1 = cv2.imread('static/'+user_ad.img1)
-            #     image1_height, image1_width, _ = image1.shape
-            #     # print('height and width',image_height,image_width)
-            #     top1_y = image1_height - logo_height
-            #     left1_x = image1_width - logo_width
-            #     # print(top_y,left_x)
-            #     roi1 = image1[top1_y:image1_height,left1_x:image1_width] 
-            #     result1 = cv2.addWeighted(roi1, 1, logo, 0.5, 0)
-            #     image1[top1_y:image1_height,left1_x:image1_width] = result1
-            #     # cv2.imshow('image1', image1)
-            #     # cv2.waitKey(0)
-            #     print('logoset')
-            #     cv2.imwrite('static/'+user_ad.img1,image1)
-                
-            #     #set second image logo
-            #     image2 = cv2.imread('static/'+user_ad.img2)
-            #     image2_height, image2_width, _ = image2.shape
-            #     # print('height and width',image_height,image_width)
-            #     top2_y = image2_height - logo_height
-            #     left2_x = image2_width - logo_width
-            #     # print(top_y,left_x)
-            #     roi2 = image2[top2_y:image2_height,left2_x:image2_width] 
-            #     result2 = cv2.addWeighted(roi2, 1, logo, 0.5, 0)
-            #     image2[top2_y:image2_height,left2_x:image2_width] = result2
-            #     # cv2.imshow('image1', image1)
-            #     # cv2.waitKey(0)
-            #     print('logoset')
-            #     cv2.imwrite('static/'+user_ad.img2,image2)
-                
-            #     #set third image logo
-            #     image3 = cv2.imread('static/'+user_ad.img3)
-            #     image3_height, image3_width, _ = image3.shape
-            #     # print('height and width',image_height,image_width)
-            #     top3_y = image3_height - logo_height
-            #     left3_x = image3_width - logo_width
-            #     # print(top_y,left_x)
-            #     roi3 = image3[top3_y:image3_height,left3_x:image3_width] 
-            #     result3 = cv2.addWeighted(roi3, 1, logo, 0.5, 0)
-            #     image3[top3_y:image3_height,left3_x:image3_width] = result3
-            #     # cv2.imshow('image1', image1)
-            #     # cv2.waitKey(0)
-            #     print('logoset')
-            #     cv2.imwrite('static/'+user_ad.img3,image3)
-                
-            #     return JsonResponse('true', safe=False)
-            
             # ---------WITH CROPING----------
             title = request.POST['title']
             img1 = request.POST['img1']
@@ -1033,15 +962,38 @@ def boost_ad(request,id):
     
 def chat(request):
     if request.user.is_authenticated:
-        context = {}
+        chats = []
+        chats_user1 = OneToOne.objects.filter(user1=request.user)
+        chats_user2 = OneToOne.objects.filter(user2=request.user)
+        for x in chats_user1:
+            chats.append(x)
+        for x in chats_user2:
+            chats.append(x)
+        exist = True
+        if len(chats) == 0:
+            exist = False
+        context = {
+            'chats':chats,
+            'exist':exist
+        }
         return render(request, 'user/chat.html',context) 
     else:
         return redirect(user_login)
 
-def chat_room(request,room_id):
+def chat_room(request,id):
     if request.user.is_authenticated:
+        receiver = CustomUser.objects.get(id=id)
+        if OneToOne.objects.filter(user1=request.user,user2=receiver).exists():
+            onetoone = OneToOne.objects.get(user1=request.user,user2=receiver)
+            room_name = onetoone.room_name
+        elif OneToOne.objects.filter(user2=request.user,user1=receiver).exists():
+            onetoone = OneToOne.objects.get(user2=request.user,user1=receiver)
+            room_name = onetoone.room_name
+        else:
+            room_name = uuid.uuid1()
         context = {
-            'room_name':room_id
+            'receiver':receiver,
+            'room_name':room_name
         }
         return render(request, 'user/chat_room.html', context)  
     else:
