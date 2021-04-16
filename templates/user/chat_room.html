@@ -98,10 +98,13 @@
         </div>
         <div id="messages" style="overflow-y: auto;height: 305px;color: white;padding: 2em;"></div>
         <div >
-            <form onsubmit="InputSubmit()" id="form" action="#" style="display: flex; place-content: center;">
-                <input class="form-control" type="text" name="text" id="text"  placeholder="Enter any messages">
+            <form id="form" action="#" style="display: flex; place-content: center;">
                 <button class="form-control" style="border-radius: 7px;width: 35px;padding: 0px; " type="button" id="filebtn">
                     <img src=" {% static 'images/paper-clip.svg' %} " style="width: 20px;" alt="">
+                </button>
+                <input class="form-control" type="text" name="text" id="text"  placeholder="Enter any messages">
+                <button class="form-control" style="border-radius: 7px;width: 35px;padding: 0px; " type="button" id="sendbtn" onclick="InputSubmit()">
+                    <img src=" {% static 'images/send.svg' %} " style="width: 20px;" alt="">
                 </button>
             </form>
             <input type="file" name="file" id="file" accept="image/*" onchange="SendFile()" style="display: none;">
@@ -117,7 +120,28 @@
 {{request.user.username|json_script:'username'}}
 {{receiver.id|json_script:'receiver_id'}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous"></script>
+{% for message in messages %}
 
+<script>
+    if('{{message.msg_type}}' == 'image'){
+        if('{{request.user.username}}' == '{{message.sender.username}}' ){
+            document.getElementById('messages').innerHTML += ('<div  style="place-content: flex-end; display: flex;text-transform: capitalize;"><label for="author">' + '{{message.sender.username}}' + '</label><br></div><div style="place-content: flex-end; display: flex;color: black;"> <br><img src={{message.get_image}} style = "width: 6em;"> <br></div>')
+        }else{
+            document.getElementById('messages').innerHTML += ('<div style="text-transform: capitalize;"><label for="author">' + '{{message.sender.username}}' + '</label><br></div><div style="color: black;"> <br><img src={{message.get_image}} style = "width: 6em;"> <br></div>')
+        }
+    }else{
+        if('{{request.user.username}}' == '{{message.sender.username}}' ){
+            document.getElementById('messages').innerHTML += ('<div  style="place-content: flex-end; display: flex;text-transform: capitalize;"><label for="author">' + '{{message.sender.username}}' + '</label><br></div><div style="place-content: flex-end; display: flex;color: black;"><p>' + '{{message.message}}' + '</p></div>')
+        }else{
+            document.getElementById('messages').innerHTML += ('<div style="text-transform: capitalize;"><label for="author">' + '{{message.sender.username}}' + '</label><br></div><div style="color: black;"><p>' + '{{message.message}}' + '</p></div>')
+        }
+    }
+    var myDiv = document.getElementById("messages");
+    var height = myDiv.scrollHeight+10
+    myDiv.scrollTop = height;
+</script>
+
+{% endfor %}
 <script>
     var myDiv = document.getElementById("messages");
     var height = myDiv.scrollHeight+10
@@ -235,6 +259,7 @@
           case 'png':
           case 'webp':
           case 'jpeg':
+          case 'jfif':
             //etc
             return true;
         }

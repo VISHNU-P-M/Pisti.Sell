@@ -2,6 +2,8 @@ from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 import json
 from .models import *
+import base64
+from django.core.files.base import ContentFile
 
 class ChatRoomConsumer(WebsocketConsumer):
     def connect(self):
@@ -28,15 +30,20 @@ class ChatRoomConsumer(WebsocketConsumer):
         msgtype = data['type']
         author = CustomUser.objects.get(username=username) 
         if OneToOne.objects.filter(user1=author,user2_id=receiver_id).exists():
-            pass
+            onetoone = OneToOne.objects.get(user1=author,user2_id=receiver_id)
         elif OneToOne.objects.filter(user1=receiver_id,user2_id=author).exists():
-            pass
+            onetoone = OneToOne.objects.get(user1=receiver_id,user2_id=author)
         else:
-            OneToOne.objects.create(user1=author,user2_id=receiver_id,room_name=self.room_name)
-            
+            onetoone = OneToOne.objects.create(user1=author,user2_id=receiver_id,room_name=self.room_name)
+          
         if msgtype == 'image':
-            print('image')
-            pass
+            format, imgstr = message.split(';base64,')
+            ext1 = format.split('/')[-1]
+            imageurl = ContentFile(base64.b64decode(imgstr), name=msgtype + '.' + ext1)
+            Messages.objects.create(sender=author,receiver_id = receiver_id,onetoone=onetoone,msg_type=msgtype,image=imageurl)
+        else:
+            Messages.objects.create(sender=author,receiver_id = receiver_id,onetoone=onetoone,msg_type=msgtype,message=message)
+            
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {
@@ -55,6 +62,6 @@ class ChatRoomConsumer(WebsocketConsumer):
             self.send(text_data=json.dumps({
             'message':message,
             'username':username,
-            'msgtype':msgtype
+            'msgtype':msgtype,
             }))
         )  
