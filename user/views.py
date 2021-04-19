@@ -983,6 +983,13 @@ def chat(request):
 def chat_room(request,id):
     if request.user.is_authenticated:
         receiver = CustomUser.objects.get(id=id)
+        if request.session.has_key('ad_id'):
+            ad_id = request.session['ad_id']
+            ad = UserAd.objects.get(id=ad_id)
+            del request.session['ad_id']
+        else:
+            ad_id = 0
+            ad = []
         if OneToOne.objects.filter(user1=request.user,user2=receiver).exists():
             onetoone = OneToOne.objects.get(user1=request.user,user2=receiver)
             room_name = onetoone.room_name
@@ -991,6 +998,8 @@ def chat_room(request,id):
                 'receiver':receiver,
                 'room_name':room_name,
                 'messages':messages,
+                'ad_id':ad_id,
+                'ad':ad
             }
         elif OneToOne.objects.filter(user2=request.user,user1=receiver).exists():
             onetoone = OneToOne.objects.get(user2=request.user,user1=receiver)
@@ -1000,14 +1009,25 @@ def chat_room(request,id):
                 'receiver':receiver,
                 'room_name':room_name,
                 'messages':messages,
+                'ad_id':ad_id,
+                'ad':ad
             }
         else:
             room_name = uuid.uuid1()
             context = {
                 'receiver':receiver,
-                'room_name':room_name
+                'room_name':room_name,
+                'ad_id':ad_id,
+                'ad':ad
             }
         return render(request, 'user/chat_room.html', context)  
+    else:
+        return redirect(user_login)
+    
+def ad_message(request,id):
+    if request.user.is_authenticated:
+        request.session['ad_id'] = id
+        return JsonResponse('true',safe = False)
     else:
         return redirect(user_login)
         

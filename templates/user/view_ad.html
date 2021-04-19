@@ -337,10 +337,10 @@
                 </div>
                 <div>
                     <h1  style='text-transform: capitalize;'>{{ad.user.first_name}}</h1>
-                    <label> {{ad.user.phone}} </label>
                     <label> {{ad.user.email}} </label>
                 </div>
                 <a href="/seller/{{ad.user.id}}" class="buttons spr-amz-butt midnitghtblue" style="text-decoration: none;">View Profile</a>
+                <a href="#" onclick="AdMessage()" class="buttons spr-amz-butt midnitghtblue" style="text-decoration: none;background-color: cornflowerblue;">Message Seller</a>
                 <hr>
             </div>
         {% else %}
@@ -355,7 +355,6 @@
             </div>
             <div>
                 <h1>{{ad.user.first_name}}</h1>
-                <label> {{ad.user.phone}} </label>
                 <label> {{ad.user.email}} </label>
             </div>
             <hr>
@@ -480,6 +479,20 @@
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
+  function AdMessage(){
+    $.ajax({
+      url:'/ad-message/{{ad.id}}',
+      method:'GET',
+      success:function(data){
+        if(data == 'true'){
+          window.location.replace('/chat/{{ad.user.id}}/')
+        }else{
+          alert('Some error!')
+        }
+      }
+    })
+  }
+
     function razorpay(){
         var payment_status = 'razorpay'
         var options = {

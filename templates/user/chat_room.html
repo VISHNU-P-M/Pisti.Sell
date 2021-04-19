@@ -86,7 +86,7 @@
     <div class="row">
         <div class="col-md-2"></div>
         <div class="col-md-8" style="margin: 2em;background-color: #43434382;border-radius: 8px;
-        height: 400px;">
+        height: 500px;">
         <div style="background-color: #c3c3c3;height: 50px;margin-left: -15px;margin-right: -15px;border-top-left-radius: 8px;border-top-right-radius: 8px">
             {% if receiver.propic == '' %}
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTew2PT1GnUtzFQIJq755hjjHAVIZtQz7Ywng&usqp=CAU" style="width: 40px;margin: 5px;border-radius: 50%;" alt="">
@@ -96,9 +96,24 @@
 
             <label for="username" style=" padding-top: 9px;">{{receiver.username}}</label>
         </div>
-        <div id="messages" style="overflow-y: auto;height: 305px;color: white;padding: 2em;"></div>
+        {% if ad_id != 0 %}
+            <div id="ad-div" style="height: 100px;    display: flex;place-content: center;">
+                {{ad.title}}
+                <img src="{{ad.img1}}" alt="" style="width: 8em;">
+                <button class="btn btn-danger" onclick="CloseAd()" style="height: 34px;">x</button>
+            </div>
+        {% endif %}
+        <div id="messages" {% if ad_id != 0 %} style="overflow-y: auto;height: 285px;color: white;padding: 2em;" {% else %} style="overflow-y: auto;height: 380px;color: white;padding: 2em;"{% endif %} ></div>
         <div >
-            <form id="form" action="#" style="display: flex; place-content: center;">
+            <div id="bot-div" style="visibility: visible;display:flex">
+                <button class="btn btn-primary" style="font-size: 1px;" onclick="BotMessage('hi')">Hi</button>
+                {% if ad_id != 0 %}
+                <button class="btn btn-primary" style="font-size: 1px;" onclick="BotMessage('Is it available?  {{ad.title}}')">Is it available?</button>
+                {% endif %}
+                <button class="btn btn-primary" style="font-size: 1px;" onclick="BotMessage('{{user.phone}}')">{{user.phone}}</button>
+                <button class="btn btn-danger" style="font-size: 1px; margin-left:7px" onclick="BotClose()">X</button>
+            </div>
+            <form id="form" action="#" style="display: flex; place-content: center;" >
                 <button class="form-control" style="border-radius: 7px;width: 35px;padding: 0px; " type="button" id="filebtn">
                     <img src=" {% static 'images/paper-clip.svg' %} " style="width: 20px;" alt="">
                 </button>
@@ -120,29 +135,8 @@
 {{request.user.username|json_script:'username'}}
 {{receiver.id|json_script:'receiver_id'}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous"></script>
-{% for message in messages %}
-
 <script>
-    if('{{message.msg_type}}' == 'image'){
-        if('{{request.user.username}}' == '{{message.sender.username}}' ){
-            document.getElementById('messages').innerHTML += ('<div  style="place-content: flex-end; display: flex;text-transform: capitalize;"><label for="author">' + '{{message.sender.username}}' + '</label><br></div><div style="place-content: flex-end; display: flex;color: black;"> <br><img src={{message.get_image}} style = "width: 6em;"> <br></div>')
-        }else{
-            document.getElementById('messages').innerHTML += ('<div style="text-transform: capitalize;"><label for="author">' + '{{message.sender.username}}' + '</label><br></div><div style="color: black;"> <br><img src={{message.get_image}} style = "width: 6em;"> <br></div>')
-        }
-    }else{
-        if('{{request.user.username}}' == '{{message.sender.username}}' ){
-            document.getElementById('messages').innerHTML += ('<div  style="place-content: flex-end; display: flex;text-transform: capitalize;"><label for="author">' + '{{message.sender.username}}' + '</label><br></div><div style="place-content: flex-end; display: flex;color: black;"><p>' + '{{message.message}}' + '</p></div>')
-        }else{
-            document.getElementById('messages').innerHTML += ('<div style="text-transform: capitalize;"><label for="author">' + '{{message.sender.username}}' + '</label><br></div><div style="color: black;"><p>' + '{{message.message}}' + '</p></div>')
-        }
-    }
-    var myDiv = document.getElementById("messages");
-    var height = myDiv.scrollHeight+10
-    myDiv.scrollTop = height;
-</script>
-
-{% endfor %}
-<script>
+    $('form').submit(false);
     var myDiv = document.getElementById("messages");
     var height = myDiv.scrollHeight+10
     myDiv.scrollTop = height;
@@ -178,7 +172,7 @@
         myDiv.scrollTop = height;
     }
 
-    $('form').submit(false);
+    
     function InputSubmit(){
         var input = document.getElementById('text').value;
         if(input == ''){
@@ -204,6 +198,30 @@
     }
 
 </script>
+
+{% for message in messages %}
+
+<script>
+    if('{{message.msg_type}}' == 'image'){
+        if('{{request.user.username}}' == '{{message.sender.username}}' ){
+            document.getElementById('messages').innerHTML += ('<div  style="place-content: flex-end; display: flex;text-transform: capitalize;"><label for="author">' + '{{message.sender.username}}' + '</label><br></div><div style="place-content: flex-end; display: flex;color: black;"> <br><img src={{message.get_image}} style = "width: 6em;"> <br></div>')
+        }else{
+            document.getElementById('messages').innerHTML += ('<div style="text-transform: capitalize;"><label for="author">' + '{{message.sender.username}}' + '</label><br></div><div style="color: black;"> <br><img src={{message.get_image}} style = "width: 6em;"> <br></div>')
+        }
+    }else{
+        if('{{request.user.username}}' == '{{message.sender.username}}' ){
+            document.getElementById('messages').innerHTML += ('<div  style="place-content: flex-end; display: flex;text-transform: capitalize;"><label for="author">' + '{{message.sender.username}}' + '</label><br></div><div style="place-content: flex-end; display: flex;color: black;"><p>' + '{{message.message}}' + '</p></div>')
+        }else{
+            document.getElementById('messages').innerHTML += ('<div style="text-transform: capitalize;"><label for="author">' + '{{message.sender.username}}' + '</label><br></div><div style="color: black;"><p>' + '{{message.message}}' + '</p></div>')
+        }
+    }
+    var myDiv = document.getElementById("messages");
+    var height = myDiv.scrollHeight+10
+    myDiv.scrollTop = height;
+</script>
+
+{% endfor %}
+
 <script>
     document.querySelector('#filebtn').onclick = function(e){
         document.getElementById('file').click()
@@ -272,5 +290,24 @@
         reader.onload = () => resolve(reader.result);
         reader.onerror = error => reject(error);
     });
+
+    function BotMessage(input){
+        console.log(input)
+        chatSocket.send(JSON.stringify({
+            'message':input,
+            'type':'text',
+            'username':UserName,
+            'receiver_id':Receiver_id,
+        }));
+    }
+    function BotClose(){
+        $('#bot-div').css({'display':'none'})
+        $('#messages').css({'height':'410px'})
+        $('#ad-div').css({'display':'none'})
+    }
+    function CloseAd(){
+        $('#ad-div').css({'display':'none'})
+        $('#messages').css({'height':'380px'})
+    }
 </script>
 {% endblock %}
