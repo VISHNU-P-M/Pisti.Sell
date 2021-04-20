@@ -89,6 +89,7 @@ class FeturedAd(models.Model):
 class OneToOne(models.Model):
     user1 = models.ForeignKey(CustomUser,on_delete=models.CASCADE,related_name='%(class)s_requests_created')
     user2 = models.ForeignKey(CustomUser,on_delete=models.CASCADE,related_name='%(class)s_requests_reciever') 
+    ad = models.ForeignKey(UserAd, on_delete = models.CASCADE, null=True)
     room_name = models.CharField(max_length=100)
     
 class Messages(models.Model):

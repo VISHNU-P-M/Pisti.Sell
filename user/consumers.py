@@ -28,14 +28,15 @@ class ChatRoomConsumer(WebsocketConsumer):
         username = data['username']
         receiver_id = data['receiver_id']
         msgtype = data['type']
+        ad_id = data['ad_id']
         author = CustomUser.objects.get(username=username) 
-        if OneToOne.objects.filter(user1=author,user2_id=receiver_id).exists():
-            onetoone = OneToOne.objects.get(user1=author,user2_id=receiver_id)
-        elif OneToOne.objects.filter(user1=receiver_id,user2_id=author).exists():
-            onetoone = OneToOne.objects.get(user1=receiver_id,user2_id=author)
+        if OneToOne.objects.filter(user1=author,user2_id=receiver_id,ad_id = ad_id).exists():
+            onetoone = OneToOne.objects.get(user1=author,user2_id=receiver_id,ad_id = ad_id)
+        elif OneToOne.objects.filter(user1=receiver_id,user2_id=author,ad_id = ad_id).exists():
+            onetoone = OneToOne.objects.get(user1=receiver_id,user2_id=author,ad_id = ad_id)
         else:
-            onetoone = OneToOne.objects.create(user1=author,user2_id=receiver_id,room_name=self.room_name)
-          
+            ad = UserAd.objects.get(id=ad_id)
+            onetoone = OneToOne.objects.create(user1=author,user2_id=receiver_id,room_name=self.room_name,ad=ad)
         if msgtype == 'image':
             format, imgstr = message.split(';base64,')
             ext1 = format.split('/')[-1]

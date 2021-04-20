@@ -9,7 +9,7 @@
         {% if exist == True %}
             {% for chat in chats %}
                 {% if chat.user1.username == request.user.username %}
-                <a href="/chat/{{chat.user2.id}}/" style="text-decoration: none; color: white;">
+                <a href="/chat/{{chat.user2.id}}/{{chat.ad.id}}" style="text-decoration: none; color: white;">
                     <div style="background: linear-gradient(90deg, rgb(8, 146, 54) 0%, rgba(9,121,39,1) 18%, rgba(99,255,0,1) 82%);margin: 3px;">
                         {% if chat.user2.propic == '' %}
                             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTew2PT1GnUtzFQIJq755hjjHAVIZtQz7Ywng&usqp=CAU" style="width: 2em;margin: 3px;" alt="">
@@ -20,7 +20,7 @@
                     </div>
                 </a>
                 {% else %}
-                <a href="/chat/{{chat.user1.id}}/" style="text-decoration: none; color: white;">
+                <a href="/chat/{{chat.user1.id}}/{{chat.ad.id}}" style="text-decoration: none; color: white;">
                     <div style="background: linear-gradient(90deg, rgb(8, 146, 54) 0%, rgba(9,121,39,1) 18%, rgba(99,255,0,1) 82%);margin: 3px;">
                         {% if chat.user1.propic == '' %}
                             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTew2PT1GnUtzFQIJq755hjjHAVIZtQz7Ywng&usqp=CAU" style="width: 2em;margin: 3px;" alt="">

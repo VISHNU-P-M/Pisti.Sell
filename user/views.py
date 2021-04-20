@@ -980,54 +980,48 @@ def chat(request):
     else:
         return redirect(user_login)
 
-def chat_room(request,id):
+def chat_room(request,id,ad_id):
     if request.user.is_authenticated:
         receiver = CustomUser.objects.get(id=id)
-        if request.session.has_key('ad_id'):
-            ad_id = request.session['ad_id']
-            ad = UserAd.objects.get(id=ad_id)
-            del request.session['ad_id']
-        else:
-            ad_id = 0
-            ad = []
-        if OneToOne.objects.filter(user1=request.user,user2=receiver).exists():
-            onetoone = OneToOne.objects.get(user1=request.user,user2=receiver)
+        ad = UserAd.objects.get(id=ad_id)
+        if OneToOne.objects.filter(user1=request.user,user2=receiver,ad=ad).exists():
+            print('one')
+            onetoone = OneToOne.objects.get(user1=request.user,user2=receiver,ad=ad)
             room_name = onetoone.room_name
             messages = Messages.objects.filter(onetoone=onetoone)
             context = {
                 'receiver':receiver,
                 'room_name':room_name,
                 'messages':messages,
-                'ad_id':ad_id,
-                'ad':ad
+                'onetoone':onetoone
             }
-        elif OneToOne.objects.filter(user2=request.user,user1=receiver).exists():
-            onetoone = OneToOne.objects.get(user2=request.user,user1=receiver)
+        elif OneToOne.objects.filter(user2=request.user,user1=receiver,ad=ad).exists():
+            print('two')
+            onetoone = OneToOne.objects.get(user2=request.user,user1=receiver,ad=ad)
             room_name = onetoone.room_name
             messages = Messages.objects.filter(onetoone=onetoone)
             context = {
                 'receiver':receiver,
                 'room_name':room_name,
                 'messages':messages,
-                'ad_id':ad_id,
-                'ad':ad
+                'onetoone':onetoone
             }
         else:
+            print('here') 
             room_name = uuid.uuid1()
+            ad = UserAd.objects.get(id=ad_id)
+            print(ad.title)
             context = {
                 'receiver':receiver,
                 'room_name':room_name,
-                'ad_id':ad_id,
+                'messages':'0', 
                 'ad':ad
             }
         return render(request, 'user/chat_room.html', context)  
     else:
         return redirect(user_login)
     
-def ad_message(request,id):
-    if request.user.is_authenticated:
-        request.session['ad_id'] = id
-        return JsonResponse('true',safe = False)
-    else:
-        return redirect(user_login)
+    
+def test(request):
+    return render(request, 'user/test.html')
         

@@ -26,6 +26,7 @@ urlpatterns = [
     path('get-premium/', views.get_premium, name = 'get_premium'),
     path('boost-ad/<int:id>', views.boost_ad, name = 'boost_ad'),
     path('chat/', views.chat, name = 'chat'),
-    path('chat/<int:id>/', views.chat_room, name = 'chat_room'),
-    path('ad-message/<int:id>', views.ad_message, name = 'ad_message'),
+    path('chat/<int:id>/<int:ad_id>', views.chat_room, name = 'chat_room'),
+    # path('ad-message/<int:id>', views.ad_message, name = 'ad_message'),
+    path('test/', views.test, name = 'test'),
 ]
