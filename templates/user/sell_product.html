@@ -30,18 +30,17 @@
                     <p class="title-register-main-connection-div" style="margin-top: 2em;">Year</p>
                     <input type="number" id="year" name="year" style="height: 2em; width: 15em;" value="2021">
                 </div>
-                <div class="col-md-6">
-                    <p class="title-register-main-connection-div" style="margin-top: 2em;">KM driven</p>
-                    <input type="number" id="km" name="km" placeholder="KM driven" style="height: 2em; width: 15em;">
+                <div class="col-md-6" id="km-div">
+                    <p class="title-register-main-connection-div" style="margin-top: 2em;">Ad Title</p>
+                    <input type="text" id="title" name="title" placeholder="Leave a title" style="height: 2em; width: 15em;">
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-6">
-                    <p class="title-register-main-connection-div" style="margin-top: 2em;">Ad Title</p>
-                    <input type="text" id="title" name="title" placeholder="Leave a title" style="height: 2em; width: 15em;">
                     <p class="title-register-main-connection-div" style="margin-top: 2em;">Set Price</p>
                     <input type="number" id="price" name="price" placeholder="Set your price" style="height: 2em; width: 15em;">    
                 </div>
+                <div id="attributes-div"></div>
                 <div class="col-md-6">
                     <p class="title-register-main-connection-div" style="margin-top: 2em;">Ad Description</p>
                     <textarea name="description" id="description" cols="15" rows="10" style="width: 15em;"></textarea>
@@ -58,7 +57,7 @@
                 </div>
                 <div class="col-md-6">
                     <h5>Or select a location</h5><br>
-                    <select class="form-select select" id="district" aria-label="Select District" style="height: 2em; width: 15em;">
+                    <select class="form-select select" id="new_district" aria-label="Select District" style="height: 2em; width: 15em;">
                         <option selected value="0">Select District</option>
                         <option value="Thiruvananthapuram">Thiruvananthapuram</option>
                         <option value="Kollam">Kollam</option>
@@ -243,21 +242,26 @@
     </script>
 <script>
     $('#btn').click(function(){
+        var category = $('#category').val()
         var brand = $('#brand').val()
         var year = $('#year').val()
         var km = $('#km').val()
         var title = $('#title').val()
         var description = $('#description').val()
+        var test_num = /\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[-\.\s]??\d{4}/g;
         var price = $('#price').val()
         var image1 = $('#imageurl1').val()
         var image2 = $('#imageurl2').val()
         var image3 = $('#imageurl3').val()
-        var district = $('#district').val()
+        var district = $('#new_district').val()
+        var fuel = $('#fuel').val()
         var data = {
             'csrfmiddlewaretoken':'{{csrf_token}}',
+            'category':category,
             'brand':brand,
             'year':year,
             'km' : km,
+            'fuel':fuel,
             'title':title,
             'description':description,
             'price':price,
@@ -266,24 +270,54 @@
             'img3':image3,
             'district':district
         }
+        var error = false;
         if(brand == '0'){
             $('#span').html('Select Brand after choose category')
+            error = true;
         }else if(year.length != 4 || isNaN(year)){
             $('#span').html('Enter valid year')
-        }else if(km.length < 1 || isNaN(km)){
-            $('#span').html('Enter valid KM driven')
+            error = true;
         }else if(title.length < 6){
             $('#span').html('Enter valid Title')
+            error = true;
         }else if(description.length <20){
             $('#span').html('Enter valid description')
+            error = true;
+        }else if(test_num.test(description) == true){
+            $('#span').html('Phone number in description is not allowed');
+            error = true;
         }else if(price.length<1 || isNaN(price)){
             $('#span').html('Enter valid Price')
+            error = true;
         }else if(image1 == ''){
             $('#span').html('Select first image')
+            error = true;
         }else if(image2 == ''){
             $('#span').html('Select second image')
+            error = true;
         }else if(image3 == ''){
             $('#span').html('Select third image')
+            error = true;
+        }else{
+            {% for category in categories %}
+                if('{{category.id}}' == category ){
+                    if('{{category.km_driven}}' == 'True'){
+                        if(km.length < 1 || isNaN(km)){
+                            $('#span').html('Enter valid KM driven')
+                            error = true;
+                        }
+                    }
+                    if('{{category.fuel}}' == 'True'){
+                        if(fuel == '0'){
+                            $('#span').html('Select fuel')
+                            error = true;
+                        }
+                    }
+                }
+            {% endfor %}
+        }
+        if(error == true){
+
         }else{
             $.ajax({
                 url:'/sell-product/',
@@ -324,7 +358,19 @@
                 select.add(option);
             }
         {% endfor %}
-        
+        {% for category in categories %}
+        console.log('here')
+        if('{{category.id}}' == hi.value){
+            console.log('hi')
+            if('{{category.km_driven}}' == 'True'){
+                console.log('hello')
+                document.getElementById('attributes-div').innerHTML += '<div class="col-md-6"><p class="title-register-main-connection-div" style="margin-top: 2em;">Km Driven</p><input type="number" id="km" name="km" placeholder="Km driven" style="height: 2em; width: 15em;"></div>'
+            }
+            if('{{category.fuel}}' == 'True'){
+                document.getElementById('attributes-div').innerHTML += '<div class="col-md-6"><p class="title-register-main-connection-div" style="margin-top: 2em;">Select fuel</p><select  id="fuel" style="height: 2em; width: 15em;"><option selected value="0">Select Fuel</option><option value="Petrol">Petrol</option><option value="Desel">Desel</option></select></div>'
+            }
+        }
+        {% endfor %}
     }
 </script>
 

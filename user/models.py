@@ -21,9 +21,10 @@ class UserAd(models.Model):
     brand = models.ForeignKey(Brands, on_delete=models.CASCADE)
     year = models.CharField(max_length=20)
     km_driven = models.DecimalField(decimal_places=2,max_digits=20)
-    title = models.CharField(max_length=30)
+    title = models.CharField(max_length=100)
     description = models.CharField(max_length=500)
     price = models.DecimalField(max_digits=20,decimal_places=2)
+    fuel = models.CharField(max_length=50,null=True)
     date = models.DateField()
     expiry_date = models.DateField(null = True) 
     image1 = models.ImageField(null=True,upload_to='image')
@@ -58,10 +59,10 @@ class UserAd(models.Model):
     @property
     def active(self):
         if self.status == 'confirmed':
-            if date.today()>(self.date + timedelta(days=14)):
-                return False
-            else:
+            if self.expiry_date >= date.today():
                 return True
+            else:
+                return False
         else:
             return False
 

@@ -30,10 +30,27 @@
                     <p class="title-register-main-connection-div" style="margin-top: 2em;">Year</p>
                     <input type="number" id="year" name="year" style="height: 2em; width: 15em;" value="{{ad.year}}">
                 </div>
+                {% if ad.brand.category.km_driven == True %}
                 <div class="col-md-6">
                     <p class="title-register-main-connection-div" style="margin-top: 2em;">KM driven</p>
                     <input type="number" id="km" name="km" placeholder="KM driven" style="height: 2em; width: 15em;" value="{{ad.km_driven}}">
                 </div>
+                {% endif %}
+                {% if ad.brand.category.fuel == True %}
+                <div class="col-md-6">
+                    <p class="title-register-main-connection-div" style="margin-top: 2em;">Fuel Type</p>
+                    <div>
+                        <p class="title-register-main-connection-div" style="margin-top: 2em;">Select fuel</p>
+                        <select  id="fuel" style="height: 2em; width: 15em;">
+                            <option selected value="0">Select Fuel</option>
+                            <option value="Petrol" {% if ad.fuel == 'Petrol' %} selected {% endif %}>Petrol</option>
+                            <option value="Desel" {% if ad.fuel == 'Desel' %} selected {% endif %}>Desel</option>
+                        </select>
+                    </div>
+                </div>
+                {% endif %}
+
+                
             </div>
             <div class="row">
                 <div class="col-md-6">
@@ -242,18 +259,22 @@
     </script>
 <script>
     $('#btn').click(function(){
+        var category_id = $('#category').val()
         var brand = $('#brand').val()
         var year = $('#year').val()
-        var km = $('#km').val()
         var title = $('#title').val()
         var description = $('#description').val()
+        var test_num = /\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[-\.\s]??\d{4}/g;
         var price = $('#price').val()
+        var fuel = $('#fuel').val()
+        var km = $('#km').val()
         var image1 = $('#imageurl1').val()
         var image2 = $('#imageurl2').val()
         var image3 = $('#imageurl3').val()
         var district = $('#location').val()
         var data = {
             'csrfmiddlewaretoken':'{{csrf_token}}',
+            'category_id':category_id,
             'brand':brand,
             'year':year,
             'km' : km,
@@ -265,18 +286,40 @@
             'img3':image3,
             'new_district':district
         }
+        var error = false
         if(brand == '0'){
             $('#span').html('Select Brand after choose category')
         }else if(year.length != 4 || isNaN(year)){
             $('#span').html('Enter valid year')
-        }else if(km.length < 1 || isNaN(km)){
-            $('#span').html('Enter valid KM driven')
         }else if(title.length < 6){
             $('#span').html('Enter valid Title')
         }else if(description.length <20){
             $('#span').html('Enter valid description')
+        }else if(test_num.test(description) == true){
+            $('#span').html('Phone number in description is not allowed');
+            error = true;
         }else if(price.length<1 || isNaN(price)){
             $('#span').html('Enter valid Price')
+        }else{
+            {% for category in categories %}
+                if('{{category.id}}' == category_id ){
+                    if('{{category.km_driven}}' == 'True'){
+                        if(km.length < 1 || isNaN(km)){
+                            $('#span').html('Enter valid KM driven')
+                            error = true;
+                        }
+                    }
+                    if('{{category.fuel}}' == 'True'){
+                        if(fuel == '0'){
+                            $('#span').html('Select fuel')
+                            error = true;
+                        }
+                    }
+                }
+            {% endfor %}
+        }
+        if (error == true){
+            
         }else{
             $.ajax({
                 url:'/edit-ad/{{ad.id}}',

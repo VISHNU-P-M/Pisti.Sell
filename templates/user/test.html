@@ -6,11 +6,18 @@
 <script>
     $('#btn').click(function(){
         var input = $('#textarea').val()
-        var phoneno = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
-        if(input.match(phoneno)){
-            console.log('yes')
-        }else{
-            console.log('no')
-        }
+        alert(hasNumbers(input))
+        
     })
+    function hasNumbers(t)
+    {
+    var regex = /\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[-\.\s]??\d{4}/g;
+    if(regex.test(t) == true){
+        alert('true')
+        return true
+    }else{
+        alert('error')
+        return false
+    }
+    }  
 </script>

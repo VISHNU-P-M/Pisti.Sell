@@ -37,6 +37,8 @@ from django.core.files.base import ContentFile
 # for chat_room no
 import uuid
 
+import operator
+
 
 
 def user_login(request):
@@ -316,9 +318,10 @@ def sell_product(request):
             ext3 = format.split('/')[-1]
             imageurl3 = ContentFile(base64.b64decode(imgstr), name=title + '3.' + ext3)
             
+            category_id = request.POST['category']
+            category = Categories.objects.get(id=category_id)
             brand = request.POST['brand']
             year = request.POST['year']
-            km = request.POST['km']
             description = request.POST['description']
             price = request.POST['price']
             district = request.POST['district']
@@ -333,67 +336,31 @@ def sell_product(request):
             del request.session['longitude']
             today = date.today()
             expiry = today + timedelta(days=14)
+            
+            # for know if user is PremiumMember
+            max_ad = 2
             if PremiumMember.objects.filter(premium_user=request.user,expiry_date__gte = date.today()).exists():
-                if UserAd.objects.filter(user=request.user,expiry_date__gt=today).count()>=5:
-                    return JsonResponse('false', safe=False)
-                else:
-                    user_ad = UserAd.objects.create(user=request.user,brand_id=brand,year=year,km_driven=km,title=title,description=description,
-                                                price=price,date=today,expiry_date=expiry,image1=imageurl1,image2=imageurl2,image3=imageurl3,
-                                                location_latitude=latitude,location_longitude=longitude)
-                    # importing logo
-                    logo = cv2.imread('static/images/Logo.png')
-                    logo_height, logo_width, _ = logo.shape
-                        
-                    #set first image logo
-                    image1 = cv2.imread('static/'+user_ad.img1)
-                    image1_height, image1_width, _ = image1.shape
-                    # print('height and width',image_height,image_width)
-                    top1_y = image1_height - logo_height
-                    left1_x = image1_width - logo_width
-                    # print(top_y,left_x)
-                    roi1 = image1[top1_y:image1_height,left1_x:image1_width] 
-                    result1 = cv2.addWeighted(roi1, 1, logo, 0.5, 0)
-                    image1[top1_y:image1_height,left1_x:image1_width] = result1
-                    # cv2.imshow('image1', image1)
-                    # cv2.waitKey(0)
-                    cv2.imwrite('static/'+user_ad.img1,image1)
-                    
-                    #set second image logo
-                    image2 = cv2.imread('static/'+user_ad.img2)
-                    image2_height, image2_width, _ = image2.shape
-                    # print('height and width',image_height,image_width)
-                    top2_y = image2_height - logo_height
-                    left2_x = image2_width - logo_width
-                    # print(top_y,left_x)
-                    roi2 = image2[top2_y:image2_height,left2_x:image2_width] 
-                    result2 = cv2.addWeighted(roi2, 1, logo, 0.5, 0)
-                    image2[top2_y:image2_height,left2_x:image2_width] = result2
-                    # cv2.imshow('image1', image1)
-                    # cv2.waitKey(0)
-                    cv2.imwrite('static/'+user_ad.img2,image2)
-                    
-                    #set third image logo
-                    image3 = cv2.imread('static/'+user_ad.img3)
-                    image3_height, image3_width, _ = image3.shape
-                    # print('height and width',image_height,image_width)
-                    top3_y = image3_height - logo_height
-                    left3_x = image3_width - logo_width
-                    # print(top_y,left_x)
-                    roi3 = image3[top3_y:image3_height,left3_x:image3_width] 
-                    result3 = cv2.addWeighted(roi3, 1, logo, 0.5, 0)
-                    image3[top3_y:image3_height,left3_x:image3_width] = result3
-                    # cv2.imshow('image1', image1)
-                    # cv2.waitKey(0)
-                    cv2.imwrite('static/'+user_ad.img3,image3)
-                    
-                    return JsonResponse('true', safe=False)
+                max_ad = 5
                 
-            elif UserAd.objects.filter(user=request.user,expiry_date__gt=today).count()>=2:
+            # for category wise attributes
+            if category.km_driven == True:
+                km = request.POST['km']
+            else:
+                km = 0.0
+            if category.fuel == True:
+                fuel = request.POST['fuel']
+            else:
+                fuel = ''
+                
+            
+                
+            if UserAd.objects.filter(user=request.user,expiry_date__gt=today).count()>=max_ad:
                 return JsonResponse('false', safe=False)
             else:
-                user_ad = UserAd.objects.create(user=request.user,brand_id=brand,year=year,km_driven=km,title=title,description=description,
-                                                price=price,date=today,expiry_date=expiry,image1=imageurl1,image2=imageurl2,image3=imageurl3,
-                                                location_latitude=latitude,location_longitude=longitude)
+                user_ad = UserAd.objects.create(user=request.user,brand_id=brand,year=year,km_driven=km,fuel=fuel,title=title,description=description,
+                          price=price,date=today,expiry_date=expiry,image1=imageurl1,image2=imageurl2,image3=imageurl3,location_latitude=latitude,
+                          location_longitude=longitude)
+                
                 # importing logo
                 logo = cv2.imread('static/images/Logo.png')
                 logo_height, logo_width, _ = logo.shape
@@ -477,12 +444,23 @@ def edit_ad(request, id):
     if request.user.is_authenticated:
         if request.method == 'POST':
             title = request.POST['title']
+            category_id = request.POST['category_id']
             brand = request.POST['brand']
             year = request.POST['year']
-            km = request.POST['km']
             description = request.POST['description']
             price = request.POST['price']
             district = request.POST['new_district']
+            
+            category = Categories.objects.get(id=category_id)
+            if category.km_driven == True:
+                km = request.POST['km']
+            else:
+                km = ''
+            if category.fuel == True:
+                fuel = request.POST['fuel']
+            else:
+                fuel = ''
+            
             if district == '0':
                 print('district',district)
                 latitude = request.session['latitude']
@@ -528,6 +506,7 @@ def edit_ad(request, id):
             ad.brand_id = brand
             ad.year = year
             ad.km_driven = km
+            ad.fuel = fuel
             ad.title = title
             ad.description = description
             ad.price = price
@@ -652,6 +631,15 @@ def view_ad(request,id):
     else:
         return redirect(user_login)
     
+def delete_ad(request,id):
+    if request.user.is_authenticated:
+        userad = UserAd.objects.get(id=id)
+        print(userad.title)
+        userad.delete()
+        return redirect(user_profile)
+    else:
+        return redirect(user_login)
+
 def view_seller(request,id):
     if request.user.is_authenticated:
         seller = CustomUser.objects.get(id=id)
@@ -804,9 +792,9 @@ def location_filter(request):
 def search_filter(request):
     if request.user.is_authenticated:
         key = request.GET['key']
-        ads1 = UserAd.objects.filter(brand__brand__icontains = key).exclude(user=request.user)
-        ads2 = UserAd.objects.filter(brand__category__category__icontains = key).exclude(user=request.user)
-        ads3 = UserAd.objects.filter(title__icontains = key).exclude(user=request.user)
+        ads1 = UserAd.objects.filter(brand__brand__icontains = key,expiry_date__gte = date.today()).exclude(user=request.user)
+        ads2 = UserAd.objects.filter(brand__category__category__icontains = key,expiry_date__gte = date.today()).exclude(user=request.user)
+        ads3 = UserAd.objects.filter(title__icontains = key,expiry_date__gte = date.today()).exclude(user=request.user)
         exist = True
         ads = []
         for ad in ads1:
@@ -834,20 +822,22 @@ def search_filter(request):
         geolocator = Nominatim(user_agent="user")
         location = geolocator.geocode(district)
         latitude,longitude = location.latitude, location.longitude
-        
         user_location = (latitude,longitude)
+        print('len',len(ads)) 
         filter_ads = []
         # for finding the ad near user location
         for ad in ads:
             ad_location = (ad.location_latitude,ad.location_longitude)
-            print(geodesic(user_location,ad_location).km)
-            if geodesic(user_location,ad_location).km <100:
-                filter_ads.append(ad)
-        if len(filter_ads) == 0:
+            ad.distance = round((geodesic(user_location,ad_location).km),2)
+            filter_ads.append(ad)
+        print('len',len(filter_ads))
+        sorted_ads = sorted(filter_ads, key=operator.attrgetter('distance'))
+        print('len', len(sorted_ads))
+        if len(ads) == 0:
             exist = False 
-        print(len(filter_ads))     
+        print(len(ads))     
         context = {
-            'ads':filter_ads,
+            'ads':sorted_ads, 
             'district':district,
             'exist':exist,
             'wish_list':wish_list,
@@ -890,9 +880,11 @@ def spec_filter(request):
         # for finding the ad near user location
         for ad in ads:
             ad_location = (ad.location_latitude,ad.location_longitude)
-            print(geodesic(filter_location,ad_location).km)
             if geodesic(filter_location,ad_location).km <100:
+                ad.distance = round(geodesic(filter_location,ad_location).km)
                 filtered_ads.append(ad)
+        sorted_ads = sorted(filtered_ads, key=operator.attrgetter('distance'))
+      
                 
         # for getting ads in wishlist
         wish_list = []
@@ -908,7 +900,7 @@ def spec_filter(request):
         categories = Categories.objects.all()
         brands = Brands.objects.all()
         context = {
-            'ads':filtered_ads,
+            'ads':sorted_ads,
             'exist':exist,
             'wish_list':wish_list,
             'district':district,

@@ -171,8 +171,13 @@ input:focus, textarea:focus {
         <form class="form" id="form1">
             
             <p class="name">
-            <input name="name" type="text" class="validate[required,custom[onlyLetter],length[0,100]] feedback-input" placeholder="Category Name" id="name" />
-            </p>
+			<h5>Category Name</h5><br>
+            <input name="name" type="text" class="validate[required,custom[onlyLetter],length[0,100]] feedback-input" placeholder="Category Name" id="name" /><br>
+			<h5>Select Attributes</h5><br>
+			<input type="checkbox" name="attributes" id="attributes" value="km_driven"> Km Driven 
+			<input type="checkbox" name="attributes" id="attributes" value="fuel"> Fuel <br>
+
+            </p><br>
             
             <div class="submit">
             <input type="button" value="Create" id="button-blue"/>
@@ -187,13 +192,20 @@ input:focus, textarea:focus {
 <script>
     $('#button-blue').click(function(){
         var category = $('#name').val()
-        var data = {
+		var list = []
+		$("input:checkbox[id=attributes]:checked").each(function () {
+			list.push($(this).val()) 
+        });
+		var data = {
             'csrfmiddlewaretoken':'{{csrf_token}}',
-            'category':category
+            'category':category,
+			'list[]':list
         }
         if(category.length<3){
             $('#span').html('Enter the Category')
-        }else{
+        }else if(list == ''){
+			$('#span').html('select attributes')
+		}else{
             $.ajax({
                 url:'/adminapp/add-categories/',
                 method:'POST',

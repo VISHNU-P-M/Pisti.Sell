@@ -13,6 +13,7 @@ urlpatterns = [
     path('set-propic/<int:id>', views.set_propic, name = 'set_propic'),
     path('sell-product/', views.sell_product, name = 'sell_product'),
     path('view-ad/<int:id>', views.view_ad, name = 'view_ad'),
+    path('delete-ad/<int:id>', views.delete_ad, name = 'delete_ad'),
     path('view-images/<int:id>', views.view_images, name = 'view_images'),
     path('edit-ad/<int:id>', views.edit_ad, name = 'edit_ad'),
     path('seller/<int:id>', views.view_seller, name = 'view_seller'),

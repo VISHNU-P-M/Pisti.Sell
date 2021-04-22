@@ -61,9 +61,8 @@
             <h1>No Ads as per your request</h1>
             {% else %}
                 {% for ad in ads %}
-                    {% if ad.active == True%}
                     <div class="col-md-4 col-sm-6 item-grid simpleCart_shelfItem">
-                        <div class="grid-pro" style="height: 13em;width: 12em;margin: 2em;">
+                        <div class="grid-pro" style="height: 15em;width: 12em;margin: 2em;">
                             <div  class=" grid-product " >
                                 <figure>		
                                     <a href="/view-ad/{{ad.id}}">
@@ -80,10 +79,11 @@
                                 <img id="wish-image-{{ad.id}}" {% if ad.id in wish_list %} src="{% static 'images/download.png' %}"{% else %} src="{% static 'images/ll.png' %}" {% endif %} alt="" style="width: 1em;" onclick="AddWishList('{{ad.id}}')">
                                 <h6><a href="/view-ad/{{ad.id}}">{{ad.title}}</a></h6>
                                 <p ><em class="item_price" id={{ad.id}} ></em></p>
+                                <h4>{{ad.distance}} &nbsp; km from your location</h4>  
                             </div>
+                            
                         </div>
                     </div>
-                    {% endif %}
                 {% endfor %}
             {% endif %}
             <div class="clearfix"></div>

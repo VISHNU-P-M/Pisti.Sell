@@ -202,9 +202,17 @@ def add_categories(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
             category = request.POST['category']
+            attribute_list = request.POST.getlist('list[]')  
+            print(attribute_list)
+            km = False
+            fuel = False
+            if 'km_driven' in attribute_list:
+                km = True
+            if 'fuel' in attribute_list:
+                fuel = True
             if Categories.objects.filter(category=category).exists():
                 return JsonResponse('exist', safe=False)
-            Categories.objects.create(category=category)
+            Categories.objects.create(category=category,km_driven=km,fuel=fuel)
             return JsonResponse('true', safe=False)
         else:
             return render(request, 'admin/add_categories.html')

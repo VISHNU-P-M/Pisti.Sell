@@ -411,8 +411,14 @@
                           <a href="/edit-ad/{{ad.id}}" style="text-decoration: none;"><button name="accept" class="bbutton accept">Edit</button></a>
                           {% if ad_boosted == True %}
                             <br><small style="font-size: 17px;">Ad is boosted for next {{days.days}} days</small> 
+                            <div>
+                              <a href="/delete-ad/{{ad.id}}"><button name="accept" id="remove-ad-btn" class="btn btn-secondary" style=" background-color: crimson; color: white; width: 14em; border-radius: 20px;margin-left: 12px;font-weight: 700;letter-spacing: 4px;">Remove Ad</button></a>
+                            </div>
                           {% else %}
                             <button name="accept"  class="bbutton accept modal-btn" style="background-color: dimgray;">Boost Ad</button>
+                            <div>
+                              <a href="/delete-ad/{{ad.id}}"><button name="accept" id="remove-ad-btn" class="btn btn-secondary" style=" background-color: crimson; color: white; width: 14em; border-radius: 20px;margin-left: 12px;font-weight: 700;letter-spacing: 4px;">Remove Ad</button></a>
+                            </div>
                           {% endif %}
                         {% endif %}
                     </div>
@@ -429,9 +435,14 @@
                                     <p >{{ad.description}}</p>         
                                 </div><hr>
                                 <div>
-                                  <h4>Model</h4><h3>{{ad.year}}</h3><hr>
-                                  <h4>KM driven</h4><h3>{{ad.km_driven}}km</h3><hr>
-                              </div>
+                                  <h4>Year</h4><h3>{{ad.year}}</h3><hr>
+                                  {% if ad.brand.category.km_driven == True %}
+                                    <h4>KM driven</h4><h3>{{ad.km_driven}}km</h3><hr>
+                                  {% endif %}
+                                  {% if ad.brand.category.fuel == True %}
+                                    <h4>Fuel Type</h4><h3>{{ad.fuel}}</h3><hr>
+                                  {% endif %}
+                                  </div>
                             </div>
                             <h2 class="resp-accordion resp-tab-active" role="tab" aria-controls="tab_item-0"><span class="resp-arrow"></span>Ad's Location</h2>
                             <div style=" width: 400px; height: 250px;">
