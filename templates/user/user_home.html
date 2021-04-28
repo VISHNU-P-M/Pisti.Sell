@@ -51,9 +51,13 @@
 					</figure>	
 				</div>
 				<div class="women">
-					<img id="wish-image-{{ad.id}}" {% if ad.id in wish_list %} src="{% static 'images/download.png' %}"{% else %} src="{% static 'images/ll.png' %}" {% endif %} alt="" style="width: 1em;" onclick="AddWishList('{{ad.id}}')">
-					<h6><a href="/view-ad/{{ad.id}}">{{ad.title}}</a></h6>
-					<p ><em class="item_price" id={{ad.id}} ></em></p>
+					<div>
+						<img id="wish-image-{{ad.id}}" {% if ad.id in wish_list %} src="{% static 'images/download.png' %}"{% else %} src="{% static 'images/ll.png' %}" {% endif %} alt="" style="width: 1em;" onclick="AddWishList('{{ad.id}}')">
+						<h6><a href="/view-ad/{{ad.id}}" style="font-size: 18px;">{{ad.title}}</a></h6>
+					</div>
+					<div>
+						<p ><em class="item_price" id={{ad.id}} ></em></p>
+					</div>
 				</div>
 			</div>
 		</div>

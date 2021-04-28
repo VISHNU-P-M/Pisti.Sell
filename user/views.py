@@ -946,7 +946,10 @@ def get_premium(request):
 
 def boost_ad(request,id):
     if request.user.is_authenticated:
+        ad = UserAd.objects.get(id=id)
         expiry = date.today() + timedelta(days=30)
+        ad.expiry_date = expiry
+        ad.save()
         FeturedAd.objects.create(ad_id = id,expiry_date = expiry)
         return JsonResponse('true', safe = False)
     else:

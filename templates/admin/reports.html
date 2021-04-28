@@ -1,0 +1,275 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+{% block link %}
+<style>
+  .fullscreen:-webkit-full-screen {
+    width: auto !important;
+    height: auto !important;
+    margin:auto !important;
+  }
+  .fullscreen:-moz-full-screen {
+    width: auto !important;
+    height: auto !important;
+    margin:auto !important;
+  }
+  .fullscreen:-ms-fullscreen {
+    width: auto !important;
+    height: auto !important;
+    margin:auto !important;
+  }     
+</style>
+
+<style>
+    @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600);
+
+*, *:before, *:after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #105469;
+  font-family: 'Open Sans', sans-serif;
+}
+table {
+  background: #012B39;
+  border-radius: 0.25em;
+  border-collapse: collapse;
+  margin: 1em;
+  width: 95%;
+}
+th {
+  border-bottom: 1px solid #364043;
+  color: #E2B842;
+  font-size: 0.85em;
+  font-weight: 600;
+  padding: 0.5em 1em;
+  text-align: left;
+}
+td {
+  color: #fff;
+  font-weight: 400;
+  padding: 0.65em 1em;
+}
+.disabled td {
+  color: #4F5F64;
+}
+tbody tr {
+  transition: background 0.25s ease;
+}
+tbody tr:hover {
+  background: #014055;
+}
+#overflowTest {
+    color: rgb(255, 255, 255);
+    height: 190px;
+    overflow: auto;
+    border: .5px solid #ccc;
+    width: 225px;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="" >
+    <div class="row">
+        <div class="col-md-6 col-sm-6">
+            <form action="">
+                <input type="date" name="from" id="from" class="form-control" placeholder="From Date" style="width: 15em;height: 2em;" onchange="changeTo()">
+                <input type="date" name="to" id="to" class="form-control" placeholder="To Date" style="width: 15em;height: 2em;">
+            </form>
+            <button id="clear-btn" class="btn btn-info" style="width: 50px;height: 50px;"><i class="fa fa-history" aria-hidden="true"></i></button>
+        </div>
+        <div class="col-md-6 col-sm-6">
+            <small>or</small>
+            <select name="key" id="key" class="form-control"  style="width: 15em;height: 2em;">
+                <option value="0"> Select any </option>
+                <option value="Today">Today</option>
+                <option value="last_week"> Last Week</option>
+                <option value="last_month">Last Month</option>
+                <option value="last_year">Last Year</option>
+
+            </select><br>
+            <span id="span" style="color: red;"></span><br>
+        </div>
+        <button class="btn btn-primary" style="display: flex; margin-left: auto;margin-right: auto;" onclick="search()">Show result</button>
+    </div>
+    <div class="row">
+        <div style="overflow-x: auto;">
+        <table>
+            <thead>
+              <tr>
+                <th>ID
+                <th>Title
+                <th>Brand
+                <th>Category
+                <th>Year
+                <th>KM driven
+                <th>Description
+                <th>Price
+                <th>Images
+                <th>Status
+            </thead>
+            <tbody id="table-body"></tbody>
+          </table>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous"></script>
+<script>
+    var todaysDate = new Date();
+    var year = todaysDate.getFullYear();                   
+    var month = ("0" + (todaysDate.getMonth() + 1)).slice(-2);
+    var day = ("0" + todaysDate.getDate()).slice(-2);          
+    var maxDate = (year +"-"+ month +"-"+ day);  
+    $('#from').attr('max',maxDate);
+    $('#to').attr('max',maxDate);
+    
+
+    function changeTo(){
+        console.log('hi')
+        $('#to').val('')
+        var from_date = $('#from').val()
+        var date = new Date(from_date)
+        var month = date.getMonth() +1;
+        var day = date.getDate() +1;
+        var year = date.getFullYear();
+        if(month < 10)
+            month = '0' + month.toString();
+        if(day < 10)
+            day = '0' + day.toString();
+        
+        var maxDate = year + '-' + month + '-' + day;
+        $('#to').attr('min', maxDate);
+    }
+    function search(){
+        document.getElementById('table-body').innerHTML =''
+        var from_date = $('#from').val()
+        var to_date = $('#to').val()
+        var key = $('#key').val()
+        var method = 'none';
+        if(from_date == '' && key == '0'){
+            console.log('select any')
+            $('#span').html('select any method')
+        }else if(from_date != '' && key != '0'){
+            console.log('Select only one')
+            $('#span').html('select only one metod')
+        }else if(from_date != '' && to_date == ''){
+            console.log('to date')
+            $('#span').html('select To date also')
+        }else if(from_date != '' && to_date != '' && key == '0'){
+            method = 'from_to';
+            var data = {
+                'csrfmiddlewaretoken':'{{csrf_token}}',
+                'from_date':from_date,
+                'to_date':to_date
+            }
+        }else{
+            method = 'key';
+            var data = {
+                'csrfmiddlewaretoken':'{{csrf_token}}',
+                'key':key
+            }
+        }
+        if(method == 'none'){
+            console.log(method)
+        }else if(method == 'from_to'){
+            console.log(method)
+            $('#span').html('')
+            $.ajax({
+                url:'/adminapp/report-from-to/',
+                method:'GET',
+                data:data,
+                dataType:'json',
+                success:function(data){
+                    if(data.status == 'true'){
+                        var parse_data = JSON.parse(data.ads)
+                        for(i=0;i<parse_data.length;i++){
+                            document.getElementById('table-body').innerHTML += '<tr><td>'+parse_data[i].pk+'<td>'+parse_data[i].fields.title+'<td>'+parse_data[i].fields.brand_name+'<td>'+parse_data[i].fields.category_name+'<td>'+parse_data[i].fields.year+'<td>'+parse_data[i].fields.km_driven+'<td><div id="overflowTest">'+parse_data[i].fields.description+'</div><td>'+parse_data[i].fields.price+'<td><img id="img1'+parse_data[i].pk+'" style="width:400px; height:auto;"  class="fullscreen" src="/media/'+parse_data[i].fields.image1+'" alt="" onclick="makeFullScreen1('+parse_data[i].pk+')"><img id="img2'+parse_data[i].pk+'" style="width:400px; height:auto;"  class="fullscreen" src="/media/'+parse_data[i].fields.image2+'" alt="" onclick="makeFullScreen2('+parse_data[i].pk+')"><img id="img3'+parse_data[i].pk+'" style="width:400px; height:auto;"  class="fullscreen" src="/media/'+parse_data[i].fields.image3+'" alt="" onclick="makeFullScreen3('+parse_data[i].pk+')"><td>'+parse_data[i].fields.status+'</tr>'
+                        }
+                    }
+                }
+                
+            })
+        }else{
+            console.log(method)
+            $('#span').html('')
+            $.ajax({
+                url:'/adminapp/report-key/',
+                method:'GET',
+                data:data,
+                dataType:'json',
+                success:function(data){
+                    if(data.status == 'true'){
+                        var parse_data = JSON.parse(data.ads)
+                        for(i=0;i<parse_data.length;i++){
+                            document.getElementById('table-body').innerHTML += '<tr><td>'+parse_data[i].pk+'<td>'+parse_data[i].fields.title+'<td>'+parse_data[i].fields.brand_name+'<td>'+parse_data[i].fields.category_name+'<td>'+parse_data[i].fields.year+'<td>'+parse_data[i].fields.km_driven+'<td><div id="overflowTest">'+parse_data[i].fields.description+'</div><td>'+parse_data[i].fields.price+'<td><img id="img1'+parse_data[i].pk+'" style="width:400px; height:auto;"  class="fullscreen" src="/media/'+parse_data[i].fields.image1+'" alt="" onclick="makeFullScreen1('+parse_data[i].pk+')"><img id="img2'+parse_data[i].pk+'" style="width:400px; height:auto;"  class="fullscreen" src="/media/'+parse_data[i].fields.image2+'" alt="" onclick="makeFullScreen2('+parse_data[i].pk+')"><img id="img3'+parse_data[i].pk+'" style="width:400px; height:auto;"  class="fullscreen" src="/media/'+parse_data[i].fields.image3+'" alt="" onclick="makeFullScreen3('+parse_data[i].pk+')"><td>'+parse_data[i].fields.status+'</tr>'
+                        }
+                    }
+                }
+            })
+        }
+    }
+
+    $('#clear-btn').click(function(){
+        document.getElementById('from').value = ''
+        document.getElementById('to').value = ''
+    })
+</script>
+<script>
+    function makeFullScreen1(id) {
+      var divObj = document.getElementById("img1"+id);
+      if (divObj.requestFullscreen) {
+        divObj.requestFullscreen();
+      }
+      else if (divObj.msRequestFullscreen) {
+        divObj.msRequestFullscreen();               
+      }
+      else if (divObj.mozRequestFullScreen) {
+        divObj.mozRequestFullScreen();      
+      }
+      else if (divObj.webkitRequestFullscreen) {
+        divObj.webkitRequestFullscreen();       
+      } else {
+        alert('Fullscreen is not supported on your browser');
+      } 
+  
+    }
+    function makeFullScreen2(id) {
+      var divObj = document.getElementById("img2"+id);
+      if (divObj.requestFullscreen) {
+        divObj.requestFullscreen();
+      }
+      else if (divObj.msRequestFullscreen) {
+        divObj.msRequestFullscreen();               
+      }
+      else if (divObj.mozRequestFullScreen) {
+        divObj.mozRequestFullScreen();      
+      }
+      else if (divObj.webkitRequestFullscreen) {
+        divObj.webkitRequestFullscreen();       
+      } else {
+        alert('Fullscreen is not supported on your browser');
+      } 
+  
+    }
+    function makeFullScreen3(id) {
+      var divObj = document.getElementById("img3"+id);
+      if (divObj.requestFullscreen) {
+        divObj.requestFullscreen();
+      }
+      else if (divObj.msRequestFullscreen) {
+        divObj.msRequestFullscreen();               
+      }
+      else if (divObj.mozRequestFullScreen) {
+        divObj.mozRequestFullScreen();      
+      }
+      else if (divObj.webkitRequestFullscreen) {
+        divObj.webkitRequestFullscreen();       
+      } else {
+        alert('Fullscreen is not supported on your browser');
+      } 
+  
+    }
+  </script>
+{% endblock %}

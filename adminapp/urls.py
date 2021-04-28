@@ -23,4 +23,7 @@ urlpatterns = [
     path('reject-ad/<int:id>', views.reject_ad, name = 'reject_ad'),
     path('user-reprots/', views.user_reports, name = 'user_reprots'),
     path('premium-users/', views.premium_users, name = 'premium_users'),
+    path('reports/', views.reports, name = 'reports'),
+    path('report-from-to/', views.report_from_to, name = 'report_from_to'),
+    path('report-key/', views.report_key, name = 'report_key'),
 ]

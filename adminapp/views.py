@@ -7,6 +7,7 @@ from django.contrib.auth.hashers import check_password
 import requests
 import json 
 from django.views.decorators.csrf import csrf_exempt
+from django.core import serializers
 # Create your views here.
 def admin_login(request):
     if request.user.is_authenticated:
@@ -140,7 +141,37 @@ def admin_logout(request):
     
 def admin_home(request):
     if request.user.is_authenticated:
-        return render(request,'admin/admin_home.html')
+        users = CustomUser.objects.filter().exclude(id = request.user.id).count()
+        print(users)
+        prime = PremiumMember.objects.all().count()
+        print(prime)
+        ads = UserAd.objects.filter(expiry_date__gte = date.today()).count()
+        print(ads)
+        fetured_ads = []
+        fetured = FeturedAd.objects.filter(expiry_date__gte = date.today())
+
+        for x in fetured:
+            fetured_ads.append(x)
+        
+        prime_members = PremiumMember.objects.filter(expiry_date__gte = date.today())
+
+        prime_members_list = []
+        for x in prime_members:
+            prime_members_list.append(x.premium_user.id)
+        
+        all_ads = UserAd.objects.filter(expiry_date__gte = date.today())
+        for x in all_ads:
+            if x.user.id in prime_members_list:
+                if not x in fetured_ads:
+                    fetured_ads.append(x)
+               
+        context = {
+            'users':users,
+            'ads':ads,
+            'prime':prime,
+            'fetured':len(fetured_ads)
+        }
+        return render(request,'admin/admin_home.html',context)
     else:
         return redirect(admin_login)    
 
@@ -336,5 +367,60 @@ def user_reports(request):
             'exist': exist
         }  
         return render(request, 'admin/user_reprots.html', context)
+    else:
+        return redirect(admin_login)
+
+def reports(request):
+    if request.user.is_authenticated:
+        return render(request, 'admin/reports.html')
+    else:
+        return redirect(admin_login)
+    
+def report_from_to(request):
+    if request.user.is_authenticated:
+        from_date = request.GET['from_date']
+        to_date = request.GET['to_date']
+        ads = UserAd.objects.filter(date__range = (from_date,to_date))
+        for x in ads:
+            x.brand_name = x.brand.brand
+            x.category_name = x.brand.category.category
+        print(ads)
+        ser_ads = serializers.serialize('json',ads)
+        print(ser_ads)
+        context = {
+            'ads':ser_ads,'status':'true'
+        }
+        return JsonResponse(context)
+    else:
+        return redirect(admin_login)
+    
+def report_key(request):
+    if request.user.is_authenticated:
+        key = request.GET['key']
+        if key == 'Today':
+            ads = UserAd.objects.filter(date=date.today())
+            print(ads)
+        elif key == 'last_week':
+            from_date = date.today()-timedelta(days=7)
+            ads = UserAd.objects.filter(date__range = (from_date,date.today()))
+            print(ads)
+        elif key == 'last_month':
+            from_date = date.today()-timedelta(days=30)
+            ads = UserAd.objects.filter(date__range = (from_date,date.today()))
+            print(ads)
+        else:
+            from_date = date.today() - timedelta(days=365)
+            ads = UserAd.objects.filter(date__range = (from_date,date.today()))
+            print(ads)
+        for x in ads:
+            x.brand_name = x.brand.brand
+            x.category_name = x.brand.category.category
+        print(ads)
+        ser_ads = serializers.serialize('json',ads)
+        print(ser_ads)
+        context = {
+            'ads':ser_ads,'status':'true'
+        }
+        return JsonResponse(context)
     else:
         return redirect(admin_login)

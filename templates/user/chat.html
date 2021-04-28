@@ -14,9 +14,9 @@
                         {% if chat.user2.propic == '' %}
                             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTew2PT1GnUtzFQIJq755hjjHAVIZtQz7Ywng&usqp=CAU" style="width: 2em;margin: 3px;" alt="">
                         {% else %}
-                            <img src="{{chat.user2.propic}}" style="width: 2em;margin: 3px;" alt="">
+                            <img src="{{chat.ad.img1}}" style="width: 2em;margin: 3px;" alt="">
                         {% endif %}
-                        <label for="" style="margin-left: 10px;text-transform: capitalize;"> {{chat.user2.username}}</label>
+                        <label for="" style="margin-left: 10px;text-transform: capitalize;font-size: 15px;"> {{chat.ad.title}} | {{chat.user2.username}}</label>
                     </div>
                 </a>
                 {% else %}
@@ -25,9 +25,9 @@
                         {% if chat.user1.propic == '' %}
                             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTew2PT1GnUtzFQIJq755hjjHAVIZtQz7Ywng&usqp=CAU" style="width: 2em;margin: 3px;" alt="">
                         {% else %}
-                            <img src="{{chat.user1.propic}}" style="width: 2em;margin: 3px;" alt="">
+                            <img src="{{chat.ad.img1}}" style="width: 2em;margin: 3px;" alt="">
                         {% endif %}
-                        <label for="" style="margin-left: 10px;text-transform: capitalize;"> {{chat.user1.username}}</label>
+                        <label for="" style="margin-left: 10px;text-transform: capitalize;font-size: 15px;">{{chat.ad.title}} | {{chat.user1.username}}</label>
                     </div>
                 </a>
                 {% endif %}

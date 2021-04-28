@@ -6,51 +6,56 @@
     <div class="col-md-3 col-sm-3 ">
         <div class="col-md-3 col-sm-3  animated wow float-right " data-wow-delay=".1s" style="margin-top: 2em;margin-bottom: 2em;">
             <div class="col-md-4  item-grid simpleCart_shelfItem">
-                <form action="/spec-filter/" id="filter-form">
-                    <ul>
-                        <li>
-                            <label for="">Location</label><br>
-                            <select class="custom-select" id="district_" name="district_" style="height: 2em;width: 10em;">
-                                <option  value="Thiruvananthapuram" {% if district == "Thiruvananthapuram" %} selected {% endif %}>Thiruvananthapuram</option>
-                                <option value="Kollam" {% if district == "Kollam" %} selected {% endif %}>Kollam</option>
-                                <option value="Alappuzha" {% if district == "Alappuzha" %} selected {% endif %}>Alappuzha</option>
-                                <option value="Pathanamthitta" {% if district == "Pathanamthitta" %} selected {% endif %}>Pathanamthitta</option>
-                                <option value="Idukki" {% if district == "Idukki" %} selected {% endif %}>Idukki</option>
-                                <option value="Kottayam" {% if district == "Kottayam" %} selected {% endif %}>Kottayam</option>
-                                <option value="Ernakulam" {% if district == "Ernakulam" %} selected {% endif %}>Ernakulam</option>
-                                <option value="Thrissur" {% if district == "Thrissur" %} selected {% endif %}>Thrissur</option>
-                                <option value="Palakkad" {% if district == "Palakkad" %} selected {% endif %}>Palakkad</option>
-                                <option value="Malappuram" {% if district == "Malappuram" %} selected {% endif %}>Malappuram</option>
-                                <option value="Kozhikode" {% if district == "Kozhikode" %} selected {% endif %}>Kozhikode</option>
-                                <option value="Wayanad" {% if district == "Wayanad" %} selected {% endif %}>Wayanad</option>
-                                <option value="Kannur" {% if district == "Kannur" %} selected {% endif %}>Kannur</option>
-                                <option value="Kasaragod" {% if district == "Kasaragod" %} selected {% endif %}>Kasaragod</option>
-                            </select>
-                        </li><br>
-                        <li>
-                            <label for="">Category</label><br>
-                            <select name="category" id="category" style="height: 2em;width: 10em;" onchange="BringBrands(this)">
-                                <option value="0">Select category</option>
-                                {% for category in categories %}
-                                    <option value="{{category.id}}">{{category.category}}</option>
-                                {% endfor %}
-                            </select>
-                        </li><br>
-                        <li>
-                            <label for="">Brands</label><br>
-                            <select name="brand" id="brand" style="height: 2em;width: 10em;">
-                                <option value="0">Select category</option>
-                            </select>
-                        </li><br>
-                        <li>
-                            <label for="">Price_Range</label><br>
-                            <input type="number" name="from_price" id="from" style="height: 2em;width: 10em;" placeholder="from"><br>
-                            <input type="number" name="to_price" id="to" style="height: 2em;width: 10em;" placeholder="to">
-                        </li><br>
-                    </ul><br>
-                    <span id="error" style="color: red;"></span><br>
-                    <button type="button" onclick="Filter()" class="btn btn-warning">Check Availabilty</button><br>
-                </form>
+                <button class="btn btn-success" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">Filter Ads &nbsp; >></button>
+                <div class="collapse" id="collapseExample">
+                    <br>
+                    <form action="/spec-filter/" id="filter-form">
+                        <ul>
+                            <li>
+                                <label for="">Location*</label><br>
+                                <select class="custom-select form-control" id="district_" name="district_" style="height: 3em;width: 15em;">
+                                    <option  value="Thiruvananthapuram" {% if district == "Thiruvananthapuram" %} selected {% endif %}>Thiruvananthapuram</option>
+                                    <option value="Kollam" {% if district == "Kollam" %} selected {% endif %}>Kollam</option>
+                                    <option value="Alappuzha" {% if district == "Alappuzha" %} selected {% endif %}>Alappuzha</option>
+                                    <option value="Pathanamthitta" {% if district == "Pathanamthitta" %} selected {% endif %}>Pathanamthitta</option>
+                                    <option value="Idukki" {% if district == "Idukki" %} selected {% endif %}>Idukki</option>
+                                    <option value="Kottayam" {% if district == "Kottayam" %} selected {% endif %}>Kottayam</option>
+                                    <option value="Ernakulam" {% if district == "Ernakulam" %} selected {% endif %}>Ernakulam</option>
+                                    <option value="Thrissur" {% if district == "Thrissur" %} selected {% endif %}>Thrissur</option>
+                                    <option value="Palakkad" {% if district == "Palakkad" %} selected {% endif %}>Palakkad</option>
+                                    <option value="Malappuram" {% if district == "Malappuram" %} selected {% endif %}>Malappuram</option>
+                                    <option value="Kozhikode" {% if district == "Kozhikode" %} selected {% endif %}>Kozhikode</option>
+                                    <option value="Wayanad" {% if district == "Wayanad" %} selected {% endif %}>Wayanad</option>
+                                    <option value="Kannur" {% if district == "Kannur" %} selected {% endif %}>Kannur</option>
+                                    <option value="Kasaragod" {% if district == "Kasaragod" %} selected {% endif %}>Kasaragod</option>
+                                </select>
+                            </li><br>
+                            <li>
+                                <label for="">Category*</label><br>
+                                <select name="category" id="category" class="form-control" style="height: 3em;width: 15em;" onchange="BringBrands(this)">
+                                    <option value="0">Select category</option>
+                                    {% for category in categories %}
+                                        <option value="{{category.id}}">{{category.category}}</option>
+                                    {% endfor %}
+                                </select>
+                            </li><br>
+                            <li>
+                                <label for="">Brands</label><br>
+                                <select name="brand" id="brand" class="form-control" style="height: 3em;width: 15em;">
+                                    <option value="0">Select category</option>
+                                </select>
+                            </li><br>
+                            <li>
+                                <label for="">Price</label><br>
+                                <input type="number" name="from_price" class="form-control" id="from" style="height: 3em;width: 15em;" placeholder="from">
+                                <small>to</small>
+                                <input type="number" name="to_price" id="to" class="form-control" style="height: 3em;width: 15em;" placeholder="to">
+                            </li>
+                        </ul>
+                        <span id="error" style="color: red;"></span><br>
+                        <button type="button" onclick="Filter()" class="btn btn-warning">Check Availabilty</button><br>
+                    </form>
+                </div>
             </div>
             <div class="clearfix"></div>
         </div>
@@ -61,35 +66,39 @@
             <h1>No Ads as per your request</h1>
             {% else %}
                 {% for ad in ads %}
-                    <div class="col-md-4 col-sm-6 item-grid simpleCart_shelfItem">
-                        <div class="grid-pro" style="height: 15em;width: 12em;margin: 2em;">
-                            <div  class=" grid-product " >
-                                <figure>		
-                                    <a href="/view-ad/{{ad.id}}">
-                                        <div class="grid-img">
-                                            <img  src="{{ad.img1}}" class="img-responsive" alt="">
-                                        </div>
-                                        <div class="grid-img">
-                                            <img  src="{{ad.img2}}" class="img-responsive"  alt="">
-                                        </div>			
-                                    </a>		
-                                </figure>	
+                    {% if ad.active == True %}
+                        <div class="col-md-4 col-sm-6 item-grid simpleCart_shelfItem">
+                            <div class="grid-pro" style="height: 15em;width: 12em;margin: 2em;">
+                                <div  class=" grid-product " >
+                                    <figure>		
+                                        <a href="/view-ad/{{ad.id}}">
+                                            <div class="grid-img">
+                                                <img  src="{{ad.img1}}" class="img-responsive" alt="">
+                                            </div>
+                                            <div class="grid-img">
+                                                <img  src="{{ad.img2}}" class="img-responsive"  alt="">
+                                            </div>			
+                                        </a>		
+                                    </figure>	
+                                </div>
+                                <div class="women">
+                                    <img id="wish-image-{{ad.id}}" {% if ad.id in wish_list %} src="{% static 'images/download.png' %}"{% else %} src="{% static 'images/ll.png' %}" {% endif %} alt="" style="width: 1em;" onclick="AddWishList('{{ad.id}}')">
+                                    <h6><a href="/view-ad/{{ad.id}}">{{ad.title}}</a></h6>
+                                    <p ><em class="item_price" id={{ad.id}} ></em></p>
+                                    <h4>{{ad.distance}} &nbsp; km from location</h4>  
+                                </div>
+                                
                             </div>
-                            <div class="women">
-                                <img id="wish-image-{{ad.id}}" {% if ad.id in wish_list %} src="{% static 'images/download.png' %}"{% else %} src="{% static 'images/ll.png' %}" {% endif %} alt="" style="width: 1em;" onclick="AddWishList('{{ad.id}}')">
-                                <h6><a href="/view-ad/{{ad.id}}">{{ad.title}}</a></h6>
-                                <p ><em class="item_price" id={{ad.id}} ></em></p>
-                                <h4>{{ad.distance}} &nbsp; km from your location</h4>  
-                            </div>
-                            
                         </div>
-                    </div>
+                    {% endif %}
                 {% endfor %}
             {% endif %}
             <div class="clearfix"></div>
         </div>
     </div>
 </div>
+
+
 
 <script>
     function Filter(){
@@ -122,10 +131,6 @@
         
         console.log(district,category_id,brand_id,from_price,to_price)
     }
-</script>
-<script>
-    
-    
 </script>
 
 {% for ad in  ads %}

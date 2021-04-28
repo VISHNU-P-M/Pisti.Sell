@@ -10,3 +10,4 @@ class Categories(models.Model):
 class Brands(models.Model):
     category = models.ForeignKey(Categories,on_delete=models.CASCADE)
     brand = models.CharField(max_length=50)
+    

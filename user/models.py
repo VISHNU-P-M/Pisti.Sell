@@ -33,6 +33,8 @@ class UserAd(models.Model):
     status = models.CharField(null=True,default='pending',max_length=10)
     location_latitude = models.CharField(max_length=20, null=True)
     location_longitude = models.CharField(max_length=20, null=True)
+    brand_name = models.CharField(max_length=30, null=True)
+    category_name = models.CharField(max_length=30, null=True)
 
 
     @property

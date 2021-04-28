@@ -11,7 +11,7 @@
             <div class="row">
                 <div class="col-md-6 ">
                     <p class="title-register-main-connection-div" style="margin-top: 2em;">CATEGORY</p>
-                    <select  id="category" onchange="show_brands(this)" style="height: 2em; width: 15em;">
+                    <select  id="category" class="form-control" onchange="show_brands(this)" style="height: 3em; width: 20em;">
                         <option selected>Choose...</option>
                         {% for category in categories %}
                         <option value="{{category.id}}"> {{category.category}} </option>
@@ -20,7 +20,7 @@
                 </div>
                 <div class="col-md-6 ">
                     <p class="title-register-main-connection-div" style="margin-top: 2em;">BRAND</p>
-                    <select  id="brand" style="height: 2em; width: 15em;">
+                    <select  id="brand" class="form-control" style="height: 3em; width: 20em;">
                         <option selected value="0">select brand</option>
                     </select>
                 </div>
@@ -28,22 +28,23 @@
             <div class="row">
                 <div class="col-md-6">
                     <p class="title-register-main-connection-div" style="margin-top: 2em;">Year</p>
-                    <input type="number" id="year" name="year" style="height: 2em; width: 15em;" value="2021">
+                    <input type="number" id="year" name="year" class="form-control" style="height: 3em; width: 20em;" value="2021">
                 </div>
                 <div class="col-md-6" id="km-div">
                     <p class="title-register-main-connection-div" style="margin-top: 2em;">Ad Title</p>
-                    <input type="text" id="title" name="title" placeholder="Leave a title" style="height: 2em; width: 15em;">
+                    <input type="text" id="title" name="title" class="form-control" placeholder="Leave a title" style="height: 3em; width: 20em;">
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-6">
                     <p class="title-register-main-connection-div" style="margin-top: 2em;">Set Price</p>
-                    <input type="number" id="price" name="price" placeholder="Set your price" style="height: 2em; width: 15em;">    
+                    <input type="number" id="price" name="price" class="form-control" placeholder="Set your price" style="height: 3em; width: 20em;">    
                 </div>
-                <div id="attributes-div"></div>
+                <div id="km-attribute-div"></div>
+                <div id="fuel-attribute-div"></div>
                 <div class="col-md-6">
                     <p class="title-register-main-connection-div" style="margin-top: 2em;">Ad Description</p>
-                    <textarea name="description" id="description" cols="15" rows="10" style="width: 15em;"></textarea>
+                    <textarea name="description" id="description" class="form-control" cols="15" rows="10" style="width: 20em;"></textarea>
                 </div>
             </div>
             
@@ -57,7 +58,7 @@
                 </div>
                 <div class="col-md-6">
                     <h5>Or select a location</h5><br>
-                    <select class="form-select select" id="new_district" aria-label="Select District" style="height: 2em; width: 15em;">
+                    <select class="form-select select form-control" id="new_district" aria-label="Select District" style="height: 3em; width: 20em;">
                         <option selected value="0">Select District</option>
                         <option value="Thiruvananthapuram">Thiruvananthapuram</option>
                         <option value="Kollam">Kollam</option>
@@ -84,7 +85,7 @@
                             <div class="col-md-6">
                                 <h4>image 1</h4>
                                 <div class="crop" id="crop1">
-                                    <input type="file" name="image1" id="image1" onchange="readURL1(this)">
+                                    <input type="file" name="image1" id="image1"  onchange="readURL1(this)">
                                     <button type="button" id="crop_button1">Crop</button>
                                     <img src="" alt="" id="pic1" style="visibility: hidden;width: 4em;">
                                 </div>
@@ -96,7 +97,7 @@
                             <div class="col-md-6">
                                 <h4>image 2</h4>
                                 <div class="crop" id="crop2">
-                                    <input type="file" name="image2" id="image2" onchange="readURL2(this)">
+                                    <input type="file" name="image2" id="image2"  onchange="readURL2(this)">
                                     <button type="button" id="crop_button2">Crop</button>
                                     <img src="" alt="" id="pic2" style="visibility: hidden;width: 4em;">
                                 </div>
@@ -108,7 +109,7 @@
                             <div class="col-md-6">
                                 <h4>image 3</h4>
                                 <div class="crop" id="crop3">
-                                    <input type="file" name="image3" id="image3" onchange="readURL3(this)">
+                                    <input type="file" name="image3" id="image3"  onchange="readURL3(this)">
                                     <button type="button" id="crop_button3">Crop</button>
                                     <img src="" alt="" id="pic3" style="visibility: hidden;width: 4em;">
                                 </div>
@@ -344,6 +345,9 @@
         for (i = length-1; i >= 0; i--) {
         select.options[i] = null;
     }
+    //document.getElementById('km').style.display = 'none';
+    //document.getElementById('fuel').style.display = 'none';
+
         var id = hi.value
         var x = document.getElementById("category");
         var option = document.createElement("option");
@@ -363,11 +367,18 @@
         if('{{category.id}}' == hi.value){
             console.log('hi')
             if('{{category.km_driven}}' == 'True'){
-                console.log('hello')
-                document.getElementById('attributes-div').innerHTML += '<div class="col-md-6"><p class="title-register-main-connection-div" style="margin-top: 2em;">Km Driven</p><input type="number" id="km" name="km" placeholder="Km driven" style="height: 2em; width: 15em;"></div>'
+                console.log('have km')
+                document.getElementById('km-attribute-div').innerHTML = '<div class="col-md-6" id="km-div" ><p class="title-register-main-connection-div" style="margin-top: 2em;display:block;">Km Driven</p><input type="number" class="form-control" id="km" name="km" placeholder="Km driven" style="height: 3em; width: 20em;"></div>'
+            }else{
+                console.log('no km')
+                document.getElementById('km-attribute-div').innerHTML = ''
             }
             if('{{category.fuel}}' == 'True'){
-                document.getElementById('attributes-div').innerHTML += '<div class="col-md-6"><p class="title-register-main-connection-div" style="margin-top: 2em;">Select fuel</p><select  id="fuel" style="height: 2em; width: 15em;"><option selected value="0">Select Fuel</option><option value="Petrol">Petrol</option><option value="Desel">Desel</option></select></div>'
+                console.log('have fuel')
+                document.getElementById('fuel-attribute-div').innerHTML = '<div class="col-md-6" id="fuel-div" ><p class="title-register-main-connection-div" style="margin-top: 2em;display:block;">Select fuel</p><select  id="fuel" class="form-control" style="height: 3em; width: 20em;"><option selected value="0">Select Fuel</option><option value="Petrol">Petrol</option><option value="Desel">Desel</option></select></div>'
+            }else{
+                console.log('no fuel')
+                document.getElementById('fuel-attribute-div').innerHTML = ''
             }
         }
         {% endfor %}
