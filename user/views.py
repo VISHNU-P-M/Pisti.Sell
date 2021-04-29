@@ -102,11 +102,9 @@ def otp_generate(request):
                 }
 
                 response = requests.request("POST", url, headers=headers, data = payload, files = files)
-                print(response.text)
                 data = response.text.encode('utf8')
                 dict=json.loads(data.decode('utf8'))
                 otp_id = dict["otp_id"]
-                print(otp_id)
                 request.session['otp_id'] = otp_id
                 request.session['phone'] = phone
                 status = dict['status']
@@ -139,7 +137,6 @@ def otp_validate(request):
             }
 
             response = requests.request("POST", url, headers=headers, data = payload, files = files)
-            print(response.text)
             data = response.text.encode('utf8')
             dict=json.loads(data.decode('utf8'))
             status = dict['status']
@@ -167,14 +164,11 @@ def otp_resend(request):
             }
 
             response = requests.request("POST", url, headers=headers, data=payload, files=files)
-            print(response.text)
             data = response.text.encode('utf8')
             dict=json.loads(data.decode('utf8'))
             otp_id = dict["otp_id"]
             status = dict['status']
             if status == 'open':
-                print(otp_id)
-                print('resend')
                 return JsonResponse('true', safe=False)
             else:
                 return JsonResponse('false',safe=False)
@@ -198,8 +192,6 @@ def user_home(request):
         # for finding the ad near user location
         for ad in all_ads:
             ad_location = (ad.location_latitude,ad.location_longitude)
-            print(request.user.district)
-            print(geodesic(user_location,ad_location).km)
             if geodesic(user_location,ad_location).km <100:
                 all_ads_id.append(ad.id)
         
@@ -241,10 +233,8 @@ def user_profile(request):
         user = request.user
         followers = Follow.objects.filter(following = user)
         count_followers = followers.count()
-        print(count_followers)
         followings = Follow.objects.filter(follower = user)
         count_followings = followings.count()
-        print(count_followings) 
         if UserAd.objects.filter(user=user).exists():
             userad = UserAd.objects.filter(user=user)
             context = {
@@ -274,7 +264,6 @@ def set_propic(request,id):
         user = CustomUser.objects.get(id=id)
         user.profile_picture=propic
         user.save()
-        print(propic)
         return JsonResponse('true',safe=False)
     else:
         return redirect(user_login)
@@ -368,50 +357,37 @@ def sell_product(request):
                 #set first image logo
                 image1 = cv2.imread('static/'+user_ad.img1)
                 image1_height, image1_width, _ = image1.shape
-                # print('height and width',image_height,image_width)
                 top1_y = image1_height - logo_height
                 left1_x = image1_width - logo_width
-                # print(top_y,left_x)
                 roi1 = image1[top1_y:image1_height,left1_x:image1_width] 
                 result1 = cv2.addWeighted(roi1, 1, logo, 0.5, 0)
                 image1[top1_y:image1_height,left1_x:image1_width] = result1
-                # cv2.imshow('image1', image1)
-                # cv2.waitKey(0)
                 cv2.imwrite('static/'+user_ad.img1,image1)
                 
                 #set second image logo
                 image2 = cv2.imread('static/'+user_ad.img2)
                 image2_height, image2_width, _ = image2.shape
-                # print('height and width',image_height,image_width)
                 top2_y = image2_height - logo_height
                 left2_x = image2_width - logo_width
-                # print(top_y,left_x)
                 roi2 = image2[top2_y:image2_height,left2_x:image2_width] 
                 result2 = cv2.addWeighted(roi2, 1, logo, 0.5, 0)
                 image2[top2_y:image2_height,left2_x:image2_width] = result2
-                # cv2.imshow('image1', image1)
-                # cv2.waitKey(0)
                 cv2.imwrite('static/'+user_ad.img2,image2)
                 
                 #set third image logo
                 image3 = cv2.imread('static/'+user_ad.img3)
                 image3_height, image3_width, _ = image3.shape
-                # print('height and width',image_height,image_width)
                 top3_y = image3_height - logo_height
                 left3_x = image3_width - logo_width
-                # print(top_y,left_x)
                 roi3 = image3[top3_y:image3_height,left3_x:image3_width] 
                 result3 = cv2.addWeighted(roi3, 1, logo, 0.5, 0)
                 image3[top3_y:image3_height,left3_x:image3_width] = result3
-                # cv2.imshow('image1', image1)
-                # cv2.waitKey(0)
                 cv2.imwrite('static/'+user_ad.img3,image3)
                 
                 return JsonResponse('true', safe=False)
         else:
             geolocator = Nominatim(user_agent="user")
             o_ip = get_ip_address(request)
-            # print(o_ip)
             ip = '117.194.167.44'
             country, city , lat, lon = get_geo(ip)
             request.session['latitude'] = lat
@@ -462,11 +438,9 @@ def edit_ad(request, id):
                 fuel = ''
             
             if district == '0':
-                print('district',district)
                 latitude = request.session['latitude']
                 longitude = request.session['longitude']
             else:
-                print('district',district)
                 geolocator = Nominatim(user_agent="user")
                 location = geolocator.geocode(district)
                 latitude,longitude = location.latitude, location.longitude
@@ -634,7 +608,6 @@ def view_ad(request,id):
 def delete_ad(request,id):
     if request.user.is_authenticated:
         userad = UserAd.objects.get(id=id)
-        print(userad.title)
         userad.delete()
         return redirect(user_profile)
     else:
@@ -652,10 +625,8 @@ def view_seller(request,id):
         # getting the followers and followings
         followers = Follow.objects.filter(following = seller)
         count_followers = followers.count()
-        print(count_followers)
         followings = Follow.objects.filter(follower=seller)
         count_followings = followings.count()
-        print(count_followings) 
         if UserAd.objects.filter(user=seller).exists():
             ads = UserAd.objects.filter(user=seller)
             wish_list =[]
@@ -695,7 +666,6 @@ def follow_user(request,id):
             return JsonResponse('follow', safe=False)
         else:
             Follow.objects.create(follower = follower,following_id = following_id)
-            print('followed')
             return JsonResponse('unfollow',safe=False)
     else:
         return redirect(user_login)
@@ -752,7 +722,6 @@ def view_images(request,id):
 def location_filter(request):
     if request.user.is_authenticated:
         district = request.GET['district']
-        print(district)
         geolocator = Nominatim(user_agent="user")
         location = geolocator.geocode(district)
         latitude,longitude = location.latitude, location.longitude
@@ -762,7 +731,6 @@ def location_filter(request):
         # for finding the ad near user location
         for ad in all_ads:
             ad_location = (ad.location_latitude,ad.location_longitude)
-            print(geodesic(filter_location,ad_location).km)
             if geodesic(filter_location,ad_location).km <100:
                 filtered_ads.append(ad)
         # for geting ads in wishlist
@@ -823,19 +791,15 @@ def search_filter(request):
         location = geolocator.geocode(district)
         latitude,longitude = location.latitude, location.longitude
         user_location = (latitude,longitude)
-        print('len',len(ads)) 
         filter_ads = []
         # for finding the ad near user location
         for ad in ads:
             ad_location = (ad.location_latitude,ad.location_longitude)
             ad.distance = round((geodesic(user_location,ad_location).km),2)
             filter_ads.append(ad)
-        print('len',len(filter_ads))
         sorted_ads = sorted(filter_ads, key=operator.attrgetter('distance'))
-        print('len', len(sorted_ads))
         if len(ads) == 0:
             exist = False 
-        print(len(ads))     
         context = {
             'ads':sorted_ads, 
             'district':district,
@@ -856,19 +820,14 @@ def spec_filter(request):
         from_price = request.GET['from_price']
         to_price = request.GET['to_price']
         if category_id == '0':
-            print('only price')
             ads = UserAd.objects.filter(price__range=(float(from_price),float(to_price))).exclude(user=request.user)
         elif brand_id == '0' and from_price == '':
-            print('only category')
             ads = UserAd.objects.filter(brand__category_id = category_id) .exclude(user=request.user)
         elif brand_id == '0' and from_price != '':
-            print('no brand and have price')
             ads = UserAd.objects.filter(brand__category_id=category_id,price__range=(float(from_price),float(to_price))).exclude(user=request.user)
         elif from_price == '' and brand_id != '0':
-            print('no price and have brand')
             ads = UserAd.objects.filter(brand_id = brand_id,brand__category_id=category_id).exclude(user=request.user)
         else:
-            print('all have')
             ads = UserAd.objects.filter(brand__category_id=category_id,brand_id = brand_id,price__range=(float(from_price),float(to_price))).exclude(user=request.user) 
         
         geolocator = Nominatim(user_agent="user")
@@ -980,7 +939,6 @@ def chat_room(request,id,ad_id):
         receiver = CustomUser.objects.get(id=id)
         ad = UserAd.objects.get(id=ad_id)
         if OneToOne.objects.filter(user1=request.user,user2=receiver,ad=ad).exists():
-            print('one')
             onetoone = OneToOne.objects.get(user1=request.user,user2=receiver,ad=ad)
             room_name = onetoone.room_name
             messages = Messages.objects.filter(onetoone=onetoone)
@@ -991,7 +949,6 @@ def chat_room(request,id,ad_id):
                 'onetoone':onetoone
             }
         elif OneToOne.objects.filter(user2=request.user,user1=receiver,ad=ad).exists():
-            print('two')
             onetoone = OneToOne.objects.get(user2=request.user,user1=receiver,ad=ad)
             room_name = onetoone.room_name
             messages = Messages.objects.filter(onetoone=onetoone)
@@ -1002,10 +959,8 @@ def chat_room(request,id,ad_id):
                 'onetoone':onetoone
             }
         else:
-            print('here') 
             room_name = uuid.uuid1()
             ad = UserAd.objects.get(id=ad_id)
-            print(ad.title)
             context = {
                 'receiver':receiver,
                 'room_name':room_name,

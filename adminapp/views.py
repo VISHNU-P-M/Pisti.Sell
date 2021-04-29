@@ -48,7 +48,6 @@ def otp_generate(request):
                 }
 
                 response = requests.request("POST", url, headers=headers, data = payload, files = files)
-                print(response.text)
                 data = response.text.encode('utf8')
                 dict=json.loads(data.decode('utf8'))
                 otp_id = dict["otp_id"]
@@ -86,7 +85,6 @@ def otp_validate(request):
             }
 
             response = requests.request("POST", url, headers=headers, data = payload, files = files)
-            print(response.text)
             data = response.text.encode('utf8')
             dict=json.loads(data.decode('utf8'))
             status = dict['status']
@@ -120,14 +118,11 @@ def otp_resend(request):
             }
 
             response = requests.request("POST", url, headers=headers, data=payload, files=files)
-            print(response.text)
             data = response.text.encode('utf8')
             dict=json.loads(data.decode('utf8'))
             otp_id = dict["otp_id"]
             status = dict['status']
             if status == 'open':
-                print(otp_id)
-                print('resend')
                 return JsonResponse('true', safe=False)
             else:
                 return JsonResponse('false',safe=False)
@@ -142,11 +137,9 @@ def admin_logout(request):
 def admin_home(request):
     if request.user.is_authenticated:
         users = CustomUser.objects.filter().exclude(id = request.user.id).count()
-        print(users)
         prime = PremiumMember.objects.all().count()
-        print(prime)
         ads = UserAd.objects.filter(expiry_date__gte = date.today()).count()
-        print(ads)
+        
         fetured_ads = []
         fetured = FeturedAd.objects.filter(expiry_date__gte = date.today())
 
@@ -164,12 +157,81 @@ def admin_home(request):
             if x.user.id in prime_members_list:
                 if not x in fetured_ads:
                     fetured_ads.append(x)
-               
+                    
+        # month chart     
+        m1 = date.today() - timedelta(days = 30)
+        m2 = m1 - timedelta(days = 30)
+        m3 = m2 - timedelta(days = 30)
+        m4 = m3 - timedelta(days = 30)
+        m5 = m4 - timedelta(days = 30)
+        m6 = m5 - timedelta(days = 30)
+        m7 = m6 - timedelta(days = 30)
+        m00 = date.today().strftime('%B')
+        m01 = m1.strftime('%B')
+        m02 = m2.strftime('%B')
+        m03 = m3.strftime('%B')
+        m04 = m4.strftime('%B')
+        m05 = m5.strftime('%B')
+        m06 = m6.strftime('%B')
+        ads00 = UserAd.objects.filter(date__range = (m1,date.today())).count()
+        ads01 = UserAd.objects.filter(date__range = (m2,m1)).count()
+        ads02 = UserAd.objects.filter(date__range = (m3,m2)).count()
+        ads03 = UserAd.objects.filter(date__range = (m4,m3)).count()
+        ads04 = UserAd.objects.filter(date__range = (m5,m4)).count()
+        ads05 = UserAd.objects.filter(date__range = (m6,m5)).count()
+        ads06 = UserAd.objects.filter(date__range = (m7,m6)).count()
+        
+        # day chart
+        d0 = date.today()
+        d1 = d0 - timedelta(days=1)
+        d2 = d1 - timedelta(days=1)
+        d3 = d2 - timedelta(days=1)
+        d4 = d3 - timedelta(days=1)
+        d5 = d4 - timedelta(days=1)
+        d6 = d5 - timedelta(days=1)
+        day_ads0 = UserAd.objects.filter(date=d0).count()
+        day_ads1 = UserAd.objects.filter(date=d1).count()
+        day_ads2 = UserAd.objects.filter(date=d2).count()
+        day_ads3 = UserAd.objects.filter(date=d3).count()
+        day_ads4 = UserAd.objects.filter(date=d4).count()
+        day_ads5 = UserAd.objects.filter(date=d5).count()
+        day_ads6 = UserAd.objects.filter(date=d6).count()
+        
         context = {
             'users':users,
             'ads':ads,
             'prime':prime,
-            'fetured':len(fetured_ads)
+            'fetured':len(fetured_ads),
+            'm0':m00,
+            'm1':m01,
+            'm2':m02,
+            'm3':m03,
+            'm4':m04,
+            'm5':m05,
+            'm6':m06,
+            'ads0':ads00,
+            'ads1':ads01,
+            'ads2':ads02,
+            'ads3':ads03,
+            'ads4':ads04,
+            'ads5':ads05,
+            'ads6':ads06,
+            'd0':d0,
+            'd1':d1,
+            'd2':d2,
+            'd3':d3,
+            'd4':d4,
+            'd5':d5,
+            'd6':d6,
+            'd_ad0':day_ads0,
+            'd_ad1':day_ads1,
+            'd_ad2':day_ads2,
+            'd_ad3':day_ads3,
+            'd_ad4':day_ads4,
+            'd_ad5':day_ads5,
+            'd_ad6':day_ads6,
+            
+
         }
         return render(request,'admin/admin_home.html',context)
     else:
@@ -212,7 +274,6 @@ def filter_user(request):
         if users.count() != 0 :
             context = {'users':users,'key':key1}
         else:
-            print('yes')
             context = {'exist':0,'key':key1}
         return render(request,'admin/users.html',context)
     else:
@@ -234,7 +295,6 @@ def add_categories(request):
         if request.method == 'POST':
             category = request.POST['category']
             attribute_list = request.POST.getlist('list[]')  
-            print(attribute_list)
             km = False
             fuel = False
             if 'km_driven' in attribute_list:
@@ -384,9 +444,7 @@ def report_from_to(request):
         for x in ads:
             x.brand_name = x.brand.brand
             x.category_name = x.brand.category.category
-        print(ads)
         ser_ads = serializers.serialize('json',ads)
-        print(ser_ads)
         context = {
             'ads':ser_ads,'status':'true'
         }
@@ -399,25 +457,19 @@ def report_key(request):
         key = request.GET['key']
         if key == 'Today':
             ads = UserAd.objects.filter(date=date.today())
-            print(ads)
         elif key == 'last_week':
             from_date = date.today()-timedelta(days=7)
             ads = UserAd.objects.filter(date__range = (from_date,date.today()))
-            print(ads)
         elif key == 'last_month':
             from_date = date.today()-timedelta(days=30)
             ads = UserAd.objects.filter(date__range = (from_date,date.today()))
-            print(ads)
         else:
             from_date = date.today() - timedelta(days=365)
             ads = UserAd.objects.filter(date__range = (from_date,date.today()))
-            print(ads)
         for x in ads:
             x.brand_name = x.brand.brand
             x.category_name = x.brand.category.category
-        print(ads)
         ser_ads = serializers.serialize('json',ads)
-        print(ser_ads)
         context = {
             'ads':ser_ads,'status':'true'
         }

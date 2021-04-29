@@ -127,7 +127,6 @@ tbody tr:hover {
     
 
     function changeTo(){
-        console.log('hi')
         $('#to').val('')
         var from_date = $('#from').val()
         var date = new Date(from_date)
@@ -149,13 +148,10 @@ tbody tr:hover {
         var key = $('#key').val()
         var method = 'none';
         if(from_date == '' && key == '0'){
-            console.log('select any')
             $('#span').html('select any method')
         }else if(from_date != '' && key != '0'){
-            console.log('Select only one')
             $('#span').html('select only one metod')
         }else if(from_date != '' && to_date == ''){
-            console.log('to date')
             $('#span').html('select To date also')
         }else if(from_date != '' && to_date != '' && key == '0'){
             method = 'from_to';
@@ -172,9 +168,8 @@ tbody tr:hover {
             }
         }
         if(method == 'none'){
-            console.log(method)
+          
         }else if(method == 'from_to'){
-            console.log(method)
             $('#span').html('')
             $.ajax({
                 url:'/adminapp/report-from-to/',
@@ -192,7 +187,6 @@ tbody tr:hover {
                 
             })
         }else{
-            console.log(method)
             $('#span').html('')
             $.ajax({
                 url:'/adminapp/report-key/',

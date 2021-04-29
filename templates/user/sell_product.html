@@ -156,8 +156,6 @@
             var cropper = new Cropper(image, {
                 aspectRatio: 16 / 9,
                 crop: function(e) {
-                console.log(e.detail.x);
-                console.log(e.detail.y);
                 }
             });
             
@@ -190,8 +188,6 @@
             var cropper = new Cropper(image, {
                 aspectRatio: 16 / 9,
                 crop: function(e) {
-                console.log(e.detail.x);
-                console.log(e.detail.y);
                 }
             });
             
@@ -224,8 +220,6 @@
             var cropper = new Cropper(image, {
                 aspectRatio: 16 / 9,
                 crop: function(e) {
-                console.log(e.detail.x);
-                console.log(e.detail.y);
                 }
             });
             
@@ -363,21 +357,15 @@
             }
         {% endfor %}
         {% for category in categories %}
-        console.log('here')
         if('{{category.id}}' == hi.value){
-            console.log('hi')
             if('{{category.km_driven}}' == 'True'){
-                console.log('have km')
                 document.getElementById('km-attribute-div').innerHTML = '<div class="col-md-6" id="km-div" ><p class="title-register-main-connection-div" style="margin-top: 2em;display:block;">Km Driven</p><input type="number" class="form-control" id="km" name="km" placeholder="Km driven" style="height: 3em; width: 20em;"></div>'
             }else{
-                console.log('no km')
                 document.getElementById('km-attribute-div').innerHTML = ''
             }
             if('{{category.fuel}}' == 'True'){
-                console.log('have fuel')
                 document.getElementById('fuel-attribute-div').innerHTML = '<div class="col-md-6" id="fuel-div" ><p class="title-register-main-connection-div" style="margin-top: 2em;display:block;">Select fuel</p><select  id="fuel" class="form-control" style="height: 3em; width: 20em;"><option selected value="0">Select Fuel</option><option value="Petrol">Petrol</option><option value="Desel">Desel</option></select></div>'
             }else{
-                console.log('no fuel')
                 document.getElementById('fuel-attribute-div').innerHTML = ''
             }
         }

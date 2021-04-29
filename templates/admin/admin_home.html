@@ -28,15 +28,14 @@
           <div class="row">
             <div class="col-sm-6 pr-sm-2 statistics-grid">
               <div class="card card_border border-primary-top p-4">
-                <i class="lnr lnr-cloud-download"> </i>
-                <i class="fa fa-car" aria-hidden="true"></i>
+                <i class="lnr lnr-car"> </i>
                 <h3 class="text-success number">{{ads}}</h3>
                 <p class="stat-text">Active Ads</p>
               </div>
             </div>
             <div class="col-sm-6 pl-sm-2 statistics-grid">
               <div class="card card_border border-primary-top p-4">
-                <i class="lnr lnr-cart"> </i>
+                <i class="lnr lnr-rocket"> </i>
                 <h3 class="text-danger number">{{fetured}}</h3>
                 <p class="stat-text">Fetured Ads</p>
               </div>
@@ -53,7 +52,7 @@
         <div class="col-lg-6 pr-lg-2 chart-grid">
           <div class="card text-center card_border">
             <div class="card-header chart-grid__header">
-              Bar Chart
+              Monthly Chart
             </div>
             <div class="card-body">
               <!-- bar chart -->
@@ -63,14 +62,13 @@
               <!-- //bar chart -->
             </div>
             <div class="card-footer text-muted chart-grid__footer">
-              Updated 2 hours ago
             </div>
           </div>
         </div>
         <div class="col-lg-6 pl-lg-2 chart-grid">
           <div class="card text-center card_border">
             <div class="card-header chart-grid__header">
-              Line Chart
+              Daily Chart
             </div>
             <div class="card-body">
               <!-- line chart -->
@@ -80,12 +78,83 @@
               <!-- //line chart -->
             </div>
             <div class="card-footer text-muted chart-grid__footer">
-              Updated just now
+             
             </div>
           </div>
         </div>
       </div>
     </div>
     <!-- //charts -->
+    {% block js_script %}
+      <script>
+        new Chart(document.getElementById("barchart"), {
+          type: 'bar',
+          data: {
+            labels: ['{{m6}}', '{{m5}}', '{{m4}}', '{{m3}}', '{{m2}}', '{{m1}}', '{{m0}}'],
+            datasets: [{
+              data: ['{{ads6}}','{{ads5}}','{{ads4}}','{{ads3}}','{{ads2}}','{{ads1}}','{{ads0}}'],
+              label: 'User ads count',
+              backgroundColor: "#4755AB",
+              borderWidth: 1,
+            }]
+          },
+          options: {
+            responsive: true,
+            legend: {
+              position: 'top',
+            },
+          }
+        });
+      </script>
+
+      <script>
+        new Chart(document.getElementById("linechart"), {
+          type: 'line',
+          data: {
+            labels: ['{{d6}}', '{{d5}}', '{{d4}}', '{{d3}}', '{{d2}}', '{{d1}}', '{{d0}}'],
+            datasets: [{
+              label: 'User ads count',
+              backgroundColor: window.chartColors.navy,
+              borderColor: window.chartColors.navy,
+              data: ['{{d_ad6}}','{{d_ad5}}','{{d_ad4}}','{{d_ad3}}','{{d_ad2}}','{{d_ad1}}','{{d_ad0}}'],
+              fill: false,
+            }]
+          },
+          options: {
+            responsive: true,
+            // title: {
+            // 	display: true,
+            // 	text: 'Chart.js Line Chart'
+            // },
+            tooltips: {
+              mode: 'index',
+              intersect: false,
+            },
+            hover: {
+              mode: 'nearest',
+              intersect: true
+            },
+            scales: {
+              xAxes: [{
+                display: true,
+                scaleLabel: {
+                  display: true,
+                  labelString: 'Month'
+                }
+              }],
+              yAxes: [{
+                display: true,
+                scaleLabel: {
+                  display: true,
+                  labelString: 'Value'
+                }
+              }]
+            }
+          }
+        });
+        
+      </script>
+    {% endblock %}
+
 {% endblock %}
   
