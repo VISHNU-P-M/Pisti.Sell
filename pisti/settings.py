@@ -25,7 +25,7 @@ SECRET_KEY = 'tky^ogdw$1^87z_!u!!!e-z@$gr#61!+)levm)v5s_@95ioi6d'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['159.65.167.195']
 
 
 # Application definition
@@ -93,11 +93,12 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'pisti',
-        'USER':'postgres',
-        'PASSWORD':'9955',
-        'HOST':'localhost'
+        'USER': 'pistiuser',
+        'PASSWORD': 'pistipass',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 
