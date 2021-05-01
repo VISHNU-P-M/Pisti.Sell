@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'tky^ogdw$1^87z_!u!!!e-z@$gr#61!+)levm)v5s_@95ioi6d'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['159.65.167.195','pisti.vishnu-pm.xyz']
+ALLOWED_HOSTS = ['159.65.167.195', 'pisti.vishnu-pm.xyz']
 
 
 # Application definition
