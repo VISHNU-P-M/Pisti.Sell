@@ -388,8 +388,8 @@ def sell_product(request):
         else:
             geolocator = Nominatim(user_agent="user")
             o_ip = get_ip_address(request)
-            ip = '117.194.167.44'
-            country, city , lat, lon = get_geo(ip)
+            # ip = '117.194.167.44'
+            country, city , lat, lon = get_geo(o_ip)
             request.session['latitude'] = lat
             request.session['longitude'] = lon
             location = geolocator.geocode(city)
