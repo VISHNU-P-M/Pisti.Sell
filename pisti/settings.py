@@ -23,11 +23,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'tky^ogdw$1^87z_!u!!!e-z@$gr#61!+)levm)v5s_@95ioi6d'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-# DEBUG = True
+# DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['159.65.167.195', 'pisti.vishnu-pm.xyz']
-# ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ['159.65.167.195', 'pisti.vishnu-pm.xyz']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -93,26 +93,26 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'pisti',
-        'USER': 'pistiuser',
-        'PASSWORD': 'pistipass',
-        'HOST': 'localhost',
-        'PORT': '',
-    }
-}
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
 #         'NAME': 'pisti',
-#         'USER': 'postgres',
-#         'PASSWORD': '9955',
+#         'USER': 'pistiuser',
+#         'PASSWORD': 'pistipass',
 #         'HOST': 'localhost',
 #         'PORT': '',
 #     }
 # }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'pisti',
+        'USER': 'postgres',
+        'PASSWORD': '9955',
+        'HOST': 'localhost',
+        'PORT': '',
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators

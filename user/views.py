@@ -385,7 +385,7 @@ def sell_product(request):
                 cv2.imwrite('static/'+user_ad.img3,image3)
                 
                 return JsonResponse('true', safe=False)
-        else:
+        else: 
             geolocator = Nominatim(user_agent="user")
             o_ip = get_ip_address(request)
             # ip = '117.194.167.44'
