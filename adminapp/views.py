@@ -432,7 +432,16 @@ def user_reports(request):
 
 def reports(request):
     if request.user.is_authenticated:
-        return render(request, 'admin/reports.html')
+        from_date = date.today()-timedelta(days=30)
+        ads = UserAd.objects.filter(date__range = (from_date,date.today()))
+        status = 'true'
+        if ads.count() == 0:
+            status = 'false'
+        print(status)
+        context = {
+            'ads':ads,'status': status
+        }
+        return render(request, 'admin/reports.html',context)
     else:
         return redirect(admin_login)
     

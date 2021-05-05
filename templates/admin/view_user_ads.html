@@ -63,7 +63,8 @@ tbody tr:hover {
 }
 #overflowTest {
     color: rgb(255, 255, 255);
-    height: 190px;
+    height: 100px;
+    font-size: 15px;
     overflow: auto;
     border: .5px solid #ccc;
     width: 225px;
@@ -72,7 +73,7 @@ tbody tr:hover {
 {% endblock %}
 {% block content %}
 <h2>User Ads</h2>
-<div style="overflow-x: auto;">
+<div style="overflow-x: auto; width: 65em;">
     {% if exist == 0 %}
     <h1> no users </h1>
     {% else %}
