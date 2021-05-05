@@ -143,6 +143,9 @@
                 </div>
                 <div class="col-md-4"></div>
             </div>
+            <div class="progress">
+                <div class="progress-bar" id="progress" role="progressbar" style="width: 0%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
         </form>
         <div hidden>
             This product includes GeoLite2 data created by MaxMind, available from
@@ -321,6 +324,17 @@
                 method:'POST',
                 data:data,
                 dataType:'json',
+                xhr: function(){
+                    const xhr = new window.XMLHttpRequest();
+                    xhr.upload.addEventListener('progress',e=>{
+                        console.log(e)
+                        if(e.lengthComputable){
+                            var percent = e.loaded / e.total * 100;
+                            document.getElementById('progress').style.width = percent + '%';
+                        }
+                    })
+                    return xhr
+                },
                 success:function(data){
                     if(data=='true'){
                         window.location.replace('/view-ad/{{ad.id}}')
