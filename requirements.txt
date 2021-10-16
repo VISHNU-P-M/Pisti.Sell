@@ -2,6 +2,7 @@ aiohttp==3.7.4.post0
 asgiref==3.3.1
 async-timeout==3.0.1
 attrs==20.3.0
+autobahn==21.3.1
 Automat==20.2.0
 branca==0.4.2
 certifi==2020.12.5
@@ -13,8 +14,10 @@ cryptography==3.4.6
 daphne==3.0.2
 defusedxml==0.7.1
 distlib==0.3.1
+dj-database-url==0.5.0
 Django==3.1.7
 django-allauth==0.44.0
+django-heroku==0.3.1
 django-social-auth==0.7.28
 folium==0.12.1
 geographiclib==1.50
@@ -29,9 +32,11 @@ Jinja2==2.11.3
 MarkupSafe==1.1.1
 maxminddb==2.0.3
 multidict==5.1.0
+numpy==1.20.2
 oauth2==1.9.0.post1
 oauthlib==3.1.0
 opencv-python==4.5.1.48
+pandas==1.2.4
 Pillow==8.2.0
 psycopg2==2.8.6
 psycopg2-binary==2.8.6
@@ -53,9 +58,9 @@ social-auth-app-django==4.0.0
 social-auth-core==4.1.0
 sqlparse==0.4.1
 Twisted==21.2.0
-twisted-iocpsupport==1.0.1
 txaio==21.2.1
 typing-extensions==3.7.4.3
 urllib3==1.26.4
+whitenoise==5.3.0
 yarl==1.6.3
 zope.interface==5.4.0

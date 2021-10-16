@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
+import django_heroku
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -23,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'tky^ogdw$1^87z_!u!!!e-z@$gr#61!+)levm)v5s_@95ioi6d'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['159.65.167.195', 'pisti.vishnu-pm.xyz']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -95,8 +96,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'pisti',
-        'USER': 'pistiuser',
-        'PASSWORD': 'pistipass',
+        'USER': 'postgres',
+        'PASSWORD': '9955',
         'HOST': 'localhost',
         'PORT': '',
     }
@@ -170,3 +171,5 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'xs6YZ5Cqtac-HKtcxmcG7tub'
 
 SOCIAL_AUTH_LINKEDIN_OAUTH2_KEY = '86bu3mqlbxyt6f' 
 SOCIAL_AUTH_LINKEDIN_OAUTH2_SECRET = 'ONAAaf4SaaxI5OEh'
+
+django_heroku.settings(locals())
